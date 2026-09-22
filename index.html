@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sicily Palermo Tour - Esplora Palermo</title>
+    <!-- Collegamento al file CSS Esterno -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Copertina Principale (Hero Section) con ID Home -->
+    <header id="home">
+        <h1>Sicily Palermo Tour</h1>
+        <p>Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
+    </header>
+
+    <!-- Barra di Navigazione -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#itinerari">Itinerari</a></li>
+            <li><a href="#contatti">Contatti</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenuto Principale -->
+    <div class="container">
+
+        <!-- Sezione Itinerari -->
+        <section id="itinerari">
+            <div class="intro">
+                <h2>I Nostri Tour Consigliati</h2>
+                <p>Seleziona una delle meraviglie di Palermo per iniziare la tua avventura.</p>
+            </div>
+
+            <div class="grid">
+                <!-- Card 1: Storia -->
+                <div class="card">
+                    <h3>Palermo Arabo-Normanna</h3>
+                    <p>Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.</p>
+                    <button class="btn-tour" onclick="mostraDettagli('Arabo-Normanno')">Scopri di più</button>
+                </div>
+
+                <!-- Card 2: Street Food -->
+                <div class="card">
+                    <h3>Tour del Gusto e Street Food</h3>
+                    <p>Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e la vera milza palermitana.</p>
+                    <button class="btn-tour" onclick="mostraDettagli('Street Food')">Scopri di più</button>
+                </div>
+
+                <!-- Card 3: Mare -->
+                <div class="card">
+                    <h3>Mondello e il Barocco</h3>
+                    <p>Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro storico barocco.</p>
+                    <button class="btn-tour" onclick="mostraDettagli('Mondello e Barocco')">Scopri di più</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sezione Contatti -->
+        <section id="contatti" class="contact-section">
+            <div class="intro">
+                <h2>Contattaci</h2>
+                <p>Hai domande sui nostri tour o desideri un itinerario personalizzato? Scrivici!</p>
+            </div>
+
+            <form id="contactForm" onsubmit="inviaMessaggio(event)">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" required placeholder="Inserisci il tuo nome">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required placeholder="Inserisci la tua email">
+                </div>
+                <div class="form-group">
+                    <label for="messaggio">Messaggio:</label>
+                    <textarea id="messaggio" required placeholder="Come possiamo aiutarti?"></textarea>
+                </div>
+                <button type="submit" class="btn-tour">Invia Messaggio</button>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+    </footer>
+
+    <!-- Collegamento al file JavaScript Esterno -->
+    <script src="main.js"></script>
+
+</body>
+</html>
