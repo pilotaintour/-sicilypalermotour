@@ -368,6 +368,7 @@
                     <span id="chip-duration" class="chip-item">⏱️ Durata: 3 Ore</span>
                     <span id="chip-price" class="chip-item">💰 Prezzo: Da 25€</span>
                     <span id="chip-meeting" class="chip-item">📍 Incontro: Cattedrale</span>
+                    <span id="chip-capacity" class="chip-item">👥 Max: 15 Persone</span>
                     <span class="chip-item">⭐ Guida Certificata</span>
                 </div>
             </div>
@@ -518,9 +519,10 @@
 
             popolaHeroTour();
 
-            // Prepara orari impostati dall'Admin per questo tour
+            // Prepara orari e capienza massima impostati dall'Admin per questo tour
+            const maxCap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
             const customSlots = (tourCorrente && tourCorrente.timeSlots && tourCorrente.timeSlots.length > 0)
-                ? tourCorrente.timeSlots.map(t => ({ time: t, maxCapacity: 15, booked: 0 }))
+                ? tourCorrente.timeSlots.map(t => ({ time: t, maxCapacity: maxCap, booked: 0 }))
                 : null;
 
             // Inizializza Modulo Calendario
@@ -561,14 +563,22 @@
             document.getElementById('booking-tour-category').textContent = tourCorrente.category || 'Tour';
             document.getElementById('booking-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
 
+            const cap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
             document.getElementById('chip-duration').textContent = `⏱️ Durata: ${tourCorrente.duration || '3 Ore'}`;
             document.getElementById('chip-price').textContent = `💰 Prezzo: ${tourCorrente.price || 'Da 25€'}`;
             document.getElementById('chip-meeting').textContent = `📍 Incontro: ${tourCorrente.meetingPoint || 'Palermo Centro'}`;
+            document.getElementById('chip-capacity').textContent = `👥 Max: ${cap} Persone`;
 
             document.getElementById('sum-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
         }
 
         function modificaPartecipanti(tipo, delta) {
+            const cap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
+            if (delta > 0 && (numAdulti + numBambini + delta) > cap) {
+                alert(`⚠️ Impossibile aggiungere altri partecipanti. La capienza massima per questo tour è di ${cap} persone.`);
+                return;
+            }
+
             if (tipo === 'adulti') {
                 numAdulti = Math.max(1, numAdulti + delta);
                 document.getElementById('cnt-adulti').textContent = numAdulti;
