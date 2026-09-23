@@ -79,13 +79,30 @@ class Step1DataOrario {
     }
 
     validaEProsegui() {
-        if (!this.selectedDateISO) {
-            alert('Per favore seleziona una data sul calendario.');
-            return;
+        // Fallback automatici se la data o lo slot non sono ancora stati cliccati
+        if (!this.selectedDateISO && this.calendarInstance) {
+            const initData = this.calendarInstance.getSelectedData();
+            this.selectedDateISO = initData.dateISO;
+            this.selectedDateReadable = initData.dateReadable;
         }
+
+        if (!this.selectedDateISO) {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            this.selectedDateISO = `${y}-${m}-${d}`;
+            this.selectedDateReadable = `${d}/${m}/${y}`;
+        }
+
         if (!this.selectedSlot) {
-            alert('Per favore seleziona un orario di partenza disponibile.');
-            return;
+            if (this.calendarInstance && this.calendarInstance.selectedSlot) {
+                this.selectedSlot = this.calendarInstance.selectedSlot;
+            } else if (this.calendarInstance && this.calendarInstance.defaultSlots && this.calendarInstance.defaultSlots.length > 0) {
+                this.selectedSlot = this.calendarInstance.defaultSlots[0].time;
+            } else {
+                this.selectedSlot = '09:30';
+            }
         }
 
         if (typeof this.onComplete === 'function') {
