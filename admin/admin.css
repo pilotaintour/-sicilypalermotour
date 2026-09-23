@@ -68,6 +68,80 @@ body {
     padding: 0 20px;
 }
 
+/* Admin Tabs (Navigazione a Schede) */
+.admin-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tab-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(230, 126, 34, 0.25);
+}
+
+/* Lista Impostazioni Espandibile */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.settings-item-header {
+    padding: 16px 20px;
+    background-color: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.settings-item-header:hover {
+    background-color: #f1f5f9;
+}
+
+.settings-arrow {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.settings-item-body {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: #ffffff;
+}
+
 /* Card Stile Generico */
 .card {
     background: var(--card-bg);

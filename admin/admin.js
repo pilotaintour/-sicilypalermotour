@@ -54,6 +54,43 @@ document.addEventListener('DOMContentLoaded', () => {
     caricaNumeroWhatsApp();
 });
 
+// Passaggio tra le Schede Admin (Gestione Itinerari / Impostazioni Sito)
+function mostraSezione(sezioneId, btnElement) {
+    const sezioneItinerari = document.getElementById('sezione-itinerari');
+    const sezioneImpostazioni = document.getElementById('sezione-impostazioni');
+    const tabs = document.querySelectorAll('.tab-btn');
+
+    tabs.forEach(t => t.classList.remove('active'));
+
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    if (sezioneId === 'sezione-itinerari') {
+        if (sezioneItinerari) sezioneItinerari.classList.remove('hidden');
+        if (sezioneImpostazioni) sezioneImpostazioni.classList.add('hidden');
+    } else if (sezioneId === 'sezione-impostazioni') {
+        if (sezioneItinerari) sezioneItinerari.classList.add('hidden');
+        if (sezioneImpostazioni) sezioneImpostazioni.classList.remove('hidden');
+    }
+}
+
+// Espande / Comprime una voce della lista Impostazioni
+function toggleSettingBox(boxId) {
+    const box = document.getElementById(boxId);
+    const arrow = document.getElementById('arrow-' + boxId);
+
+    if (box) {
+        if (box.classList.contains('hidden')) {
+            box.classList.remove('hidden');
+            if (arrow) arrow.textContent = '▲';
+        } else {
+            box.classList.add('hidden');
+            if (arrow) arrow.textContent = '▼';
+        }
+    }
+}
+
 // Verifica e attiva la vista Dashboard
 function verificaStatoAutenticazione() {
     const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';

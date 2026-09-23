@@ -46,97 +46,124 @@
         <!-- Pannello Dashboard Amministratore (Visibile solo se autenticato) -->
         <section id="dashboard-section" class="hidden">
 
-            <!-- Box Configurazione WhatsApp -->
-            <div class="card" style="margin-bottom: 25px; border-left: 5px solid #25d366;">
-                <h2 style="color: #25d366; font-size: 1.3rem; margin-bottom: 5px;">📱 Numero WhatsApp per le Prenotazioni</h2>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 12px;">Inserisci il tuo numero di telefono con prefisso internazionale (es. <code>393401234567</code>):</p>
-                <div style="display: flex; gap: 12px; max-width: 500px; flex-wrap: wrap;">
-                    <input type="text" id="wa-number-input" aria-label="Numero WhatsApp" placeholder="Es. 393401234567" style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <button onclick="salvaNumeroWhatsApp()" class="btn-primary" style="background-color: #25d366;">💾 Salva Numero</button>
+            <!-- Navigazione a Schede Admin -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" id="tab-itinerari-btn" onclick="mostraSezione('sezione-itinerari', this)">📋 Gestione Itinerari</button>
+                <button class="tab-btn" id="tab-impostazioni-btn" onclick="mostraSezione('sezione-impostazioni', this)">⚙️ Impostazioni Sito</button>
+            </div>
+
+            <!-- SEZIONE 1: Gestione Itinerari -->
+            <div id="sezione-itinerari">
+                <div class="dashboard-grid">
+                    <!-- Colonna Form: Aggiungi / Modifica Itinerario -->
+                    <div class="card form-card">
+                        <h2 id="form-title">➕ Aggiungi Nuovo Itinerario</h2>
+                        <p>Compila i campi sottostanti per pubblicare o aggiornare un tour.</p>
+
+                        <form id="itineraryForm" onsubmit="salvaItinerario(event)">
+                            <input type="hidden" id="itinerary-id">
+
+                            <div class="form-group">
+                                <label for="title">Titolo dell'Itinerario *</label>
+                                <input type="text" id="title" required placeholder="Es. Tour dei Mercati Storici">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="category">Categoria *</label>
+                                    <select id="category" required>
+                                        <option value="Storia e Cultura">🏛️ Storia e Cultura</option>
+                                        <option value="Street Food">🥙 Street Food</option>
+                                        <option value="Mare e Natura">🌊 Mare e Natura</option>
+                                        <option value="Esperienze e Tradizioni">🎭 Esperienze e Tradizioni</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="duration">Durata Stimata</label>
+                                    <input type="text" id="duration" placeholder="Es. 3 ore / 1 Giorno">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="price">Prezzo / Info</label>
+                                    <input type="text" id="price" placeholder="Es. Da 20€ / Gratuito">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="featured">In Evidenza in Home?</label>
+                                    <select id="featured">
+                                        <option value="true">Sì (In primo piano)</option>
+                                        <option value="false">No (Standard)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image-url">URL Immagine di Copertina</label>
+                                <input type="url" id="image-url" placeholder="https://images.unsplash.com/..." oninput="anteprimaImmagine()">
+                                <div id="image-preview-box" class="image-preview-box hidden">
+                                    <img id="image-preview" src="" alt="Anteprima immagine">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="short-desc">Descrizione Breve *</label>
+                                <textarea id="short-desc" rows="2" required placeholder="Una o due frasi per la scheda riassuntiva..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="full-desc">Descrizione Dettagliata & Tappe *</label>
+                                <textarea id="full-desc" rows="5" required placeholder="Descrivi il percorso, le tappe principali, i monumenti e le fermate del tour..."></textarea>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="submit" class="btn-primary" id="save-btn">💾 Salva Itinerario</button>
+                                <button type="button" class="btn-secondary hidden" id="cancel-edit-btn" onclick="annullaModifica()">Annulla Modifica</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Colonna Elenco Itinerari -->
+                    <div class="card list-card">
+                        <div class="list-header">
+                            <h2>📋 Itinerari Caricati (<span id="itinerary-count">0</span>)</h2>
+                            <button class="btn-small btn-secondary" onclick="resetDemoData()">🔄 Ripristina Dati Demo</button>
+                        </div>
+
+                        <div id="itineraries-list" class="itineraries-list">
+                            <!-- Verrà popolato dinamicamente via JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="dashboard-grid">
-                <!-- Colonna Form: Aggiungi / Modifica Itinerario -->
-                <div class="card form-card">
-                    <h2 id="form-title">➕ Aggiungi Nuovo Itinerario</h2>
-                    <p>Compila i campi sottostanti per pubblicare o aggiornare un tour.</p>
+            <!-- SEZIONE 2: Impostazioni Sito -->
+            <div id="sezione-impostazioni" class="card hidden">
+                <h2 style="color: #1b4f72; font-size: 1.5rem; margin-bottom: 8px;">⚙️ Impostazioni del Sito</h2>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 25px;">Seleziona la configurazione che desideri modificare:</p>
 
-                    <form id="itineraryForm" onsubmit="salvaItinerario(event)">
-                        <input type="hidden" id="itinerary-id">
-
-                        <div class="form-group">
-                            <label for="title">Titolo dell'Itinerario *</label>
-                            <input type="text" id="title" required placeholder="Es. Tour dei Mercati Storici">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="category">Categoria *</label>
-                                <select id="category" required>
-                                    <option value="Storia e Cultura">🏛️ Storia e Cultura</option>
-                                    <option value="Street Food">🥙 Street Food</option>
-                                    <option value="Mare e Natura">🌊 Mare e Natura</option>
-                                    <option value="Esperienze e Tradizioni">🎭 Esperienze e Tradizioni</option>
-                                </select>
+                <div class="settings-list">
+                    <!-- Voce Lista 1: WhatsApp -->
+                    <div class="settings-item">
+                        <div class="settings-item-header" onclick="toggleSettingBox('box-whatsapp')">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">📱</span>
+                                <strong style="color: #1b4f72; font-size: 1.05rem;">Configurazione WhatsApp</strong>
                             </div>
-
-                            <div class="form-group">
-                                <label for="duration">Durata Stimata</label>
-                                <input type="text" id="duration" placeholder="Es. 3 ore / 1 Giorno">
+                            <span id="arrow-box-whatsapp" class="settings-arrow">▼</span>
+                        </div>
+                        <div id="box-whatsapp" class="settings-item-body hidden">
+                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">Inserisci il numero di telefono a cui i turisti invieranno i messaggi (prefisso incluso, es. <code>393401234567</code>):</p>
+                            <div style="display: flex; gap: 12px; max-width: 500px; flex-wrap: wrap;">
+                                <input type="text" id="wa-number-input" aria-label="Numero WhatsApp" placeholder="Es. 393401234567" style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                <button onclick="salvaNumeroWhatsApp()" class="btn-primary" style="background-color: #25d366;">💾 Salva Numero</button>
                             </div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="price">Prezzo / Info</label>
-                                <input type="text" id="price" placeholder="Es. Da 20€ / Gratuito">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="featured">In Evidenza in Home?</label>
-                                <select id="featured">
-                                    <option value="true">Sì (In primo piano)</option>
-                                    <option value="false">No (Standard)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="image-url">URL Immagine di Copertina</label>
-                            <input type="url" id="image-url" placeholder="https://images.unsplash.com/..." oninput="anteprimaImmagine()">
-                            <div id="image-preview-box" class="image-preview-box hidden">
-                                <img id="image-preview" src="" alt="Anteprima immagine">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="short-desc">Descrizione Breve *</label>
-                            <textarea id="short-desc" rows="2" required placeholder="Una o due frasi per la scheda riassuntiva..."></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="full-desc">Descrizione Dettagliata & Tappe *</label>
-                            <textarea id="full-desc" rows="5" required placeholder="Descrivi il percorso, le tappe principali, i monumenti e le fermate del tour..."></textarea>
-                        </div>
-
-                        <div class="button-group">
-                            <button type="submit" class="btn-primary" id="save-btn">💾 Salva Itinerario</button>
-                            <button type="button" class="btn-secondary hidden" id="cancel-edit-btn" onclick="annullaModifica()">Annulla Modifica</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Colonna Elenco Itinerari -->
-                <div class="card list-card">
-                    <div class="list-header">
-                        <h2>📋 Itinerari Caricati (<span id="itinerary-count">0</span>)</h2>
-                        <button class="btn-small btn-secondary" onclick="resetDemoData()">🔄 Ripristina Dati Demo</button>
                     </div>
 
-                    <div id="itineraries-list" class="itineraries-list">
-                        <!-- Verrà popolato dinamicamente via JS -->
-                    </div>
+                    <!-- In futuro potremo aggiungere altre opzioni qui nella lista -->
                 </div>
             </div>
 
