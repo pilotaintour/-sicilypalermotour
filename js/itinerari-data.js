@@ -15,6 +15,7 @@ const DEFAULT_ITINERARIES = [
         category: 'Storia e Cultura',
         duration: '3 Ore',
         price: 'Da 25€',
+        meetingPoint: 'Piazza Bellini / Cattedrale',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
         images: [
@@ -22,8 +23,15 @@ const DEFAULT_ITINERARIES = [
             'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=800',
             'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
         ],
+        tappe: [
+            'Cattedrale di Palermo',
+            'Palazzo dei Normanni e Cappella Palatina',
+            'Chiesa di San Giovanni degli Eremiti',
+            'Quattro Canti e Piazza Pretoria'
+        ],
+        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Adatto a Famiglie', 'Cancellazione Gratuita'],
         shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
-        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo.\n\nTappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
+        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo.'
     },
     {
         id: '2',
@@ -31,14 +39,22 @@ const DEFAULT_ITINERARIES = [
         category: 'Street Food',
         duration: '2.5 Ore',
         price: 'Da 20€',
+        meetingPoint: 'Mercato di Ballarò',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
         images: [
             'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
             'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
         ],
+        tappe: [
+            'Panelle e Crocchè calde',
+            'Sfincione palermitano artigianale',
+            'Pane con la milza (per i più audaci)',
+            'Cannolo siciliano con ricotta fresca'
+        ],
+        servizi: ['Guida Locale Esperta', 'Degustazione Cibo', 'Adatto a Famiglie'],
         shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
-        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari.\n\nAssaggerai:\n1. Panelle e Crocchè calde\n2. Sfincione palermitano artigianale\n3. Pane con la milza (per i più audaci)\n4. Cannolo siciliano con ricotta fresca.'
+        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari.'
     },
     {
         id: '3',
@@ -46,13 +62,21 @@ const DEFAULT_ITINERARIES = [
         category: 'Mare e Natura',
         duration: 'Mezza Giornata',
         price: 'Da 30€',
+        meetingPoint: 'Piazza Politeama',
         featured: 'false',
         imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
         images: [
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
         ],
+        tappe: [
+            'Passeggiata sul lungomare di Mondello',
+            'Ammirare le Ville Liberty e lo Stabilimento Balneare',
+            'Sosta per gelato artigianale o granita siciliana',
+            'Rientro panoramico verso Palermo'
+        ],
+        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Cancellazione Gratuita'],
         shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
-        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello.\n\nTappe e Momenti:\n1. Passeggiata sul lungomare di Mondello\n2. Ammirare le Ville Liberty e dello Stabilimento Balneare\n3. Sosta per gelato artigianale o granita siciliana\n4. Rientro panoramico verso Palermo.'
+        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello.'
     }
 ];
 
@@ -262,36 +286,39 @@ function apriDettagliModal(id) {
         // Popola Box Dettagli Pratici
         const durationEl = document.getElementById('modal-duration');
         const priceEl = document.getElementById('modal-price');
+        const meetingEl = document.getElementById('modal-meeting');
+
         if (durationEl) durationEl.textContent = tour.duration || 'Flessibile';
         if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
+        if (meetingEl) meetingEl.textContent = tour.meetingPoint || 'Palermo Centro';
 
-        // Genera la Timeline delle Tappe partendo dalla descrizione
+        // Genera la Timeline delle Tappe
         const modalTimeline = document.getElementById('modal-timeline');
         const modalDescText = document.getElementById('modal-description-text');
 
-        const fullText = tour.fullDesc || tour.shortDesc || '';
-        const righe = fullText.split('\n').filter(r => r.trim() !== '');
-
-        const tappeTrovate = [];
-        let testoGenerale = [];
-
-        righe.forEach(riga => {
-            const trimmed = riga.trim();
-            if (/^(\d+[\.\)-]|-|\*)/.test(trimmed)) {
-                const pulita = trimmed.replace(/^(\d+[\.\)-]|-|\*)\s*/, '');
-                if (pulita) tappeTrovate.push(pulita);
-            } else {
-                testoGenerale.push(trimmed);
-            }
-        });
-
         if (modalDescText) {
-            modalDescText.textContent = testoGenerale.join('\n\n') || tour.shortDesc || '';
+            modalDescText.textContent = tour.fullDesc || tour.shortDesc || '';
         }
 
         if (modalTimeline) {
-            if (tappeTrovate.length > 0) {
-                modalTimeline.innerHTML = tappeTrovate.map((tappa, idx) => `
+            let tappeList = [];
+            if (tour.tappe && Array.isArray(tour.tappe) && tour.tappe.length > 0) {
+                tappeList = tour.tappe;
+            } else {
+                // Parsea righe numerate dalla descrizione se presenti
+                const fullText = tour.fullDesc || tour.shortDesc || '';
+                const righe = fullText.split('\n').filter(r => r.trim() !== '');
+                righe.forEach(riga => {
+                    const trimmed = riga.trim();
+                    if (/^(\d+[\.\)-]|-|\*)/.test(trimmed)) {
+                        const pulita = trimmed.replace(/^(\d+[\.\)-]|-|\*)\s*/, '');
+                        if (pulita) tappeList.push(pulita);
+                    }
+                });
+            }
+
+            if (tappeList.length > 0) {
+                modalTimeline.innerHTML = tappeList.map((tappa, idx) => `
                     <div class="timeline-step">
                         <span class="step-number">${idx + 1}</span>
                         <span class="step-text">${escapeHtml(tappa)}</span>
@@ -313,6 +340,18 @@ function apriDettagliModal(id) {
                     </div>
                 `;
             }
+        }
+
+        // Renderizza Chips Servizi Inclusi
+        const servicesBox = document.getElementById('modal-services-box');
+        if (servicesBox) {
+            const listaServizi = (tour.servizi && tour.servizi.length > 0)
+                ? tour.servizi
+                : ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Adatto a Famiglie', 'Cancellazione Gratuita'];
+
+            servicesBox.innerHTML = listaServizi.map(s => `
+                <span class="service-chip">✓ ${escapeHtml(s)}</span>
+            `).join('');
         }
 
         const modalOverlay = document.getElementById('modal-dettaglio');

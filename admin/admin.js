@@ -10,8 +10,9 @@ const WA_STORAGE_KEY = 'spt_whatsapp_number';
 // Email Autorizzata Amministratore
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
-// Array contenente le foto correnti per l'itinerario in modifica/creazione
+// State locale per foto e tappe durante la compilazione del form
 let fotoItinerarioCorrenti = [];
+let tappeCorrenti = [];
 
 // Itinerari Iniziali Predefiniti
 const DEFAULT_ITINERARIES = [
@@ -21,6 +22,7 @@ const DEFAULT_ITINERARIES = [
         category: 'Storia e Cultura',
         duration: '3 Ore',
         price: 'Da 25€',
+        meetingPoint: 'Piazza Bellini / Cattedrale',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
         images: [
@@ -28,8 +30,15 @@ const DEFAULT_ITINERARIES = [
             'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=800',
             'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
         ],
+        tappe: [
+            'Cattedrale di Palermo',
+            'Palazzo dei Normanni e Cappella Palatina',
+            'Chiesa di San Giovanni degli Eremiti',
+            'Quattro Canti e Piazza Pretoria'
+        ],
+        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Adatto a Famiglie'],
         shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
-        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo. Tappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
+        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo.'
     },
     {
         id: '2',
@@ -37,14 +46,22 @@ const DEFAULT_ITINERARIES = [
         category: 'Street Food',
         duration: '2.5 Ore',
         price: 'Da 20€',
+        meetingPoint: 'Mercato di Ballarò',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
         images: [
             'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
             'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
         ],
+        tappe: [
+            'Panelle e Crocchè calde',
+            'Sfincione palermitano artigianale',
+            'Pane con la milza (per i più audaci)',
+            'Cannolo siciliano con ricotta fresca'
+        ],
+        servizi: ['Guida Locale Esperta', 'Degustazione Cibo', 'Adatto a Famiglie'],
         shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
-        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari. Assaggerai:\n- Panelle e Crocchè calde\n- Sfincione palermitano\n- Pane con la milza (per i più audaci)\n- Cannolo siciliano artigianale.'
+        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari.'
     },
     {
         id: '3',
@@ -52,13 +69,21 @@ const DEFAULT_ITINERARIES = [
         category: 'Mare e Natura',
         duration: 'Mezza Giornata',
         price: 'Da 30€',
+        meetingPoint: 'Piazza Politeama',
         featured: 'false',
         imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
         images: [
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
         ],
+        tappe: [
+            'Passeggiata sul lungomare di Mondello',
+            'Ammirare le Ville Liberty e lo Stabilimento Balneare',
+            'Sosta per gelato artigianale o granita siciliana',
+            'Rientro panoramico verso Palermo'
+        ],
+        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Cancellazione Gratuita'],
         shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
-        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello. Comprende passeggiata panoramica e sosta per gelato artigianale sul mare.'
+        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello.'
     }
 ];
 
@@ -67,7 +92,48 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(AUTH_KEY, 'true');
     verificaStatoAutenticazione();
     caricaNumeroWhatsApp();
+    renderCampiTappe();
 });
+
+// Gestione Dynamic Tappe Input Builder
+function renderCampiTappe() {
+    const container = document.getElementById('tappe-input-list');
+    if (!container) return;
+
+    if (tappeCorrenti.length === 0) {
+        tappeCorrenti = ['Incontro con la guida', 'Passeggiata tra i monumenti storici'];
+    }
+
+    container.innerHTML = tappeCorrenti.map((tappaText, idx) => `
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="font-weight: bold; font-size: 0.85rem; color: #e67e22; width: 24px; text-align: center;">${idx + 1}.</span>
+            <input type="text" class="tappa-input" value="${escapeHtml(tappaText)}" placeholder="Es. Tappa ${idx + 1}" oninput="aggiornaTappa(${idx}, this.value)" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            ${tappeCorrenti.length > 1 ? `<button type="button" class="btn-danger btn-small" onclick="rimuoviCampoTappa(${idx})" title="Rimuovi tappa">✕</button>` : ''}
+        </div>
+    `).join('');
+}
+
+function aggiornaTappa(index, val) {
+    tappeCorrenti[index] = val;
+}
+
+function aggiungiCampoTappa() {
+    tappeCorrenti.push('');
+    renderCampiTappe();
+
+    // Focus sull'ultimo input creato
+    setTimeout(() => {
+        const inputs = document.querySelectorAll('.tappa-input');
+        if (inputs.length > 0) {
+            inputs[inputs.length - 1].focus();
+        }
+    }, 50);
+}
+
+function rimuoviCampoTappa(index) {
+    tappeCorrenti.splice(index, 1);
+    renderCampiTappe();
+}
 
 // Passaggio tra le Schede Admin
 function mostraSezione(sezioneId, btnElement) {
@@ -212,9 +278,9 @@ function verificaStatoAutenticazione() {
         }
         caricaElencoItinerari();
     } else {
-        if (loginSection) loginSection.classList.remove('hidden');
-        if (dashboardSection) dashboardSection.classList.add('hidden');
-        if (userControls) userControls.classList.add('hidden');
+        if (loginSection) loginSection.remove('hidden');
+        if (dashboardSection) dashboardSection.add('hidden');
+        if (userControls) userControls.add('hidden');
     }
 }
 
@@ -306,9 +372,17 @@ function salvaItinerario(event) {
     const category = document.getElementById('category').value;
     const duration = document.getElementById('duration').value.trim();
     const price = document.getElementById('price').value.trim();
+    const meetingPoint = document.getElementById('meeting-point').value.trim();
     const featured = document.getElementById('featured').value;
     const shortDesc = document.getElementById('short-desc').value.trim();
     const fullDesc = document.getElementById('full-desc').value.trim();
+
+    // Raccoglie le tappe valide inserite
+    const tappe = tappeCorrenti.map(t => t.trim()).filter(t => t !== '');
+
+    // Raccoglie i servizi selezionati
+    const serviziChecks = document.querySelectorAll('input[name="servizio-check"]:checked');
+    const servizi = Array.from(serviziChecks).map(c => c.value);
 
     // Se non ha caricato foto nella galleria ma ha inserito qualcosa nel campo URL
     const singleUrl = document.getElementById('image-url').value.trim();
@@ -324,8 +398,8 @@ function salvaItinerario(event) {
     if (id) {
         // Aggiornamento
         itinerari = itinerari.map(item => {
-            if (item.id === id) {
-                return { id, title, category, duration, price, featured, imageUrl, images, shortDesc, fullDesc };
+            if (String(item.id) === String(id)) {
+                return { id, title, category, duration, price, meetingPoint, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
             }
             return item;
         });
@@ -334,7 +408,7 @@ function salvaItinerario(event) {
         // Nuovo
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, featured, imageUrl, images, shortDesc, fullDesc
+            title, category, duration, price, meetingPoint, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
         alert('Nuovo itinerario pubblicato con successo!');
@@ -348,7 +422,7 @@ function salvaItinerario(event) {
 // Prepara il form per la modifica
 function preparaModifica(id) {
     const itinerari = getItinerari();
-    const item = itinerari.find(i => i.id === id);
+    const item = itinerari.find(i => String(i.id) === String(id));
 
     if (!item) return;
 
@@ -357,9 +431,24 @@ function preparaModifica(id) {
     document.getElementById('category').value = item.category;
     document.getElementById('duration').value = item.duration || '';
     document.getElementById('price').value = item.price || '';
+    document.getElementById('meeting-point').value = item.meetingPoint || '';
     document.getElementById('featured').value = item.featured || 'false';
     document.getElementById('short-desc').value = item.shortDesc || '';
     document.getElementById('full-desc').value = item.fullDesc || '';
+
+    // Popola tappe
+    if (item.tappe && item.tappe.length > 0) {
+        tappeCorrenti = [...item.tappe];
+    } else {
+        tappeCorrenti = ['Incontro con la guida'];
+    }
+    renderCampiTappe();
+
+    // Popola servizi
+    const serviziChecks = document.querySelectorAll('input[name="servizio-check"]');
+    serviziChecks.forEach(c => {
+        c.checked = item.servizi ? item.servizi.includes(c.value) : true;
+    });
 
     // Carica galleria foto
     if (item.images && item.images.length > 0) {
@@ -392,7 +481,9 @@ function resetForm() {
     const fileInput = document.getElementById('image-file-input');
     if (fileInput) fileInput.value = '';
     fotoItinerarioCorrenti = [];
+    tappeCorrenti = ['Incontro con la guida', 'Passeggiata tra i monumenti'];
     renderGalleriaAnteprima();
+    renderCampiTappe();
     document.getElementById('form-title').textContent = '➕ Aggiungi Nuovo Itinerario';
     document.getElementById('save-btn').textContent = '💾 Salva Itinerario';
     document.getElementById('cancel-edit-btn').classList.add('hidden');
@@ -403,10 +494,10 @@ function eliminaItinerario(id) {
     if (!confirm('Sei sicuro di voler eliminare questo itinerario?')) return;
 
     let itinerari = getItinerari();
-    itinerari = itinerari.filter(i => i.id !== id);
+    itinerari = itinerari.filter(i => String(i.id) !== String(id));
     saveItinerari(itinerari);
 
-    if (document.getElementById('itinerary-id').value === id) {
+    if (String(document.getElementById('itinerary-id').value) === String(id)) {
         resetForm();
     }
 
@@ -425,9 +516,9 @@ function resetDemoData() {
 // Helper per evitare attacchi XSS
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#032;");
+    return String(str).replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#032;");
 }

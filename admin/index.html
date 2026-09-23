@@ -92,12 +92,17 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="featured">In Evidenza in Home?</label>
-                                    <select id="featured">
-                                        <option value="true">Sì (In primo piano)</option>
-                                        <option value="false">No (Standard)</option>
-                                    </select>
+                                    <label for="meeting-point">Punto di Partenza / Incontro</label>
+                                    <input type="text" id="meeting-point" placeholder="Es. Piazza Bellini / Cattedrale">
                                 </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="featured">In Evidenza in Home?</label>
+                                <select id="featured">
+                                    <option value="true">Sì (In primo piano)</option>
+                                    <option value="false">No (Standard)</option>
+                                </select>
                             </div>
 
                             <!-- Sezione Foto (Upload Multiplo File + URL Web) -->
@@ -123,14 +128,39 @@
                                 </div>
                             </div>
 
+                            <!-- Builder Tappe Dinamico -->
+                            <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <label style="margin-bottom: 8px; color: #1b4f72;">📍 Tappe e Fermate del Tour</label>
+                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 12px;">Inserisci le tappe principali del tour. Verranno mostrate con i numeri nel popup del sito:</p>
+
+                                <div id="tappe-input-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <!-- Generato via JS -->
+                                </div>
+
+                                <button type="button" class="btn-secondary btn-small" onclick="aggiungiCampoTappa()" style="margin-top: 12px;">➕ Aggiungi una Tappa</button>
+                            </div>
+
+                            <!-- Servizi Inclusi Checkboxes -->
                             <div class="form-group">
-                                <label for="short-desc">Descrizione Breve *</label>
-                                <textarea id="short-desc" rows="2" required placeholder="Una o due frasi per la scheda riassuntiva..."></textarea>
+                                <label>✓ Servizi Inclusi</label>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 6px;">
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Guida Locale Esperta" checked> Guida Locale</label>
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Degustazione Cibo"> Degustazione Cibo</label>
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Ingressi Monumenti"> Ingressi Monumenti</label>
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Adatto a Famiglie" checked> Adatto a Famiglie</label>
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Assistenza Personalizzata" checked> Assistenza Dedicata</label>
+                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Cancellazione Gratuita" checked> Cancellazione Gratuita</label>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="full-desc">Descrizione Dettagliata & Tappe *</label>
-                                <textarea id="full-desc" rows="5" required placeholder="Descrivi il percorso, le tappe principali, i monumenti e le fermate del tour..."></textarea>
+                                <label for="short-desc">Descrizione Breve (Per la scheda in Home) *</label>
+                                <textarea id="short-desc" rows="2" required placeholder="Una o due frasi di presentazione del tour..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="full-desc">Descrizione Dettagliata Generale *</label>
+                                <textarea id="full-desc" rows="4" required placeholder="Spiegazione generale del tour e storia dei luoghi..."></textarea>
                             </div>
 
                             <div class="button-group">
