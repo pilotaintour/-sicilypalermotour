@@ -21,6 +21,7 @@
             <li><a href="#home">Home</a></li>
             <li><a href="#itinerari">Itinerari</a></li>
             <li><a href="#contatti">Contatti</a></li>
+            <li><a href="admin/index.html" target="_blank" class="nav-admin">🔒 Area Admin</a></li>
         </ul>
     </nav>
 
@@ -34,27 +35,18 @@
                 <p>Seleziona una delle meraviglie di Palermo per iniziare la tua avventura.</p>
             </div>
 
-            <div class="grid">
-                <!-- Card 1: Storia -->
-                <div class="card">
-                    <h3>Palermo Arabo-Normanna</h3>
-                    <p>Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.</p>
-                    <button class="btn-tour" onclick="mostraDettagli('Arabo-Normanno')">Scopri di più</button>
-                </div>
+            <!-- Filtri per Categoria -->
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filtraCategoria('Tutti', this)">Tutti</button>
+                <button class="filter-btn" onclick="filtraCategoria('Storia e Cultura', this)">🏛️ Storia e Cultura</button>
+                <button class="filter-btn" onclick="filtraCategoria('Street Food', this)">🥙 Street Food</button>
+                <button class="filter-btn" onclick="filtraCategoria('Mare e Natura', this)">🌊 Mare e Natura</button>
+                <button class="filter-btn" onclick="filtraCategoria('Esperienze e Tradizioni', this)">🎭 Esperienze</button>
+            </div>
 
-                <!-- Card 2: Street Food -->
-                <div class="card">
-                    <h3>Tour del Gusto e Street Food</h3>
-                    <p>Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e la vera milza palermitana.</p>
-                    <button class="btn-tour" onclick="mostraDettagli('Street Food')">Scopri di più</button>
-                </div>
-
-                <!-- Card 3: Mare -->
-                <div class="card">
-                    <h3>Mondello e il Barocco</h3>
-                    <p>Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro storico barocco.</p>
-                    <button class="btn-tour" onclick="mostraDettagli('Mondello e Barocco')">Scopri di più</button>
-                </div>
+            <!-- Griglia dinamica Itinerari (Popolata da main.js) -->
+            <div id="itinerari-grid" class="grid">
+                <!-- Verrà popolato dinamicamente via JavaScript -->
             </div>
         </section>
 
@@ -84,9 +76,30 @@
 
     </div>
 
+    <!-- Modal Dettaglio Itinerario -->
+    <div id="modal-dettaglio" class="modal-overlay hidden" onclick="chiudiModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="chiudiModal()">&times;</button>
+            <img id="modal-img" src="" alt="Copertina Tour" class="modal-cover">
+            <div class="modal-header-info">
+                <div class="badges-row">
+                    <span id="modal-badge" class="badge"></span>
+                    <span id="modal-featured" class="badge badge-star hidden">⭐ In Evidenza</span>
+                </div>
+                <h2 id="modal-title"></h2>
+                <div id="modal-meta" class="modal-meta"></div>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn-tour" onclick="prenotaTourModal()">📩 Richiedi Info / Prenota Questo Tour</button>
+                <button class="btn-secondary" onclick="chiudiModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati. | <a href="admin/index.html" target="_blank" style="color: #e67e22; text-decoration: none;">Area Riservata Admin</a></p>
     </footer>
 
     <!-- Collegamento al file JavaScript Esterno -->

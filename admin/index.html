@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sicily Palermo Tour - Pannello Amministrazione</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- Header Amministrativo -->
+    <header class="admin-header">
+        <div class="header-container">
+            <h1>🏛️ Sicily Palermo Tour - Admin</h1>
+            <div id="user-controls" class="hidden">
+                <span id="welcome-msg">Benvenuto Admin</span>
+                <a href="../index.html" class="btn-secondary" target="_blank">👁️ Vedi Sito</a>
+                <button id="logout-btn" class="btn-danger" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Schermata di Login -->
+        <section id="login-section" class="card login-card">
+            <h2>🔑 Accesso Riservato Amministratore</h2>
+            <p>Inserisci le tue credenziali per gestire gli itinerari di Palermo.</p>
+
+            <form id="loginForm" onsubmit="effettuaLogin(event)">
+                <div class="form-group">
+                    <label for="admin-user">Utente</label>
+                    <input type="text" id="admin-user" required placeholder="Es. admin">
+                </div>
+                <div class="form-group">
+                    <label for="admin-pass">Password</label>
+                    <input type="password" id="admin-pass" required placeholder="Inserisci la password">
+                </div>
+                <div id="login-error" class="alert-error hidden">
+                    Credenziali non valide. Riprova!
+                </div>
+                <button type="submit" class="btn-primary full-width">Accedi al Pannello</button>
+            </form>
+
+            <div class="login-footer">
+                <a href="../index.html">← Torna al sito principale</a>
+            </div>
+        </section>
+
+        <!-- Pannello Dashboard Amministratore (Visibile solo se autenticato) -->
+        <section id="dashboard-section" class="hidden">
+
+            <div class="dashboard-grid">
+                <!-- Colonna Form: Aggiungi / Modifica Itinerario -->
+                <div class="card form-card">
+                    <h2 id="form-title">➕ Aggiungi Nuovo Itinerario</h2>
+                    <p>Compila i campi sottostanti per pubblicare o aggiornare un tour.</p>
+
+                    <form id="itineraryForm" onsubmit="salvaItinerario(event)">
+                        <input type="hidden" id="itinerary-id">
+
+                        <div class="form-group">
+                            <label for="title">Titolo dell'Itinerario *</label>
+                            <input type="text" id="title" required placeholder="Es. Tour dei Mercati Storici">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="category">Categoria *</label>
+                                <select id="category" required>
+                                    <option value="Storia e Cultura">🏛️ Storia e Cultura</option>
+                                    <option value="Street Food">🥙 Street Food</option>
+                                    <option value="Mare e Natura">🌊 Mare e Natura</option>
+                                    <option value="Esperienze e Tradizioni">🎭 Esperienze e Tradizioni</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="duration">Durata Stimata</label>
+                                <input type="text" id="duration" placeholder="Es. 3 ore / 1 Giorno">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price">Prezzo / Info</label>
+                                <input type="text" id="price" placeholder="Es. Da 20€ / Gratuito">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="featured">In Evidenza in Home?</label>
+                                <select id="featured">
+                                    <option value="true">Sì (In primo piano)</option>
+                                    <option value="false">No (Standard)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image-url">URL Immagine di Copertina</label>
+                            <input type="url" id="image-url" placeholder="https://images.unsplash.com/..." oninput="anteprimaImmagine()">
+                            <div id="image-preview-box" class="image-preview-box hidden">
+                                <img id="image-preview" src="" alt="Anteprima immagine">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="short-desc">Descrizione Breve *</label>
+                            <textarea id="short-desc" rows="2" required placeholder="Una o due frasi per la scheda riassuntiva..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="full-desc">Descrizione Dettagliata & Tappe *</label>
+                            <textarea id="full-desc" rows="5" required placeholder="Descrivi il percorso, le tappe principali, i monumenti e le fermate del tour..."></textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn-primary" id="save-btn">💾 Salva Itinerario</button>
+                            <button type="button" class="btn-secondary hidden" id="cancel-edit-btn" onclick="annullaModifica()">Annulla Modifica</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Colonna Elenco Itinerari -->
+                <div class="card list-card">
+                    <div class="list-header">
+                        <h2>📋 Itinerari Caricati (<span id="itinerary-count">0</span>)</h2>
+                        <button class="btn-small btn-secondary" onclick="resetDemoData()">🔄 Ripristina Dati Demo</button>
+                    </div>
+
+                    <div id="itineraries-list" class="itineraries-list">
+                        <!-- Verrà popolato dinamicamente via JS -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
