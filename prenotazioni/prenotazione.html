@@ -414,28 +414,6 @@
                                 <button type="button" class="btn-counter" onclick="modificaPartecipanti('bambini', 1)">+</button>
                             </div>
                         </div>
-
-                        <h4 style="color: #1b4f72; margin-top: 22px; margin-bottom: 12px; font-size: 1rem;">✨ Personalizza la tua Esperienza (Extra Opzionali):</h4>
-
-                        <label class="extra-option-card" id="extra-card-degustazione">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <input type="checkbox" id="extra-degustazione" onchange="toggleExtra(this, 'extra-card-degustazione')" style="width: 18px; height: 18px; accent-color: #1b4f72;">
-                                <div>
-                                    <strong style="color: #1e293b; display: block;">🍷 Degustazione Street Food & Vino (+10€/persona)</strong>
-                                    <span style="font-size: 0.82rem; color: #64748b;">Include cannolo siciliano o sfincione con calice di vino locale.</span>
-                                </div>
-                            </div>
-                        </label>
-
-                        <label class="extra-option-card" id="extra-card-auricolari">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <input type="checkbox" id="extra-auricolari" checked disabled style="width: 18px; height: 18px; accent-color: #1b4f72;">
-                                <div>
-                                    <strong style="color: #1e293b; display: block;">🎧 Auricolari Wireless Riceventi (Inclusi Gratis)</strong>
-                                    <span style="font-size: 0.82rem; color: #16a34a; font-weight: 600;">Incluso gratuitamente per ascoltare la guida in totale comodità.</span>
-                                </div>
-                            </div>
-                        </label>
                     </div>
 
                     <!-- Step 3: Dati Personali -->
@@ -488,11 +466,6 @@
                             <strong id="sum-guests">2 Adulti</strong>
                         </div>
 
-                        <div id="summary-extra-row" class="summary-row" style="display: none;">
-                            <span>Extra Degustazione:</span>
-                            <strong id="sum-extra-price">+€0.00</strong>
-                        </div>
-
                         <div class="summary-total-row">
                             <span>Totale Stimato:</span>
                             <span id="sum-price">€50.00</span>
@@ -529,7 +502,6 @@
         let orarioScelto = '09:30';
         let numAdulti = 2;
         let numBambini = 0;
-        let haExtraDegustazione = false;
         let codicePrenotazione = '';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -601,30 +573,14 @@
             aggiornaRiepilogo();
         }
 
-        function toggleExtra(checkbox, cardId) {
-            haExtraDegustazione = checkbox.checked;
-            const card = document.getElementById(cardId);
-            if (card) {
-                if (haExtraDegustazione) card.classList.add('selected');
-                else card.classList.remove('selected');
-            }
-            aggiornaRiepilogo();
-        }
-
         function calcolaTotale() {
-            if (!tourCorrente) return 50;
+            if (!tourCorrente) return '50.00';
 
             const match = (tourCorrente.price || '').match(/\d+/);
             const prezzoBase = match ? parseInt(match[0], 10) : 25;
 
             const totalePartecipanti = (numAdulti * prezzoBase) + (numBambini * (prezzoBase * 0.5));
-            const totaleExtra = haExtraDegustazione ? ((numAdulti + numBambini) * 10) : 0;
-
-            return {
-                base: totalePartecipanti,
-                extra: totaleExtra,
-                finale: (totalePartecipanti + totaleExtra).toFixed(2)
-            };
+            return totalePartecipanti.toFixed(2);
         }
 
         function aggiornaRiepilogo() {
@@ -635,17 +591,8 @@
             if (numBambini > 0) testoOspiti += `, ${numBambini} Bambini`;
             document.getElementById('sum-guests').textContent = testoOspiti;
 
-            const prezzi = calcolaTotale();
-
-            const extraRow = document.getElementById('summary-extra-row');
-            if (haExtraDegustazione) {
-                extraRow.style.display = 'flex';
-                document.getElementById('sum-extra-price').textContent = `+€${prezzi.extra.toFixed(2)}`;
-            } else {
-                extraRow.style.display = 'none';
-            }
-
-            document.getElementById('sum-price').textContent = `€${prezzi.finale}`;
+            const totale = calcolaTotale();
+            document.getElementById('sum-price').textContent = `€${totale}`;
         }
 
         function confermaPrenotazioneForm(event) {
@@ -661,7 +608,7 @@
                 return;
             }
 
-            const prezzi = calcolaTotale();
+            const totale = calcolaTotale();
 
             // Salva la prenotazione per la dashboard Admin
             salvaStorage({
@@ -672,8 +619,7 @@
                 time: orarioScelto,
                 adults: numAdulti,
                 children: numBambini,
-                extraDegustazione: haExtraDegustazione,
-                total: prezzi.finale,
+                total: totale,
                 customerName: nome,
                 customerEmail: email,
                 customerPhone: phone,
