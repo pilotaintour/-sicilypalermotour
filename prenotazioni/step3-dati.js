@@ -1,6 +1,6 @@
 /**
- * STEP 3: Dati Personali Completi e Note per CIASCUN Partecipante (Obbligatori)
- * Nome, Cognome, Età, Luogo di Provenienza e Note per ciascun partecipante.
+ * STEP 3: Dati Personali Completi e Data di Nascita per CIASCUN Partecipante (Obbligatori)
+ * Nome, Cognome, Data di Nascita, Luogo di Provenienza e Note per ciascun partecipante.
  */
 
 class Step3Dati {
@@ -37,7 +37,7 @@ class Step3Dati {
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
-                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Età e Luogo di Provenienza</strong>.
+                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong>.
             </div>
 
             <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE -->
@@ -53,8 +53,8 @@ class Step3Dati {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div>
-                        <label for="step3-age-1" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Età *</label>
-                        <input type="number" id="step3-age-1" min="1" max="110" required placeholder="Es. 35" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
+                        <label for="step3-dob-1" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Data di Nascita *</label>
+                        <input type="date" id="step3-dob-1" required style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
                     </div>
                     <div>
                         <label for="step3-origin-1" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Città / Luogo di Provenienza *</label>
@@ -98,8 +98,8 @@ class Step3Dati {
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
-                            <label for="step3-age-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Età *</label>
-                            <input type="number" id="step3-age-${partCounter}" min="1" max="110" required placeholder="Es. 30" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                            <label for="step3-dob-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Data di Nascita *</label>
+                            <input type="date" id="step3-dob-${partCounter}" required style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
                         <div>
                             <label for="step3-origin-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Città / Provenienza *</label>
@@ -131,8 +131,8 @@ class Step3Dati {
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
-                            <label for="step3-age-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Età *</label>
-                            <input type="number" id="step3-age-${partCounter}" min="1" max="12" required placeholder="Es. 8" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                            <label for="step3-dob-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Data di Nascita *</label>
+                            <input type="date" id="step3-dob-${partCounter}" required style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
                         <div>
                             <label for="step3-origin-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Città / Provenienza *</label>
@@ -181,15 +181,15 @@ class Step3Dati {
         const totalePartecipanti = this.adults + this.children;
         const listaPartecipanti = [];
 
-        // Valida Nome, Età, Provenienza e leggi Note per ciascun partecipante da 1 a N
+        // Valida Nome, Data di Nascita, Provenienza e Note per ciascun partecipante da 1 a N
         for (let i = 1; i <= totalePartecipanti; i++) {
             const nameEl = this.container.querySelector(`#step3-name-${i}`);
-            const ageEl = this.container.querySelector(`#step3-age-${i}`);
+            const dobEl = this.container.querySelector(`#step3-dob-${i}`);
             const originEl = this.container.querySelector(`#step3-origin-${i}`);
             const notesEl = this.container.querySelector(`#step3-notes-${i}`);
 
             const nameVal = nameEl ? nameEl.value.trim() : '';
-            const ageVal = ageEl ? ageEl.value.trim() : '';
+            const dobVal = dobEl ? dobEl.value.trim() : '';
             const originVal = originEl ? originEl.value.trim() : '';
             const notesVal = notesEl ? notesEl.value.trim() : '';
 
@@ -199,9 +199,9 @@ class Step3Dati {
                 return;
             }
 
-            if (!ageVal) {
-                alert(`⚠️ Attenzione: è obbligatorio inserire l'Età per il Partecipante ${i} (${nameVal}).`);
-                if (ageEl) ageEl.focus();
+            if (!dobVal) {
+                alert(`⚠️ Attenzione: è obbligatorio inserire la Data di Nascita per il Partecipante ${i} (${nameVal}).`);
+                if (dobEl) dobEl.focus();
                 return;
             }
 
@@ -215,10 +215,17 @@ class Step3Dati {
             const isChild = i > this.adults;
             let typeLabel = isLead ? 'Referente Principale' : (isChild ? 'Bambino' : 'Adulto');
 
+            // Formatta la Data di Nascita da YYYY-MM-DD a DD/MM/YYYY
+            let dobFormatted = dobVal;
+            const parts = dobVal.split('-');
+            if (parts.length === 3) {
+                dobFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
             listaPartecipanti.push({
                 number: i,
                 name: nameVal,
-                age: ageVal,
+                dob: dobFormatted,
                 origin: originVal,
                 notes: notesVal,
                 type: typeLabel

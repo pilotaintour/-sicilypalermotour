@@ -83,7 +83,7 @@ class Step4Conferma {
                         ${data.participantsList.map(p => `
                             <li style="margin-bottom: 6px;">
                                 <strong>${p.name}</strong>
-                                <span style="color:#64748b;">(${p.age ? p.age + ' anni' : p.type}${p.origin ? ' - da ' + p.origin : ''})</span>
+                                <span style="color:#64748b;">(${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - da ' + p.origin : ''})</span>
                                 ${p.notes ? `<div style="font-size:0.83rem; color:#475569; margin-top:2px;">📝 <em>Note: ${p.notes}</em></div>` : ''}
                             </li>
                         `).join('')}
