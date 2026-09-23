@@ -135,17 +135,24 @@ function normalizzaOrari(arr) {
 function renderCampiOrari() {
     orariCorrenti = normalizzaOrari(orariCorrenti);
 
-    // 1. Renderizza i chips attivi nel form dell'admin
-    const chipsContainer = document.getElementById('orari-active-chips');
-    if (chipsContainer) {
+    // 1. Renderizza la lista degli orari attivi con input capienza modificabile direttamente
+    const activeList = document.getElementById('orari-active-list');
+    if (activeList) {
         if (orariCorrenti.length === 0) {
-            chipsContainer.innerHTML = '<span style="font-size:0.85rem; color:#94a3b8;">Nessun orario selezionato. Clicca su "Apri Tabella Orari" per sceglierli!</span>';
+            activeList.innerHTML = '<span style="font-size:0.85rem; color:#94a3b8; padding:8px;">Nessun orario selezionato. Clicca su "Seleziona Orari dalla Tabella" per aggiungerli!</span>';
         } else {
-            chipsContainer.innerHTML = orariCorrenti.map((item) => `
-                <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
-                    ⏰ ${escapeHtml(item.time)} <small style="background:#0369a1; color:#ffffff; padding:1px 6px; border-radius:10px; font-size:0.75rem;">${item.capacity} pers.</small>
-                    <button type="button" onclick="toggleOrario('${item.time}')" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
-                </span>
+            activeList.innerHTML = orariCorrenti.map((item, idx) => `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <strong style="color: #1b4f72; font-size: 1.05rem;">⏰ Orario: ${escapeHtml(item.time)}</strong>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.85rem; color: #475569; margin: 0; font-weight: 600;">Capienza Max:</label>
+                        <input type="number" min="1" max="500" value="${item.capacity}" onchange="aggiornaCapienzaOrario(${idx}, this.value)" style="width: 75px; padding: 6px 8px; border: 1.5px solid #1b4f72; border-radius: 6px; font-weight: bold; text-align: center; color: #1b4f72; font-size: 0.95rem;">
+                        <span style="font-size: 0.85rem; color: #64748b;">persone</span>
+                        <button type="button" class="btn-danger btn-small" onclick="toggleOrario('${item.time}')" style="margin-left: 8px;" title="Rimuovi orario">✕ Rimuovi</button>
+                    </div>
+                </div>
             `).join('');
         }
     }
@@ -184,6 +191,13 @@ function renderCampiOrari() {
     }
 
     tableBody.innerHTML = rowsHtml;
+}
+
+function aggiornaCapienzaOrario(index, nuovaCapienza) {
+    if (orariCorrenti[index]) {
+        orariCorrenti[index].capacity = parseInt(nuovaCapienza, 10) || 15;
+        renderCampiOrari();
+    }
 }
 
 function toggleOrario(timeStr) {

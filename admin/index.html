@@ -114,15 +114,15 @@
                             <!-- Sezione Orari di Partenza per il Calendario -->
                             <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 18px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
-                                    <label style="color: #1b4f72; margin: 0; font-weight: bold;">⏰ Orari di Partenza (per il Calendario Clienti)</label>
+                                    <label style="color: #1b4f72; margin: 0; font-weight: bold;">⏰ Orari di Partenza & Capienza Personalizzata</label>
                                     <button type="button" class="btn-primary btn-small" style="background-color: #1b4f72;" onclick="apriModalTabellaOrari()">
-                                        🗓️ Apri Tabella Orari (a 15 min)
+                                        🗓️ Seleziona Orari dalla Tabella (a 15 min)
                                     </button>
                                 </div>
-                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">Orari attivi per questo tour (verranno mostrati sotto il calendario nella prenotazione):</p>
+                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">Orari attivi per questo tour. Puoi modificare direttamente la capienza max per ciascun orario:</p>
 
-                                <!-- Lista orari attivi (chips) -->
-                                <div id="orari-active-chips" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 8px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                <!-- Lista orari attivi con input capienza diretta -->
+                                <div id="orari-active-list" style="display: flex; flex-direction: column; gap: 8px;">
                                     <!-- Popolato via JS -->
                                 </div>
                             </div>
