@@ -1,0 +1,301 @@
+/**
+ * Stili Grafici del Wizard di Prenotazione Step-by-Step
+ */
+
+:root {
+    --wizard-primary: #1b4f72;
+    --wizard-accent: #e67e22;
+    --wizard-bg: #f8fafc;
+    --wizard-card: #ffffff;
+    --wizard-text: #1e293b;
+    --wizard-muted: #64748b;
+    --wizard-border: #e2e8f0;
+}
+
+body {
+    background-color: var(--wizard-bg);
+    color: var(--wizard-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Navbar */
+header {
+    background: var(--wizard-primary);
+    color: white;
+    padding: 16px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+header p {
+    font-size: 0.85rem;
+    margin: 4px 0 0 0;
+    opacity: 0.9;
+}
+
+nav {
+    background: #153d59;
+    padding: 10px 20px;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Steps Bar Sticky */
+.steps-bar-container {
+    background: #ffffff;
+    border-bottom: 1px solid var(--wizard-border);
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.steps-bar {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.step-item.active {
+    color: var(--wizard-primary);
+}
+
+.step-item.completed {
+    color: #10b981;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.step-item.active .step-number {
+    background: var(--wizard-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(27, 79, 114, 0.25);
+}
+
+.step-item.completed .step-number {
+    background: #10b981;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .step-text {
+        display: none;
+    }
+}
+
+/* Contenitore Principale */
+.wizard-main-container {
+    max-width: 820px;
+    margin: 30px auto 60px auto;
+    padding: 0 20px;
+}
+
+/* Hero Tour Card Banner */
+.tour-hero-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--wizard-border);
+    margin-bottom: 25px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+}
+
+@media (max-width: 640px) {
+    .tour-hero-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tour-hero-img {
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+    object-fit: cover;
+}
+
+.tour-hero-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tour-hero-title {
+    font-size: 1.3rem;
+    color: var(--wizard-primary);
+    margin: 6px 0;
+    font-weight: 800;
+}
+
+.tour-highlights-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.chip-item {
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.booking-ref-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Card Step Visibile */
+.wizard-step-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--wizard-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.wizard-step-card.hidden-step {
+    display: none !important;
+}
+
+.step-card-header {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--wizard-primary);
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Barra Navigazione Avanti/Indietro Step */
+.step-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--wizard-border);
+    gap: 12px;
+}
+
+.btn-nav-prev {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1.5px solid #cbd5e1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-nav-prev:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-nav-next {
+    background: linear-gradient(135deg, #1b4f72, #2980b9);
+    color: #ffffff;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(27, 79, 114, 0.25);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.btn-nav-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(27, 79, 114, 0.35);
+}
+
+.btn-nav-confirm {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.btn-nav-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}

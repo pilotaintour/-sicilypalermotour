@@ -8,318 +8,12 @@
     <link rel="stylesheet" href="../itinerari/itinerari.css">
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="calendario.css">
-    <style>
-        :root {
-            --brand-primary: #1b4f72;
-            --brand-accent: #e67e22;
-            --brand-bg: #f8fafc;
-            --brand-card-bg: #ffffff;
-            --brand-text: #1e293b;
-        }
-
-        body {
-            background-color: var(--brand-bg);
-            color: var(--brand-text);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Steps Bar Mobile-First */
-        .steps-bar-container {
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
-
-        .steps-bar {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #94a3b8;
-        }
-
-        .step-item.active {
-            color: var(--brand-primary);
-        }
-
-        .step-number {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #e2e8f0;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .step-item.active .step-number {
-            background: var(--brand-primary);
-            color: #ffffff;
-        }
-
-        .booking-main-container {
-            max-width: 1000px;
-            margin: 30px auto 60px auto;
-            padding: 0 20px;
-        }
-
-        /* Banner Tour Selezionato */
-        .tour-hero-card {
-            background: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-        }
-
-        @media (max-width: 768px) {
-            .tour-hero-card {
-                grid-template-columns: 1fr;
-            }
-            .steps-text {
-                display: none;
-            }
-        }
-
-        .tour-hero-img {
-            width: 100%;
-            height: 100%;
-            min-height: 180px;
-            object-fit: cover;
-        }
-
-        .tour-hero-content {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .tour-hero-title {
-            font-size: 1.4rem;
-            color: var(--brand-primary);
-            margin: 8px 0;
-            font-weight: 800;
-        }
-
-        .tour-highlights-chips {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-            font-size: 0.88rem;
-            color: #475569;
-        }
-
-        .chip-item {
-            background: #f1f5f9;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        /* Grid Layout Principale */
-        .booking-grid {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 25px;
-        }
-
-        @media (max-width: 880px) {
-            .booking-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .section-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 26px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            color: var(--brand-primary);
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 18px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Contatore Partecipanti */
-        .guest-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .counter-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-counter {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            border: 1.5px solid #cbd5e1;
-            background: #ffffff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--brand-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .btn-counter:hover {
-            background: #f1f5f9;
-            border-color: var(--brand-primary);
-        }
-
-        /* Servizi Extra Opzionali */
-        .extra-option-card {
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .extra-option-card:hover {
-            border-color: var(--brand-primary);
-            background: #f0f9ff;
-        }
-
-        .extra-option-card.selected {
-            border-color: var(--brand-primary);
-            background: #f0f9ff;
-        }
-
-        /* Card Riepilogo Prezzo */
-        .summary-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 26px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 90px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-            color: #475569;
-        }
-
-        .summary-total-row {
-            border-top: 2px dashed #cbd5e1;
-            padding-top: 15px;
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--brand-primary);
-        }
-
-        .btn-whatsapp-confirm {
-            width: 100%;
-            background: #25d366;
-            color: #ffffff;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.08rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        .btn-whatsapp-confirm:hover {
-            background: #1da851;
-            transform: translateY(-2px);
-        }
-
-        .btn-email-confirm {
-            width: 100%;
-            background: var(--brand-primary);
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 0.98rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-email-confirm:hover {
-            background: #143d59;
-        }
-
-        .booking-ref-badge {
-            background: #f1f5f9;
-            color: #64748b;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-family: monospace;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="booking-wizard.css">
 </head>
 <body>
 
     <!-- Header e Navigazione -->
-    <header style="padding: 15px 20px;">
+    <header>
         <h1>Sicily Palermo Tour</h1>
         <p>Prenotazione Guidata Tour e Itinerari</p>
     </header>
@@ -331,29 +25,29 @@
         </ul>
     </nav>
 
-    <!-- Barra di Avanzamento Step -->
+    <!-- Barra di Avanzamento Step con Clic sugli Step già Completati -->
     <div class="steps-bar-container">
         <div class="steps-bar">
-            <div class="step-item active">
+            <div class="step-item active" id="bar-step-1" onclick="wizardManager.tryGoToStep(1)">
                 <span class="step-number">1</span>
-                <span class="steps-text">Seleziona Data & Orario</span>
+                <span class="step-text">Data & Orario</span>
             </div>
-            <div class="step-item active">
+            <div class="step-item" id="bar-step-2" onclick="wizardManager.tryGoToStep(2)">
                 <span class="step-number">2</span>
-                <span class="steps-text">Partecipanti & Extra</span>
+                <span class="step-text">Partecipanti</span>
             </div>
-            <div class="step-item active">
+            <div class="step-item" id="bar-step-3" onclick="wizardManager.tryGoToStep(3)">
                 <span class="step-number">3</span>
-                <span class="steps-text">I Tuoi Dati</span>
+                <span class="step-text">I Tuoi Dati</span>
             </div>
-            <div class="step-item active">
+            <div class="step-item" id="bar-step-4" onclick="wizardManager.tryGoToStep(4)">
                 <span class="step-number">4</span>
-                <span class="steps-text">Conferma</span>
+                <span class="step-text">Conferma</span>
             </div>
         </div>
     </div>
 
-    <div class="booking-main-container">
+    <div class="wizard-main-container">
 
         <!-- Tour Hero Banner -->
         <div class="tour-hero-card">
@@ -368,123 +62,16 @@
                     <span id="chip-duration" class="chip-item">⏱️ Durata: 3 Ore</span>
                     <span id="chip-price" class="chip-item">💰 Prezzo: Da 25€</span>
                     <span id="chip-meeting" class="chip-item">📍 Incontro: Cattedrale</span>
-                    <span id="chip-capacity" class="chip-item">👥 Max: 15 Persone</span>
                     <span class="chip-item">⭐ Guida Certificata</span>
                 </div>
             </div>
         </div>
 
-        <form id="booking-form" onsubmit="confermaPrenotazioneForm(event)">
-            <div class="booking-grid">
-
-                <!-- Colonna Sinistra: Moduli della Prenotazione -->
-                <div>
-
-                    <!-- Step 1: Calendario e Orari -->
-                    <div class="section-card">
-                        <h3 class="section-title">📅 1. Seleziona Data e Orario della Visita</h3>
-                        <div id="tour-calendar-app">
-                            <!-- Inserito dal modulo avanzato calendario.js -->
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Partecipanti e Servizi Extra -->
-                    <div class="section-card">
-                        <h3 class="section-title">👥 2. Partecipanti e Servizi Aggiuntivi</h3>
-
-                        <div class="guest-row">
-                            <div>
-                                <strong style="color: #334155; display: block; font-size: 1.02rem;">Adulti</strong>
-                                <span style="font-size: 0.85rem; color: #64748b;">Età 13+ anni</span>
-                            </div>
-                            <div class="counter-controls">
-                                <button type="button" class="btn-counter" onclick="modificaPartecipanti('adulti', -1)">-</button>
-                                <span id="cnt-adulti" style="font-weight: 800; font-size: 1.2rem; width: 26px; text-align: center;">2</span>
-                                <button type="button" class="btn-counter" onclick="modificaPartecipanti('adulti', 1)">+</button>
-                            </div>
-                        </div>
-
-                        <div class="guest-row">
-                            <div>
-                                <strong style="color: #334155; display: block; font-size: 1.02rem;">Bambini</strong>
-                                <span style="font-size: 0.85rem; color: #64748b;">Età 4-12 anni (Sconto -50%)</span>
-                            </div>
-                            <div class="counter-controls">
-                                <button type="button" class="btn-counter" onclick="modificaPartecipanti('bambini', -1)">-</button>
-                                <span id="cnt-bambini" style="font-weight: 800; font-size: 1.2rem; width: 26px; text-align: center;">0</span>
-                                <button type="button" class="btn-counter" onclick="modificaPartecipanti('bambini', 1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Dati Personali -->
-                    <div class="section-card">
-                        <h3 class="section-title">👤 3. Dati Personali del Referente</h3>
-
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="user-name" style="font-weight: 600;">Nome e Cognome Completo *</label>
-                            <input type="text" id="user-name" required placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 1rem;">
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                            <div class="form-group">
-                                <label for="user-email" style="font-weight: 600;">Email di Conferma *</label>
-                                <input type="email" id="user-email" required placeholder="mario@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 1rem;">
-                            </div>
-                            <div class="form-group">
-                                <label for="user-phone" style="font-weight: 600;">Telefono / WhatsApp *</label>
-                                <input type="tel" id="user-phone" required placeholder="+39 340 1234567" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 1rem;">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="user-notes" style="font-weight: 600;">Note o Esigenze Particolari (Opzionale)</label>
-                            <textarea id="user-notes" rows="3" placeholder="Es. Lingua parlata preferita, passeggini, allergie alimentari..." style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem;"></textarea>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Colonna Destra: Card Riepilogo e Invio -->
-                <div>
-                    <div class="summary-card">
-                        <h3 style="color: #1b4f72; font-size: 1.2rem; margin-bottom: 18px; font-weight: 800;">📋 Riepilogo Prenotazione</h3>
-
-                        <div class="summary-row">
-                            <span>Tour:</span>
-                            <strong id="sum-tour-title" style="text-align: right; max-width: 170px;">--</strong>
-                        </div>
-                        <div class="summary-row">
-                            <span>Data Visita:</span>
-                            <strong id="sum-date" style="color: #1b4f72;">Non Selezionata</strong>
-                        </div>
-                        <div class="summary-row">
-                            <span>Orario Partenza:</span>
-                            <strong id="sum-time">09:30</strong>
-                        </div>
-                        <div class="summary-row">
-                            <span>Partecipanti:</span>
-                            <strong id="sum-guests">2 Adulti</strong>
-                        </div>
-
-                        <div class="summary-total-row">
-                            <span>Totale Stimato:</span>
-                            <span id="sum-price">€50.00</span>
-                        </div>
-
-                        <button type="submit" class="btn-confirm-main" style="width: 100%; background: linear-gradient(135deg, #1b4f72, #2980b9); color: #ffffff; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 16px rgba(27, 79, 114, 0.3); transition: all 0.2s ease;">
-                            ✅ Conferma e Invia Prenotazione
-                        </button>
-
-                        <div style="margin-top: 18px; background: #f8fafc; border-radius: 10px; padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.8rem; color: #64748b; line-height: 1.5;">
-                            🔒 <strong>Nessun Pagamento Anticipato</strong><br>
-                            Pagamento direttamente sul posto prima della partenza del tour. Cancellazione gratuita fino a 24h prima.
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </form>
+        <!-- Contenitori per ciascun Step del Wizard -->
+        <div id="step-card-1" class="wizard-step-card"></div>
+        <div id="step-card-2" class="wizard-step-card hidden-step"></div>
+        <div id="step-card-3" class="wizard-step-card hidden-step"></div>
+        <div id="step-card-4" class="wizard-step-card hidden-step"></div>
 
     </div>
 
@@ -493,186 +80,210 @@
         <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
     </footer>
 
+    <!-- Moduli Script Separati per ogni Step -->
     <script src="../itinerari/itinerari-data.js"></script>
     <script src="calendario.js"></script>
+    <script src="step1-data-orario.js"></script>
+    <script src="step2-partecipanti.js"></script>
+    <script src="step3-dati.js"></script>
+    <script src="step4-conferma.js"></script>
+
+    <!-- Master Controller Script Wizard -->
     <script>
-        let tourCorrente = null;
-        let calendarInstance = null;
-        let dataISO = '';
-        let dataLeggibile = '';
-        let orarioScelto = '09:30';
-        let numAdulti = 2;
-        let numBambini = 0;
-        let codicePrenotazione = '';
+        class BookingWizardManager {
+            constructor() {
+                this.currentStep = 1;
+                this.maxStepReached = 1;
+                this.tourCorrente = null;
+                this.codicePrenotazione = '';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Genera codice prenotazione univoco
-            codicePrenotazione = '#SPT-' + Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('booking-ref-code').textContent = `Codice: ${codicePrenotazione}`;
+                this.step1Module = null;
+                this.step2Module = null;
+                this.step3Module = null;
+                this.step4Module = null;
 
-            // Carica Tour da URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const tourId = urlParams.get('tourId') || '1';
+                this.bookingData = {
+                    code: '',
+                    tourTitle: 'Tour Palermo',
+                    dateISO: '',
+                    dateReadable: '',
+                    slotTime: '09:30',
+                    adults: 2,
+                    children: 0,
+                    customerName: '',
+                    customerEmail: '',
+                    customerPhone: '',
+                    notes: '',
+                    total: '50.00'
+                };
 
-            const itinerari = getItinerari();
-            tourCorrente = itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0];
+                this.init();
+            }
 
-            popolaHeroTour();
+            init() {
+                // Genera Codice Univoco
+                this.codicePrenotazione = '#SPT-' + Math.floor(1000 + Math.random() * 9000);
+                this.bookingData.code = this.codicePrenotazione;
+                document.getElementById('booking-ref-code').textContent = `Codice: ${this.codicePrenotazione}`;
 
-            // Prepara orari e capienza per ciascuno slot impostato dall'Admin per questo tour
-            const customSlots = (tourCorrente && tourCorrente.timeSlots && tourCorrente.timeSlots.length > 0)
-                ? tourCorrente.timeSlots.map(item => {
-                    if (typeof item === 'string') {
-                        return { time: item, maxCapacity: tourCorrente.maxCapacity || 15, booked: 0 };
+                // Ottieni TourId da URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const tourId = urlParams.get('tourId') || '1';
+
+                const itinerari = getItinerari();
+                this.tourCorrente = itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0];
+
+                this.popolaHeroBanner();
+
+                // Inizializza Moduli Step
+                this.step1Module = new Step1DataOrario('step-card-1', {
+                    tourData: this.tourCorrente,
+                    onComplete: (data) => {
+                        this.bookingData.dateISO = data.dateISO;
+                        this.bookingData.dateReadable = data.dateReadable;
+                        this.bookingData.slotTime = data.slotTime;
+
+                        // Aggiorna slot e capienza per Step 2
+                        let cap = 15;
+                        if (data.calendarInstance && data.calendarInstance.defaultSlots) {
+                            const slotObj = data.calendarInstance.defaultSlots.find(s => s.time === data.slotTime);
+                            if (slotObj) cap = slotObj.maxCapacity;
+                        } else if (this.tourCorrente && this.tourCorrente.maxCapacity) {
+                            cap = parseInt(this.tourCorrente.maxCapacity, 10);
+                        }
+
+                        if (this.step2Module) {
+                            this.step2Module.setSlotInfo(data.slotTime, cap);
+                        }
+
+                        this.goToStep(2);
                     }
-                    if (item && typeof item === 'object' && item.time) {
-                        return { time: item.time, maxCapacity: parseInt(item.capacity, 10) || 15, booked: 0 };
-                    }
-                    return null;
-                }).filter(Boolean)
-                : null;
+                });
 
-            // Inizializza Modulo Calendario
-            calendarInstance = new TourCalendar('tour-calendar-app', {
-                defaultSlots: customSlots || undefined,
-                onDateChange: (isoStr, dateObj) => {
-                    dataISO = isoStr;
-                    dataLeggibile = calendarInstance ? calendarInstance.formatDateReadable(dateObj) : isoStr;
-                    if (calendarInstance && calendarInstance.selectedSlot) {
-                        orarioScelto = calendarInstance.selectedSlot;
+                this.step2Module = new Step2Partecipanti('step-card-2', {
+                    onPrev: () => this.goToStep(1),
+                    onComplete: (data) => {
+                        this.bookingData.adults = data.adults;
+                        this.bookingData.children = data.children;
+                        this.goToStep(3);
                     }
-                    aggiornaRiepilogo();
-                },
-                onSlotChange: (time) => {
-                    orarioScelto = time;
-                    aggiornaRiepilogo();
+                });
+
+                this.step3Module = new Step3Dati('step-card-3', {
+                    onPrev: () => this.goToStep(2),
+                    onComplete: (data) => {
+                        this.bookingData.customerName = data.customerName;
+                        this.bookingData.customerEmail = data.customerEmail;
+                        this.bookingData.customerPhone = data.customerPhone;
+                        this.bookingData.notes = data.notes;
+
+                        this.calcolaEInviaRiepilogo();
+                        this.goToStep(4);
+                    }
+                });
+
+                this.step4Module = new Step4Conferma('step-card-4', {
+                    onPrev: () => this.goToStep(3),
+                    onConfirm: () => this.confermaDefinitiva()
+                });
+
+                this.goToStep(1);
+            }
+
+            popolaHeroBanner() {
+                if (!this.tourCorrente) return;
+
+                const heroImg = document.getElementById('tour-hero-img');
+                if (heroImg && this.tourCorrente.imageUrl) {
+                    heroImg.src = this.tourCorrente.imageUrl;
                 }
-            });
 
-            if (calendarInstance) {
-                const initData = calendarInstance.getSelectedData();
-                dataISO = initData.dateISO;
-                dataLeggibile = initData.dateReadable;
-                orarioScelto = initData.slotTime;
+                document.getElementById('booking-tour-category').textContent = this.tourCorrente.category || 'Tour';
+                document.getElementById('booking-tour-title').textContent = this.tourCorrente.title || 'Tour Palermo';
+
+                this.bookingData.tourTitle = this.tourCorrente.title || 'Tour Palermo';
+
+                document.getElementById('chip-duration').textContent = `⏱️ Durata: ${this.tourCorrente.duration || '3 Ore'}`;
+                document.getElementById('chip-price').textContent = `💰 Prezzo: ${this.tourCorrente.price || 'Da 25€'}`;
+                document.getElementById('chip-meeting').textContent = `📍 Incontro: ${this.tourCorrente.meetingPoint || 'Palermo Centro'}`;
             }
 
-            aggiornaRiepilogo();
+            calcolaEInviaRiepilogo() {
+                if (!this.tourCorrente) return;
+
+                const match = (this.tourCorrente.price || '').match(/\d+/);
+                const prezzoBase = match ? parseInt(match[0], 10) : 25;
+
+                const totale = (this.bookingData.adults * prezzoBase) + (this.bookingData.children * (prezzoBase * 0.5));
+                this.bookingData.total = totale.toFixed(2);
+
+                if (this.step4Module) {
+                    this.step4Module.renderSummary(this.bookingData);
+                }
+            }
+
+            goToStep(stepNum) {
+                this.currentStep = stepNum;
+                if (stepNum > this.maxStepReached) {
+                    this.maxStepReached = stepNum;
+                }
+
+                // Nascondi tutte le card e mostra solo la card attiva
+                [1, 2, 3, 4].forEach(i => {
+                    const card = document.getElementById(`step-card-${i}`);
+                    const barItem = document.getElementById(`bar-step-${i}`);
+
+                    if (card) {
+                        if (i === stepNum) card.classList.remove('hidden-step');
+                        else card.classList.add('hidden-step');
+                    }
+
+                    if (barItem) {
+                        barItem.classList.remove('active', 'completed');
+                        if (i === stepNum) barItem.classList.add('active');
+                        else if (i < stepNum) barItem.classList.add('completed');
+                    }
+                });
+
+                // Scroll fluido in alto alla card dello step
+                const activeCard = document.getElementById(`step-card-${stepNum}`);
+                if (activeCard) {
+                    activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+
+            tryGoToStep(stepNum) {
+                if (stepNum <= this.maxStepReached) {
+                    this.goToStep(stepNum);
+                }
+            }
+
+            confermaDefinitiva() {
+                // Salva nel localStorage delle prenotazioni per l'Admin
+                try {
+                    const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+                    const record = {
+                        ...this.bookingData,
+                        id: Date.now().toString(),
+                        createdAt: new Date().toLocaleString(),
+                        status: 'In attesa'
+                    };
+                    list.unshift(record);
+                    localStorage.setItem('spt_bookings', JSON.stringify(list));
+                } catch (e) {
+                    console.error("Errore salvataggio booking:", e);
+                }
+
+                alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${this.bookingData.code}\nTour: ${this.bookingData.tourTitle}\nData: ${this.bookingData.dateReadable} - Orario: ${this.bookingData.slotTime}\nOspiti: ${this.bookingData.adults} Adulti${this.bookingData.children > 0 ? `, ${this.bookingData.children} Bambini` : ''}\nTotale: €${this.bookingData.total}\n\nGrazie ${this.bookingData.customerName}, la tua prenotazione è stata ricevuta. Ti risponderemo a breve!`);
+
+                window.location.href = '../index.html';
+            }
+        }
+
+        let wizardManager = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            wizardManager = new BookingWizardManager();
         });
-
-        function popolaHeroTour() {
-            if (!tourCorrente) return;
-
-            const heroImg = document.getElementById('tour-hero-img');
-            if (heroImg && tourCorrente.imageUrl) {
-                heroImg.src = tourCorrente.imageUrl;
-            }
-
-            document.getElementById('booking-tour-category').textContent = tourCorrente.category || 'Tour';
-            document.getElementById('booking-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
-
-            const cap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
-            document.getElementById('chip-duration').textContent = `⏱️ Durata: ${tourCorrente.duration || '3 Ore'}`;
-            document.getElementById('chip-price').textContent = `💰 Prezzo: ${tourCorrente.price || 'Da 25€'}`;
-            document.getElementById('chip-meeting').textContent = `📍 Incontro: ${tourCorrente.meetingPoint || 'Palermo Centro'}`;
-            document.getElementById('chip-capacity').textContent = `👥 Max: ${cap} Persone`;
-
-            document.getElementById('sum-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
-        }
-
-        function modificaPartecipanti(tipo, delta) {
-            let cap = 15;
-            if (calendarInstance && calendarInstance.defaultSlots) {
-                const slotTrovato = calendarInstance.defaultSlots.find(s => s.time === orarioScelto);
-                if (slotTrovato) cap = slotTrovato.maxCapacity;
-            } else if (tourCorrente && tourCorrente.maxCapacity) {
-                cap = parseInt(tourCorrente.maxCapacity, 10);
-            }
-
-            if (delta > 0 && (numAdulti + numBambini + delta) > cap) {
-                alert(`⚠️ Impossibile aggiungere altri partecipanti per l'orario delle ${orarioScelto}. La capienza massima per questo slot è di ${cap} persone.`);
-                return;
-            }
-
-            if (tipo === 'adulti') {
-                numAdulti = Math.max(1, numAdulti + delta);
-                document.getElementById('cnt-adulti').textContent = numAdulti;
-            } else if (tipo === 'bambini') {
-                numBambini = Math.max(0, numBambini + delta);
-                document.getElementById('cnt-bambini').textContent = numBambini;
-            }
-            aggiornaRiepilogo();
-        }
-
-        function calcolaTotale() {
-            if (!tourCorrente) return '50.00';
-
-            const match = (tourCorrente.price || '').match(/\d+/);
-            const prezzoBase = match ? parseInt(match[0], 10) : 25;
-
-            const totalePartecipanti = (numAdulti * prezzoBase) + (numBambini * (prezzoBase * 0.5));
-            return totalePartecipanti.toFixed(2);
-        }
-
-        function aggiornaRiepilogo() {
-            document.getElementById('sum-date').textContent = dataLeggibile ? dataLeggibile : 'Non Selezionata';
-            document.getElementById('sum-time').textContent = orarioScelto;
-
-            let testoOspiti = `${numAdulti} Adulti`;
-            if (numBambini > 0) testoOspiti += `, ${numBambini} Bambini`;
-            document.getElementById('sum-guests').textContent = testoOspiti;
-
-            const totale = calcolaTotale();
-            document.getElementById('sum-price').textContent = `€${totale}`;
-        }
-
-        function confermaPrenotazioneForm(event) {
-            event.preventDefault();
-
-            const nome = document.getElementById('user-name').value.trim();
-            const email = document.getElementById('user-email').value.trim();
-            const phone = document.getElementById('user-phone').value.trim();
-            const note = document.getElementById('user-notes').value.trim();
-
-            if (!nome || !email || !phone) {
-                alert('Per favore compila tutti i campi obbligatori del referente (Nome, Email e Telefono).');
-                return;
-            }
-
-            const totale = calcolaTotale();
-
-            // Salva la prenotazione per la dashboard Admin
-            salvaStorage({
-                code: codicePrenotazione,
-                tourTitle: tourCorrente ? tourCorrente.title : 'Tour Palermo',
-                dateISO: dataISO,
-                dateReadable: dataLeggibile,
-                time: orarioScelto,
-                adults: numAdulti,
-                children: numBambini,
-                total: totale,
-                customerName: nome,
-                customerEmail: email,
-                customerPhone: phone,
-                notes: note,
-                status: 'In attesa'
-            });
-
-            alert(`🎉 Prenotazione Registrata con Successo!\n\nCodice: ${codicePrenotazione}\nTour: ${tourCorrente ? tourCorrente.title : 'Tour Palermo'}\nData: ${dataLeggibile} - Orario: ${orarioScelto}\nOspiti: ${numAdulti} Adulti${numBambini > 0 ? `, ${numBambini} Bambini` : ''}\n\nGrazie ${nome}, la tua prenotazione è stata ricevuta. Ti risponderemo al più presto via Email o WhatsApp!`);
-
-            window.location.href = '../index.html';
-        }
-
-        function salvaStorage(obj) {
-            try {
-                const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
-                obj.id = Date.now().toString();
-                obj.createdAt = new Date().toLocaleString();
-                list.unshift(obj);
-                localStorage.setItem('spt_bookings', JSON.stringify(list));
-            } catch (e) {
-                console.error("Errore salvataggio booking:", e);
-            }
-        }
     </script>
 </body>
 </html>
