@@ -25,21 +25,17 @@
         <!-- Schermata di Login -->
         <section id="login-section" class="card login-card">
             <h2>🔑 Accesso Riservato Amministratore</h2>
-            <p>Inserisci le tue credenziali per gestire gli itinerari di Palermo.</p>
+            <p>Inserisci la tua email autorizzata per accedere alla gestione degli itinerari di Palermo.</p>
 
             <form id="loginForm" onsubmit="effettuaLogin(event)">
                 <div class="form-group">
-                    <label for="admin-user">Utente</label>
-                    <input type="text" id="admin-user" required placeholder="Es. admin">
-                </div>
-                <div class="form-group">
-                    <label for="admin-pass">Password</label>
-                    <input type="password" id="admin-pass" required placeholder="Inserisci la password">
+                    <label for="admin-email">Email Amministratore</label>
+                    <input type="email" id="admin-email" required placeholder="Inserisci la tua email">
                 </div>
                 <div id="login-error" class="alert-error hidden">
-                    Credenziali non valide. Riprova!
+                    Accesso negato: questa email non è autorizzata come Amministratore.
                 </div>
-                <button type="submit" class="btn-primary full-width">Accedi al Pannello</button>
+                <button type="submit" class="btn-primary full-width">Accedi al Pannello Admin</button>
             </form>
 
             <div class="login-footer">

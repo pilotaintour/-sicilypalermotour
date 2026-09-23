@@ -6,9 +6,8 @@
 const STORAGE_KEY = 'spt_itineraries';
 const AUTH_KEY = 'spt_admin_logged_in';
 
-// Credenziali Demo Admin (Estendibili in futuro con Firebase Auth)
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'palermo2025';
+// Email Autorizzata Amministratore
+const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
 // Itinerari Iniziali Predefiniti
 const DEFAULT_ITINERARIES = [
@@ -58,11 +57,15 @@ function verificaStatoAutenticazione() {
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const userControls = document.getElementById('user-controls');
+    const welcomeMsg = document.getElementById('welcome-msg');
 
     if (isLoggedIn) {
         loginSection.classList.add('hidden');
         dashboardSection.classList.remove('hidden');
         userControls.classList.remove('hidden');
+        if (welcomeMsg) {
+            welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL}`;
+        }
         caricaElencoItinerari();
     } else {
         loginSection.classList.remove('hidden');
@@ -74,11 +77,10 @@ function verificaStatoAutenticazione() {
 // Gestione Form Login
 function effettuaLogin(event) {
     event.preventDefault();
-    const user = document.getElementById('admin-user').value.trim();
-    const pass = document.getElementById('admin-pass').value.trim();
+    const inputEmail = document.getElementById('admin-email').value.trim().toLowerCase();
     const errorBox = document.getElementById('login-error');
 
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    if (inputEmail === AUTHORIZED_EMAIL.toLowerCase()) {
         localStorage.setItem(AUTH_KEY, 'true');
         errorBox.classList.add('hidden');
         document.getElementById('loginForm').reset();
