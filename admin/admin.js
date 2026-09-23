@@ -108,6 +108,9 @@ function apriModalTabellaOrari() {
 }
 
 function chiudiModalTabellaOrari(event) {
+    if (event && event.target && event.target.id !== 'modal-tabella-orari') {
+        return;
+    }
     const modal = document.getElementById('modal-tabella-orari');
     if (modal) {
         modal.classList.add('hidden');
