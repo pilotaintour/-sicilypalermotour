@@ -519,10 +519,17 @@
 
             popolaHeroTour();
 
-            // Prepara orari e capienza massima impostati dall'Admin per questo tour
-            const maxCap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
+            // Prepara orari e capienza per ciascuno slot impostato dall'Admin per questo tour
             const customSlots = (tourCorrente && tourCorrente.timeSlots && tourCorrente.timeSlots.length > 0)
-                ? tourCorrente.timeSlots.map(t => ({ time: t, maxCapacity: maxCap, booked: 0 }))
+                ? tourCorrente.timeSlots.map(item => {
+                    if (typeof item === 'string') {
+                        return { time: item, maxCapacity: tourCorrente.maxCapacity || 15, booked: 0 };
+                    }
+                    if (item && typeof item === 'object' && item.time) {
+                        return { time: item.time, maxCapacity: parseInt(item.capacity, 10) || 15, booked: 0 };
+                    }
+                    return null;
+                }).filter(Boolean)
                 : null;
 
             // Inizializza Modulo Calendario
@@ -573,9 +580,16 @@
         }
 
         function modificaPartecipanti(tipo, delta) {
-            const cap = (tourCorrente && tourCorrente.maxCapacity) ? parseInt(tourCorrente.maxCapacity, 10) : 15;
+            let cap = 15;
+            if (calendarInstance && calendarInstance.defaultSlots) {
+                const slotTrovato = calendarInstance.defaultSlots.find(s => s.time === orarioScelto);
+                if (slotTrovato) cap = slotTrovato.maxCapacity;
+            } else if (tourCorrente && tourCorrente.maxCapacity) {
+                cap = parseInt(tourCorrente.maxCapacity, 10);
+            }
+
             if (delta > 0 && (numAdulti + numBambini + delta) > cap) {
-                alert(`⚠️ Impossibile aggiungere altri partecipanti. La capienza massima per questo tour è di ${cap} persone.`);
+                alert(`⚠️ Impossibile aggiungere altri partecipanti per l'orario delle ${orarioScelto}. La capienza massima per questo slot è di ${cap} persone.`);
                 return;
             }
 

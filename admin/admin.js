@@ -119,17 +119,32 @@ function chiudiModalTabellaOrari(event) {
     }
 }
 
+function normalizzaOrari(arr) {
+    if (!arr || !Array.isArray(arr)) return [];
+    return arr.map(item => {
+        if (typeof item === 'string') {
+            return { time: item, capacity: 15 };
+        }
+        if (item && typeof item === 'object' && item.time) {
+            return { time: item.time, capacity: parseInt(item.capacity, 10) || 15 };
+        }
+        return null;
+    }).filter(Boolean).sort((a, b) => a.time.localeCompare(b.time));
+}
+
 function renderCampiOrari() {
+    orariCorrenti = normalizzaOrari(orariCorrenti);
+
     // 1. Renderizza i chips attivi nel form dell'admin
     const chipsContainer = document.getElementById('orari-active-chips');
     if (chipsContainer) {
-        if (!orariCorrenti || orariCorrenti.length === 0) {
+        if (orariCorrenti.length === 0) {
             chipsContainer.innerHTML = '<span style="font-size:0.85rem; color:#94a3b8;">Nessun orario selezionato. Clicca su "Apri Tabella Orari" per sceglierli!</span>';
         } else {
-            chipsContainer.innerHTML = orariCorrenti.map((timeStr) => `
+            chipsContainer.innerHTML = orariCorrenti.map((item) => `
                 <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
-                    ⏰ ${escapeHtml(timeStr)}
-                    <button type="button" onclick="toggleOrario('${timeStr}')" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
+                    ⏰ ${escapeHtml(item.time)} <small style="background:#0369a1; color:#ffffff; padding:1px 6px; border-radius:10px; font-size:0.75rem;">${item.capacity} pers.</small>
+                    <button type="button" onclick="toggleOrario('${item.time}')" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
                 </span>
             `).join('');
         }
@@ -147,7 +162,8 @@ function renderCampiOrari() {
 
         ['00', '15', '30', '45'].forEach(mStr => {
             const timeStr = `${hStr}:${mStr}`;
-            const isSelected = orariCorrenti && orariCorrenti.includes(timeStr);
+            const trovato = orariCorrenti.find(o => o.time === timeStr);
+            const isSelected = !!trovato;
 
             const bgStyle = isSelected
                 ? 'background: #1b4f72; color: #ffffff; font-weight: bold;'
@@ -157,8 +173,8 @@ function renderCampiOrari() {
                 <td style="padding: 4px; border: 1px solid #e2e8f0;">
                     <button type="button"
                             onclick="toggleOrario('${timeStr}')"
-                            style="${bgStyle} width: 100%; padding: 8px 4px; border: 1px solid ${isSelected ? '#1b4f72' : '#cbd5e1'}; border-radius: 6px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s ease;">
-                        ${isSelected ? '✓ ' : ''}${timeStr}
+                            style="${bgStyle} width: 100%; padding: 6px 2px; border: 1px solid ${isSelected ? '#1b4f72' : '#cbd5e1'}; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
+                        ${isSelected ? `✓ ${timeStr}<br><small style="font-size:0.72rem; opacity:0.9;">(${trovato.capacity}p)</small>` : timeStr}
                     </button>
                 </td>
             `;
@@ -171,12 +187,22 @@ function renderCampiOrari() {
 }
 
 function toggleOrario(timeStr) {
-    if (orariCorrenti.includes(timeStr)) {
-        orariCorrenti = orariCorrenti.filter(t => t !== timeStr);
+    const inputCap = document.getElementById('capienza-selezione-input');
+    const targetCapacity = inputCap ? (parseInt(inputCap.value, 10) || 15) : 15;
+
+    const idx = orariCorrenti.findIndex(o => o.time === timeStr);
+
+    if (idx !== -1) {
+        if (orariCorrenti[idx].capacity === targetCapacity) {
+            orariCorrenti.splice(idx, 1);
+        } else {
+            orariCorrenti[idx].capacity = targetCapacity;
+        }
     } else {
-        orariCorrenti.push(timeStr);
-        orariCorrenti.sort();
+        orariCorrenti.push({ time: timeStr, capacity: targetCapacity });
     }
+
+    orariCorrenti.sort((a, b) => a.time.localeCompare(b.time));
     renderCampiOrari();
 }
 
