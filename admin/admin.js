@@ -222,6 +222,8 @@ function gestisciCaricamentoFotoMultiple(event) {
                 completati++;
                 if (completati === files.length) {
                     renderGalleriaAnteprima();
+                    // Reset dell'input per permettere selezioni successive
+                    event.target.value = '';
                 }
             };
             img.src = e.target.result;
@@ -259,7 +261,9 @@ function renderGalleriaAnteprima() {
         return;
     }
 
-    container.innerHTML = fotoItinerarioCorrenti.map((imgUrl, index) => `
+    const htmlHeader = `<div style="grid-column:1/-1; font-weight:bold; font-size:0.85rem; color:#1b4f72;">🖼️ ${fotoItinerarioCorrenti.length} foto pronte per la galleria del tour:</div>`;
+
+    container.innerHTML = htmlHeader + fotoItinerarioCorrenti.map((imgUrl, index) => `
         <div class="gallery-thumb-item">
             <img src="${imgUrl}" alt="Foto ${index + 1}">
             <button type="button" class="gallery-thumb-remove" onclick="rimuoviFotoGalleria(${index})" title="Rimuovi foto">✕</button>

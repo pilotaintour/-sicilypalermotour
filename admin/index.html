@@ -111,9 +111,12 @@
                                 <label style="margin-bottom: 10px; color: #1b4f72;">🖼️ Galleria Foto dell'Itinerario (Scorrevoli)</label>
 
                                 <div style="margin-bottom: 12px;">
-                                    <label for="image-file-input" style="font-size: 0.85rem; color: #64748b; font-weight: normal;">📁 <strong>Opzione A:</strong> Carica una o più foto dal tuo dispositivo:</label>
-                                    <input type="file" id="image-file-input" accept="image/*" multiple onchange="gestisciCaricamentoFotoMultiple(event)" style="margin-top: 4px;">
-                                    <p style="font-size: 0.78rem; color: #1b4f72; margin-top: 4px;">💡 <em>Tieni premuto per selezionare più foto contemporaneamente dallo smartphone o usa CTRL/SHIFT da PC.</em></p>
+                                    <label style="font-size: 0.85rem; color: #64748b; font-weight: normal; display: block; margin-bottom: 6px;">📁 <strong>Opzione A:</strong> Carica foto dal dispositivo (selezione multipla):</label>
+                                    <button type="button" class="btn-primary" style="background-color: #1b4f72; width: 100%; padding: 12px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="document.getElementById('image-file-input').click()">
+                                        📸 Seleziona Foto dal Telefono / PC (Multiplo)
+                                    </button>
+                                    <input type="file" id="image-file-input" accept="image/*" multiple onchange="gestisciCaricamentoFotoMultiple(event)" style="display: none;">
+                                    <p style="font-size: 0.78rem; color: #1b4f72; margin-top: 6px; margin-bottom: 0;">💡 <em>Tieni premuto sul telefono per selezionare più foto insieme, oppure aggiungine altre cliccando più volte.</em></p>
                                 </div>
 
                                 <div>
