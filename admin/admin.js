@@ -732,8 +732,8 @@ function caricaPrenotazioniAdmin() {
                         ${b.participantsList && b.participantsList.length > 0 ? `
                             <div style="margin-top: 8px; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
                                 <strong>👥 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
-                                <ol style="margin: 4px 0 0 18px; padding: 0; font-size: 0.85rem; color: #1e293b;">
-                                    ${b.participantsList.map(p => `<li><strong>${escapeHtml(p.name)}</strong> (${escapeHtml(p.type)})</li>`).join('')}
+                                <ol style="margin: 4px 0 0 18px; padding: 0; font-size: 0.85rem; color: #1e293b; line-height: 1.6;">
+                                    ${b.participantsList.map(p => `<li><strong>${escapeHtml(p.name)}</strong> (${p.age ? escapeHtml(p.age) + ' anni' : escapeHtml(p.type)}${p.origin ? ' - da ' + escapeHtml(p.origin) : ''})</li>`).join('')}
                                 </ol>
                             </div>
                         ` : ''}
