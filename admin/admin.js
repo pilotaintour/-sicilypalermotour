@@ -485,6 +485,7 @@ function caricaElencoItinerari() {
     container.innerHTML = itinerari.map(item => {
         const coverImg = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || 'https://via.placeholder.com/90?text=Palermo');
         const totalPhotos = (item.images && item.images.length > 0) ? item.images.length : (item.imageUrl ? 1 : 0);
+        const totalOrari = (item.timeSlots && item.timeSlots.length > 0) ? item.timeSlots.length : 0;
 
         return `
             <div class="itinerary-item">
@@ -492,9 +493,10 @@ function caricaElencoItinerari() {
                 <div class="item-content">
                     <span class="item-badge">${item.category}</span>
                     <span class="item-badge" style="background:#e0f2fe; color:#0369a1;">🖼️ ${totalPhotos} Foto</span>
+                    <span class="item-badge" style="background:#fef3c7; color:#92400e;">⏰ ${totalOrari} Orari Attivi</span>
                     ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
                     <div class="item-title">${escapeHtml(item.title)}</div>
-                    <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')} | 👥 Max ${escapeHtml(String(item.maxCapacity || 15))} pers.</div>
+                    <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')}</div>
                     <div class="item-desc">${escapeHtml(item.shortDesc)}</div>
                 </div>
                 <div class="item-actions">
@@ -516,8 +518,6 @@ function salvaItinerario(event) {
     const duration = document.getElementById('duration').value.trim();
     const price = document.getElementById('price').value.trim();
     const meetingPoint = document.getElementById('meeting-point').value.trim();
-    const maxCapacityInput = document.getElementById('max-capacity');
-    const maxCapacity = maxCapacityInput ? (parseInt(maxCapacityInput.value, 10) || 15) : 15;
     const featured = document.getElementById('featured').value;
     const shortDesc = document.getElementById('short-desc').value.trim();
     const fullDesc = document.getElementById('full-desc').value.trim();
@@ -538,6 +538,7 @@ function salvaItinerario(event) {
     const images = [...fotoItinerarioCorrenti];
     const imageUrl = images.length > 0 ? images[0] : 'https://via.placeholder.com/400x200?text=Palermo+Tour';
     const timeSlots = [...orariCorrenti];
+    const maxCapacity = (timeSlots.length > 0 && typeof timeSlots[0] === 'object') ? timeSlots[0].capacity : 15;
 
     let itinerari = getItinerari();
 
@@ -578,8 +579,6 @@ function preparaModifica(id) {
     document.getElementById('duration').value = item.duration || '';
     document.getElementById('price').value = item.price || '';
     document.getElementById('meeting-point').value = item.meetingPoint || '';
-    const maxCapacityInput = document.getElementById('max-capacity');
-    if (maxCapacityInput) maxCapacityInput.value = item.maxCapacity || 15;
     document.getElementById('featured').value = item.featured || 'false';
     document.getElementById('short-desc').value = item.shortDesc || '';
     document.getElementById('full-desc').value = item.fullDesc || '';
@@ -636,8 +635,6 @@ function resetForm() {
     document.getElementById('itinerary-id').value = '';
     const fileInput = document.getElementById('image-file-input');
     if (fileInput) fileInput.value = '';
-    const maxCapacityInput = document.getElementById('max-capacity');
-    if (maxCapacityInput) maxCapacityInput.value = 15;
     fotoItinerarioCorrenti = [];
     tappeCorrenti = ['Incontro con la guida', 'Passeggiata tra i monumenti'];
     orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
