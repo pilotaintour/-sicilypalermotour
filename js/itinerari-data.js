@@ -67,7 +67,8 @@ function getItinerari() {
         return DEFAULT_ITINERARIES;
     }
     try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_ITINERARIES;
     } catch (e) {
         return DEFAULT_ITINERARIES;
     }
@@ -93,8 +94,8 @@ function generaHtmlCarosello(tour, prefissoId = 'card') {
 
     if (haPiuFoto) {
         html += `
-            <button class="carousel-nav-btn prev" onclick="scorriCarosello('${tourId}', -1, '${prefissoId}', event)" title="Foto precedente">❮</button>
-            <button class="carousel-nav-btn next" onclick="scorriCarosello('${tourId}', 1, '${prefissoId}', event)" title="Foto successiva">❯</button>
+            <button type="button" class="carousel-nav-btn prev" onclick="scorriCarosello('${tourId}', -1, '${prefissoId}', event)" title="Foto precedente">❮</button>
+            <button type="button" class="carousel-nav-btn next" onclick="scorriCarosello('${tourId}', 1, '${prefissoId}', event)" title="Foto successiva">❯</button>
             <div class="carousel-dots">
                 ${fotoList.map((_, i) => `
                     <span class="carousel-dot ${i === currentIndex ? 'active' : ''}" onclick="vaiAFotoIndex('${tourId}', ${i}, '${prefissoId}', event)"></span>
@@ -201,7 +202,7 @@ function caricaItinerari(categoria = 'Tutti') {
                 <div class="badges-row">
                     <span class="badge">${escapeHtml(tour.category)}</span>
                     ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
-                    ${tour.featured === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
+                    ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
                 </div>
                 <h3>${escapeHtml(tour.title)}</h3>
                 <div class="card-meta">
@@ -209,7 +210,7 @@ function caricaItinerari(categoria = 'Tutti') {
                     <span>💰 ${escapeHtml(tour.price || 'Su richiesta')}</span>
                 </div>
                 <div class="card-desc">${escapeHtml(tour.shortDesc)}</div>
-                <button class="btn-tour" onclick="apriDettagliModal('${tour.id}')">Scopri Dettagli & Tappe →</button>
+                <button type="button" class="btn-tour" onclick="apriDettagliModal('${tour.id}')">Scopri Dettagli & Tappe →</button>
             </div>
         </div>
     `).join('');
@@ -229,95 +230,99 @@ function filtraCategoria(categoria, btnElement) {
 
 // Apre la finestra modale con le tappe e il carosello dell'itinerario
 function apriDettagliModal(id) {
-    const itinerari = getItinerari();
-    const tour = itinerari.find(t => String(t.id) === String(id));
+    try {
+        const itinerari = getItinerari();
+        const tour = itinerari.find(t => String(t.id) === String(id)) || itinerari[0];
 
-    if (!tour) return;
+        if (!tour) return;
 
-    itinerarioSelezionatoAttuale = tour;
+        itinerarioSelezionatoAttuale = tour;
 
-    // Renderizza il carosello nella modale
-    const modalCoverBox = document.getElementById('modal-cover-box');
-    if (modalCoverBox) {
-        modalCoverBox.innerHTML = generaHtmlCarosello(tour, 'modal');
-    }
-
-    const badgeEl = document.getElementById('modal-badge');
-    if (badgeEl) badgeEl.textContent = tour.category;
-
-    const featuredBadge = document.getElementById('modal-featured');
-    if (featuredBadge) {
-        if (tour.featured === 'true') {
-            featuredBadge.classList.remove('hidden');
-        } else {
-            featuredBadge.classList.add('hidden');
+        // Renderizza il carosello nella modale
+        const modalCoverBox = document.getElementById('modal-cover-box');
+        if (modalCoverBox) {
+            modalCoverBox.innerHTML = generaHtmlCarosello(tour, 'modal');
         }
-    }
 
-    const titleEl = document.getElementById('modal-title');
-    if (titleEl) titleEl.textContent = tour.title;
+        const badgeEl = document.getElementById('modal-badge');
+        if (badgeEl) badgeEl.textContent = tour.category || 'Tour';
 
-    // Popola Box Dettagli Pratici
-    const durationEl = document.getElementById('modal-duration');
-    const priceEl = document.getElementById('modal-price');
-    if (durationEl) durationEl.textContent = tour.duration || 'Flessibile';
-    if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
-
-    // Genera la Timeline delle Tappe partendo dalla descrizione
-    const modalTimeline = document.getElementById('modal-timeline');
-    const modalDescText = document.getElementById('modal-description-text');
-
-    const fullText = tour.fullDesc || tour.shortDesc || '';
-    const righe = fullText.split('\n').filter(r => r.trim() !== '');
-
-    const tappeTrovate = [];
-    let testoGenerale = [];
-
-    righe.forEach(riga => {
-        const trimmed = riga.trim();
-        // Cerca se la riga comincia con un numero (es. "1.", "2-") o un trattino "-"
-        if (/^(\d+[\.\)-]|-|\*)/.test(trimmed)) {
-            const pulita = trimmed.replace(/^(\d+[\.\)-]|-|\*)\s*/, '');
-            if (pulita) tappeTrovate.push(pulita);
-        } else {
-            testoGenerale.push(trimmed);
+        const featuredBadge = document.getElementById('modal-featured');
+        if (featuredBadge) {
+            if (String(tour.featured) === 'true') {
+                featuredBadge.classList.remove('hidden');
+            } else {
+                featuredBadge.classList.add('hidden');
+            }
         }
-    });
 
-    if (modalDescText) {
-        modalDescText.textContent = testoGenerale.join('\n\n') || tour.shortDesc;
-    }
+        const titleEl = document.getElementById('modal-title');
+        if (titleEl) titleEl.textContent = tour.title || '';
 
-    if (modalTimeline) {
-        if (tappeTrovate.length > 0) {
-            modalTimeline.innerHTML = tappeTrovate.map((tappa, idx) => `
-                <div class="timeline-step">
-                    <span class="step-number">${idx + 1}</span>
-                    <span class="step-text">${escapeHtml(tappa)}</span>
-                </div>
-            `).join('');
-        } else {
-            modalTimeline.innerHTML = `
-                <div class="timeline-step">
-                    <span class="step-number">1</span>
-                    <span class="step-text">Incontro con la guida e partenza per il tour "${escapeHtml(tour.title)}"</span>
-                </div>
-                <div class="timeline-step">
-                    <span class="step-number">2</span>
-                    <span class="step-text">Passeggiata tra i luoghi storici, monumenti e punti di interesse del percorso</span>
-                </div>
-                <div class="timeline-step">
-                    <span class="step-number">3</span>
-                    <span class="step-text">Conclusione dell'itinerario e consigli personalizzati su cosa visitare a Palermo</span>
-                </div>
-            `;
+        // Popola Box Dettagli Pratici
+        const durationEl = document.getElementById('modal-duration');
+        const priceEl = document.getElementById('modal-price');
+        if (durationEl) durationEl.textContent = tour.duration || 'Flessibile';
+        if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
+
+        // Genera la Timeline delle Tappe partendo dalla descrizione
+        const modalTimeline = document.getElementById('modal-timeline');
+        const modalDescText = document.getElementById('modal-description-text');
+
+        const fullText = tour.fullDesc || tour.shortDesc || '';
+        const righe = fullText.split('\n').filter(r => r.trim() !== '');
+
+        const tappeTrovate = [];
+        let testoGenerale = [];
+
+        righe.forEach(riga => {
+            const trimmed = riga.trim();
+            if (/^(\d+[\.\)-]|-|\*)/.test(trimmed)) {
+                const pulita = trimmed.replace(/^(\d+[\.\)-]|-|\*)\s*/, '');
+                if (pulita) tappeTrovate.push(pulita);
+            } else {
+                testoGenerale.push(trimmed);
+            }
+        });
+
+        if (modalDescText) {
+            modalDescText.textContent = testoGenerale.join('\n\n') || tour.shortDesc || '';
         }
-    }
 
-    const modalOverlay = document.getElementById('modal-dettaglio');
-    if (modalOverlay) {
-        modalOverlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+        if (modalTimeline) {
+            if (tappeTrovate.length > 0) {
+                modalTimeline.innerHTML = tappeTrovate.map((tappa, idx) => `
+                    <div class="timeline-step">
+                        <span class="step-number">${idx + 1}</span>
+                        <span class="step-text">${escapeHtml(tappa)}</span>
+                    </div>
+                `).join('');
+            } else {
+                modalTimeline.innerHTML = `
+                    <div class="timeline-step">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Incontro con la guida e partenza per il tour "${escapeHtml(tour.title || '')}"</span>
+                    </div>
+                    <div class="timeline-step">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Passeggiata tra i luoghi storici, monumenti e punti di interesse del percorso</span>
+                    </div>
+                    <div class="timeline-step">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Conclusione dell'itinerario e consigli personalizzati su cosa visitare a Palermo</span>
+                    </div>
+                `;
+            }
+        }
+
+        const modalOverlay = document.getElementById('modal-dettaglio');
+        if (modalOverlay) {
+            modalOverlay.classList.remove('hidden');
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    } catch (err) {
+        console.error("Errore nell'apertura della modale:", err);
     }
 }
 
@@ -326,6 +331,7 @@ function chiudiModal(event) {
     const modal = document.getElementById('modal-dettaglio');
     if (modal) {
         modal.classList.add('hidden');
+        modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 }
@@ -354,9 +360,9 @@ function prenotaTourModal() {
 // Helper sicurezza HTML
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#032;");
+    return String(str).replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#032;");
 }
