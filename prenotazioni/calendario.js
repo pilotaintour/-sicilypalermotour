@@ -38,10 +38,24 @@ class TourCalendar {
         this.init();
     }
 
+    setSlots(newSlotsArray) {
+        if (newSlotsArray && Array.isArray(newSlotsArray) && newSlotsArray.length > 0) {
+            this.defaultSlots = newSlotsArray.map(s => {
+                if (typeof s === 'string') {
+                    return { time: s, maxCapacity: 15, booked: 0 };
+                }
+                return s;
+            });
+            const primoLibero = this.defaultSlots.find(s => (s.maxCapacity - s.booked) > 0);
+            this.selectedSlot = primoLibero ? primoLibero.time : this.defaultSlots[0].time;
+            this.render();
+        }
+    }
+
     init() {
         // Seleziona il primo slot disponibile all'avvio
         const primoLibero = this.defaultSlots.find(s => (s.maxCapacity - s.booked) > 0);
-        this.selectedSlot = primoLibero ? primoLibero.time : this.defaultSlots[0].time;
+        this.selectedSlot = primoLibero ? primoLibero.time : (this.defaultSlots[0] ? this.defaultSlots[0].time : '09:30');
 
         this.render();
     }

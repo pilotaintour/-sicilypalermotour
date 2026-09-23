@@ -16,6 +16,7 @@ const DEFAULT_ITINERARIES = [
         duration: '3 Ore',
         price: 'Da 25€',
         meetingPoint: 'Piazza Bellini / Cattedrale',
+        timeSlots: ['09:30', '11:30', '15:30', '18:00'],
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
         images: [
@@ -40,6 +41,7 @@ const DEFAULT_ITINERARIES = [
         duration: '2.5 Ore',
         price: 'Da 20€',
         meetingPoint: 'Mercato di Ballarò',
+        timeSlots: ['10:30', '12:30', '17:30', '19:30'],
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
         images: [
@@ -63,6 +65,7 @@ const DEFAULT_ITINERARIES = [
         duration: 'Mezza Giornata',
         price: 'Da 30€',
         meetingPoint: 'Piazza Politeama',
+        timeSlots: ['09:00', '15:00'],
         featured: 'false',
         imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
         images: [

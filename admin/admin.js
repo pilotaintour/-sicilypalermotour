@@ -10,9 +10,10 @@ const WA_STORAGE_KEY = 'spt_whatsapp_number';
 // Email Autorizzata Amministratore
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
-// State locale per foto e tappe durante la compilazione del form
+// State locale per foto, tappe e orari durante la compilazione del form
 let fotoItinerarioCorrenti = [];
 let tappeCorrenti = [];
+let orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
 
 // Itinerari Iniziali Predefiniti
 const DEFAULT_ITINERARIES = [
@@ -93,7 +94,43 @@ document.addEventListener('DOMContentLoaded', () => {
     verificaStatoAutenticazione();
     caricaNumeroWhatsApp();
     renderCampiTappe();
+    renderCampiOrari();
 });
+
+// Gestione Builder Orari per Calendario
+function renderCampiOrari() {
+    const container = document.getElementById('orari-chips-container');
+    if (!container) return;
+
+    if (!orariCorrenti || orariCorrenti.length === 0) {
+        orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
+    }
+
+    container.innerHTML = orariCorrenti.map((orarioText, idx) => `
+        <span style="background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
+            ⏰ ${escapeHtml(orarioText)}
+            <button type="button" onclick="rimuoviOrario(${idx})" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
+        </span>
+    `).join('');
+}
+
+function aggiungiOrarioPersonalizzato() {
+    const input = document.getElementById('nuovo-orario-input');
+    if (!input) return;
+
+    const val = input.value.trim();
+    if (val && !orariCorrenti.includes(val)) {
+        orariCorrenti.push(val);
+        orariCorrenti.sort();
+        renderCampiOrari();
+        input.value = '';
+    }
+}
+
+function rimuoviOrario(index) {
+    orariCorrenti.splice(index, 1);
+    renderCampiOrari();
+}
 
 // Gestione Dynamic Tappe Input Builder
 function renderCampiTappe() {
@@ -403,6 +440,7 @@ function salvaItinerario(event) {
 
     const images = [...fotoItinerarioCorrenti];
     const imageUrl = images.length > 0 ? images[0] : 'https://via.placeholder.com/400x200?text=Palermo+Tour';
+    const timeSlots = [...orariCorrenti];
 
     let itinerari = getItinerari();
 
@@ -410,7 +448,7 @@ function salvaItinerario(event) {
         // Aggiornamento
         itinerari = itinerari.map(item => {
             if (String(item.id) === String(id)) {
-                return { id, title, category, duration, price, meetingPoint, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
+                return { id, title, category, duration, price, meetingPoint, timeSlots, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
             }
             return item;
         });
@@ -419,7 +457,7 @@ function salvaItinerario(event) {
         // Nuovo
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, meetingPoint, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
+            title, category, duration, price, meetingPoint, timeSlots, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
         alert('Nuovo itinerario pubblicato con successo!');
@@ -454,6 +492,14 @@ function preparaModifica(id) {
         tappeCorrenti = ['Incontro con la guida'];
     }
     renderCampiTappe();
+
+    // Popola orari
+    if (item.timeSlots && item.timeSlots.length > 0) {
+        orariCorrenti = [...item.timeSlots];
+    } else {
+        orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
+    }
+    renderCampiOrari();
 
     // Popola servizi
     const serviziChecks = document.querySelectorAll('input[name="servizio-check"]');
@@ -493,8 +539,10 @@ function resetForm() {
     if (fileInput) fileInput.value = '';
     fotoItinerarioCorrenti = [];
     tappeCorrenti = ['Incontro con la guida', 'Passeggiata tra i monumenti'];
+    orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
     renderGalleriaAnteprima();
     renderCampiTappe();
+    renderCampiOrari();
     document.getElementById('form-title').textContent = '➕ Aggiungi Nuovo Itinerario';
     document.getElementById('save-btn').textContent = '💾 Salva Itinerario';
     document.getElementById('cancel-edit-btn').classList.add('hidden');

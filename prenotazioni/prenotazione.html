@@ -518,8 +518,14 @@
 
             popolaHeroTour();
 
+            // Prepara orari impostati dall'Admin per questo tour
+            const customSlots = (tourCorrente && tourCorrente.timeSlots && tourCorrente.timeSlots.length > 0)
+                ? tourCorrente.timeSlots.map(t => ({ time: t, maxCapacity: 15, booked: 0 }))
+                : null;
+
             // Inizializza Modulo Calendario
             calendarInstance = new TourCalendar('tour-calendar-app', {
+                defaultSlots: customSlots || undefined,
                 onDateChange: (isoStr, dateObj) => {
                     dataISO = isoStr;
                     dataLeggibile = calendarInstance ? calendarInstance.formatDateReadable(dateObj) : isoStr;

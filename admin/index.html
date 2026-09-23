@@ -106,6 +106,21 @@
                                 </select>
                             </div>
 
+                            <!-- Builder Orari di Partenza per Calendario -->
+                            <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 18px;">
+                                <label style="margin-bottom: 6px; color: #1b4f72;">⏰ Orari di Partenza Disponibili (per il Calendario)</label>
+                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">Imposta gli orari in cui i clienti potranno prenotare questo tour:</p>
+
+                                <div id="orari-chips-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                                    <!-- Generato via JS -->
+                                </div>
+
+                                <div style="display: flex; gap: 8px; max-width: 320px;">
+                                    <input type="time" id="nuovo-orario-input" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    <button type="button" class="btn-secondary btn-small" onclick="aggiungiOrarioPersonalizzato()">+ Aggiungi Orario</button>
+                                </div>
+                            </div>
+
                             <!-- Sezione Foto (Upload Multiplo File + URL Web) -->
                             <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
                                 <label style="margin-bottom: 10px; color: #1b4f72;">🖼️ Galleria Foto dell'Itinerario (Scorrevoli)</label>
