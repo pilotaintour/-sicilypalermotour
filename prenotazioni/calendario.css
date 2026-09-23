@@ -1,54 +1,72 @@
 /**
- * Stili Grafici per il Componente Calendario Avanzato Tour
+ * Stili Grafici Avanzati per il Componente Calendario Tour (Mobile-First)
  */
 
+:root {
+    --cal-primary: #1b4f72;
+    --cal-primary-light: #e0f2fe;
+    --cal-accent: #e67e22;
+    --cal-success: #10b981;
+    --cal-warning: #f59e0b;
+    --cal-danger: #ef4444;
+    --cal-text-main: #1e293b;
+    --cal-text-muted: #64748b;
+    --cal-bg-card: #ffffff;
+    --cal-border: #e2e8f0;
+}
+
 .custom-calendar-widget {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    background: var(--cal-bg-card);
+    border: 1px solid var(--cal-border);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
     user-select: none;
+    font-family: inherit;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .calendar-header h4 {
-    font-size: 1.15rem;
-    color: #1b4f72;
+    font-size: 1.2rem;
+    color: var(--cal-primary);
     margin: 0;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.3px;
 }
 
 .calendar-nav-btn {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    width: 36px;
-    height: 36px;
+    background: #f8fafc;
+    border: 1.5px solid var(--cal-border);
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    color: #1b4f72;
-    transition: all 0.2s ease;
+    color: var(--cal-primary);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .calendar-nav-btn:hover:not(:disabled) {
-    background: #1b4f72;
+    background: var(--cal-primary);
     color: #ffffff;
-    border-color: #1b4f72;
+    border-color: var(--cal-primary);
+    transform: translateY(-1px);
 }
 
 .calendar-nav-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
@@ -57,15 +75,17 @@
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
     font-weight: 700;
-    font-size: 0.82rem;
-    color: #64748b;
-    margin-bottom: 10px;
+    font-size: 0.85rem;
+    color: var(--cal-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
 }
 
 .calendar-days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+    gap: 8px;
 }
 
 .day-cell {
@@ -74,31 +94,44 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    border: 1.5px solid var(--cal-border);
     background: #ffffff;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #334155;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cal-text-main);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    padding: 2px;
 }
 
 .day-cell:hover:not(.day-disabled):not(.empty-cell) {
-    border-color: #1b4f72;
-    background: #e0f2fe;
+    border-color: var(--cal-primary);
+    background: var(--cal-primary-light);
+    transform: scale(1.04);
 }
 
 .day-cell.day-selected {
-    background: #1b4f72 !important;
+    background: linear-gradient(135deg, #1b4f72, #2980b9) !important;
     color: #ffffff !important;
-    border-color: #1b4f72 !important;
-    box-shadow: 0 4px 10px rgba(27, 79, 114, 0.3);
+    border-color: var(--cal-primary) !important;
+    box-shadow: 0 6px 16px rgba(27, 79, 114, 0.35);
 }
 
 .day-cell.day-today {
-    border: 2px solid #e67e22;
+    border: 2px solid var(--cal-accent);
+}
+
+.day-cell.day-today::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: var(--cal-accent);
+    border-radius: 50%;
 }
 
 .day-cell.day-disabled {
@@ -107,6 +140,7 @@
     border-color: #f1f5f9;
     cursor: not-allowed;
     text-decoration: line-through;
+    opacity: 0.6;
 }
 
 .day-cell.empty-cell {
@@ -115,60 +149,64 @@
     cursor: default;
 }
 
-.day-dot-available {
-    width: 5px;
-    height: 5px;
-    background-color: #22c55e;
+.day-status-indicator {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
-.day-dot-full {
-    width: 5px;
-    height: 5px;
-    background-color: #ef4444;
-    border-radius: 50%;
-    margin-top: 2px;
-}
+.status-dot-available { background-color: var(--cal-success); }
+.status-dot-warning { background-color: var(--cal-warning); }
+.status-dot-full { background-color: var(--cal-danger); }
 
+/* Contenitore Orari e Capienza */
 .slots-container {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px dashed #cbd5e1;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--cal-border);
 }
 
 .slots-title {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: #1b4f72;
-    margin-bottom: 10px;
+    color: var(--cal-primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .slots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
 }
 
 .slot-card {
-    border: 1.5px solid #cbd5e1;
+    border: 1.5px solid var(--cal-border);
     background: #f8fafc;
-    border-radius: 8px;
-    padding: 8px 12px;
+    border-radius: 12px;
+    padding: 12px 14px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .slot-card:hover:not(.slot-full) {
-    border-color: #1b4f72;
+    border-color: var(--cal-primary);
     background: #f0f9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .slot-card.selected {
-    background: #1b4f72;
+    background: linear-gradient(135deg, #1b4f72, #1f618d);
     color: #ffffff;
-    border-color: #1b4f72;
+    border-color: var(--cal-primary);
+    box-shadow: 0 6px 16px rgba(27, 79, 114, 0.3);
 }
 
 .slot-card.slot-full {
@@ -176,15 +214,45 @@
     border-color: #fecaca;
     color: #991b1b;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .slot-time {
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.2px;
 }
 
-.slot-status {
+.slot-status-badge {
     font-size: 0.75rem;
-    margin-top: 2px;
+    font-weight: 600;
+    margin-top: 4px;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
 }
+
+.slot-card.selected .slot-status-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Barra di avanzamento capienza */
+.capacity-progress-bg {
+    height: 4px;
+    width: 100%;
+    background: #e2e8f0;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.capacity-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.fill-success { background-color: var(--cal-success); }
+.fill-warning { background-color: var(--cal-warning); }
+.fill-danger { background-color: var(--cal-danger); }

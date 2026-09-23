@@ -1,6 +1,6 @@
 /**
  * Modulo Calendario Interattivo Avanzato - Sicily Palermo Tour
- * Gestisce la visualizzazione mensile, giorni disponibili, e slot orari per la prenotazione.
+ * Gestisce la visualizzazione mensile, giorni di chiusura, e disponibilità slot con capienza.
  */
 
 class TourCalendar {
@@ -18,15 +18,17 @@ class TourCalendar {
         this.selectedDate = new Date();
         this.selectedSlot = null;
 
-        // Configurazione orari di default per tour
+        // Giorni di chiusura (es. 0 = Domenica, 1 = Lunedì se il tour non si tiene)
+        this.closedDays = options.closedDays || []; // Array es. [0] per Domenica chiusa
+
+        // Slot orari e capienza per la data selezionata
         this.defaultSlots = options.defaultSlots || [
-            { time: '09:30', maxCapacity: 15, booked: 3 },
+            { time: '09:30', maxCapacity: 15, booked: 4 },
             { time: '11:30', maxCapacity: 15, booked: 12 },
             { time: '15:30', maxCapacity: 15, booked: 15 }, // Esaurito
-            { time: '18:00', maxCapacity: 15, booked: 0 }
+            { time: '18:00', maxCapacity: 15, booked: 2 }
         ];
 
-        // Giorni della settimana abbreviati
         this.weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
         this.monthNames = [
             'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
@@ -37,6 +39,10 @@ class TourCalendar {
     }
 
     init() {
+        // Seleziona il primo slot disponibile all'avvio
+        const primoLibero = this.defaultSlots.find(s => (s.maxCapacity - s.booked) > 0);
+        this.selectedSlot = primoLibero ? primoLibero.time : this.defaultSlots[0].time;
+
         this.render();
     }
 
@@ -46,11 +52,9 @@ class TourCalendar {
         const year = this.currentDate.getFullYear();
         const month = this.currentDate.getMonth();
 
-        // Calcola primo giorno e totale giorni del mese
         const firstDayOfMonth = new Date(year, month, 1);
         const lastDayOfMonth = new Date(year, month + 1, 0);
 
-        // Adatta per iniziare da Lunedì (0 = Lunedì, 6 = Domenica)
         let startingDay = firstDayOfMonth.getDay() - 1;
         if (startingDay === -1) startingDay = 6;
 
@@ -64,7 +68,7 @@ class TourCalendar {
                 <!-- Header Mese e Navigazione -->
                 <div class="calendar-header">
                     <button type="button" class="calendar-nav-btn" id="cal-prev-btn" title="Mese precedente">❮</button>
-                    <h4>${this.monthNames[month]} ${year}</h4>
+                    <h4>🗓️ ${this.monthNames[month]} ${year}</h4>
                     <button type="button" class="calendar-nav-btn" id="cal-next-btn" title="Mese successivo">❯</button>
                 </div>
 
@@ -77,22 +81,26 @@ class TourCalendar {
                 <div class="calendar-days-grid">
         `;
 
-        // Canti vuoti prima del primo giorno del mese
+        // Celle vuote prima del 1 del mese
         for (let i = 0; i < startingDay; i++) {
             html += `<div class="day-cell empty-cell"></div>`;
         }
 
-        // Genera i giorni del mese
+        // Genera i giorni
         for (let day = 1; day <= totalDays; day++) {
             const dateObj = new Date(year, month, day);
             dateObj.setHours(0, 0, 0, 0);
 
-            const isToday = dateObj.getTime() === today.getTime();
+            const dayOfWeek = dateObj.getDay();
             const isPast = dateObj.getTime() < today.getTime();
+            const isClosed = this.closedDays.includes(dayOfWeek);
+            const isDisabled = isPast || isClosed;
+
+            const isToday = dateObj.getTime() === today.getTime();
             const isSelected = this.selectedDate && dateObj.getTime() === this.selectedDate.getTime();
 
             let classes = ['day-cell'];
-            if (isPast) classes.push('day-disabled');
+            if (isDisabled) classes.push('day-disabled');
             if (isToday) classes.push('day-today');
             if (isSelected) classes.push('day-selected');
 
@@ -101,9 +109,9 @@ class TourCalendar {
             html += `
                 <div class="${classes.join(' ')}"
                      data-date="${dateStr}"
-                     ${isPast ? '' : `onclick="window.tourCalendarInstance.selectDate('${dateStr}')"`}>
+                     ${isDisabled ? '' : `onclick="window.tourCalendarInstance.selectDate('${dateStr}')"`}>
                     <span>${day}</span>
-                    ${!isPast ? '<span class="day-dot-available"></span>' : ''}
+                    ${!isDisabled ? '<span class="day-status-indicator status-dot-available"></span>' : ''}
                 </div>
             `;
         }
@@ -111,10 +119,10 @@ class TourCalendar {
         html += `
                 </div>
 
-                <!-- Sezione Slot Orari per la Data Selezionata -->
+                <!-- Sezione Slot Orari e Capienza -->
                 <div class="slots-container">
                     <div class="slots-title">
-                        ⏰ Orari Disponibili per <span id="cal-selected-date-str">${this.formatDateReadable(this.selectedDate)}</span>:
+                        ⏰ Orari e Disponibilità Posti per <u>${this.formatDateReadable(this.selectedDate)}</u>:
                     </div>
                     <div class="slots-grid" id="cal-slots-grid">
                         ${this.renderSlotsHtml()}
@@ -125,12 +133,11 @@ class TourCalendar {
 
         this.container.innerHTML = html;
 
-        // Binda eventi bottoni mese
+        // Gestione bottoni cambio mese
         const prevBtn = this.container.querySelector('#cal-prev-btn');
         const nextBtn = this.container.querySelector('#cal-next-btn');
 
         if (prevBtn) {
-            // Disabilita navigazione a mesi passati rispetto ad oggi
             const prevMonthDate = new Date(year, month - 1, 1);
             if (prevMonthDate.getFullYear() < today.getFullYear() ||
                (prevMonthDate.getFullYear() === today.getFullYear() && prevMonthDate.getMonth() < today.getMonth())) {
@@ -144,13 +151,13 @@ class TourCalendar {
             nextBtn.onclick = () => this.changeMonth(1);
         }
 
-        // Salva istanza globale per onclick inline
         window.tourCalendarInstance = this;
     }
 
     renderSlotsHtml() {
         return this.defaultSlots.map(slot => {
             const postiRimanenti = slot.maxCapacity - slot.booked;
+            const percentualeOccupata = Math.min(100, Math.round((slot.booked / slot.maxCapacity) * 100));
             const isFull = postiRimanenti <= 0;
             const isSelected = this.selectedSlot === slot.time;
 
@@ -158,12 +165,21 @@ class TourCalendar {
             if (isFull) slotClasses.push('slot-full');
             if (isSelected) slotClasses.push('selected');
 
+            let fillClass = 'fill-success';
+            if (percentualeOccupata > 80) fillClass = 'fill-danger';
+            else if (percentualeOccupata > 50) fillClass = 'fill-warning';
+
+            let statusText = `🟢 ${postiRimanenti} posti liberi`;
+            if (isFull) statusText = '🔴 Esaurito';
+            else if (postiRimanenti <= 3) statusText = `⚠️ Ultimi ${postiRimanenti} posti!`;
+
             return `
                 <div class="${slotClasses.join(' ')}"
                      ${isFull ? '' : `onclick="window.tourCalendarInstance.selectSlot('${slot.time}')"`}>
                     <div class="slot-time">${slot.time}</div>
-                    <div class="slot-status">
-                        ${isFull ? '🔴 Esaurito' : `🟢 ${postiRimanenti} posti liberi`}
+                    <div class="slot-status-badge">${statusText}</div>
+                    <div class="capacity-progress-bg" title="${slot.booked}/${slot.maxCapacity} posti prenotati">
+                        <div class="capacity-progress-fill ${fillClass}" style="width: ${percentualeOccupata}%;"></div>
                     </div>
                 </div>
             `;
@@ -180,9 +196,8 @@ class TourCalendar {
         this.selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
         this.selectedDate.setHours(0, 0, 0, 0);
 
-        // Seleziona di default il primo slot disponibile
         const primoLibero = this.defaultSlots.find(s => (s.maxCapacity - s.booked) > 0);
-        this.selectedSlot = primoLibero ? primoLibero.time : null;
+        this.selectedSlot = primoLibero ? primoLibero.time : this.defaultSlots[0].time;
 
         this.render();
 
@@ -194,7 +209,6 @@ class TourCalendar {
     selectSlot(time) {
         this.selectedSlot = time;
 
-        // Aggiorna la vista slot
         const slotsGrid = this.container.querySelector('#cal-slots-grid');
         if (slotsGrid) {
             slotsGrid.innerHTML = this.renderSlotsHtml();

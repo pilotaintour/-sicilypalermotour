@@ -138,6 +138,7 @@ function rimuoviCampoTappa(index) {
 // Passaggio tra le Schede Admin
 function mostraSezione(sezioneId, btnElement) {
     const sezioneItinerari = document.getElementById('sezione-itinerari');
+    const sezionePrenotazioni = document.getElementById('sezione-prenotazioni');
     const sezioneImpostazioni = document.getElementById('sezione-impostazioni');
     const tabs = document.querySelectorAll('.tab-btn');
 
@@ -147,11 +148,16 @@ function mostraSezione(sezioneId, btnElement) {
         btnElement.classList.add('active');
     }
 
+    if (sezioneItinerari) sezioneItinerari.classList.add('hidden');
+    if (sezionePrenotazioni) sezionePrenotazioni.classList.add('hidden');
+    if (sezioneImpostazioni) sezioneImpostazioni.classList.add('hidden');
+
     if (sezioneId === 'sezione-itinerari') {
         if (sezioneItinerari) sezioneItinerari.classList.remove('hidden');
-        if (sezioneImpostazioni) sezioneImpostazioni.classList.add('hidden');
+    } else if (sezioneId === 'sezione-prenotazioni') {
+        if (sezionePrenotazioni) sezionePrenotazioni.classList.remove('hidden');
+        caricaPrenotazioniAdmin();
     } else if (sezioneId === 'sezione-impostazioni') {
-        if (sezioneItinerari) sezioneItinerari.classList.add('hidden');
         if (sezioneImpostazioni) sezioneImpostazioni.classList.remove('hidden');
     }
 }
@@ -277,6 +283,7 @@ function verificaStatoAutenticazione() {
             welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL}`;
         }
         caricaElencoItinerari();
+        caricaPrenotazioniAdmin();
     } else {
         if (loginSection) loginSection.remove('hidden');
         if (dashboardSection) dashboardSection.add('hidden');
@@ -521,4 +528,108 @@ function escapeHtml(str) {
                       .replace(/>/g, "&gt;")
                       .replace(/"/g, "&quot;")
                       .replace(/'/g, "&#032;");
+}
+
+/* ==========================================================================
+   GESTIONE PRENOTAZIONI RICEVUTE ADMIN
+   ========================================================================== */
+
+function caricaPrenotazioniAdmin() {
+    const listContainer = document.getElementById('admin-bookings-list');
+    const badgeCount = document.getElementById('cnt-prenotazioni-badge');
+
+    if (!listContainer) return;
+
+    let bookings = [];
+    try {
+        bookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+    } catch (e) {
+        bookings = [];
+    }
+
+    if (badgeCount) badgeCount.textContent = bookings.length;
+
+    if (bookings.length === 0) {
+        listContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #64748b;">
+                <h3>📥 Nessuna prenotazione ricevuta al momento</h3>
+                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui in tempo reale.</p>
+            </div>
+        `;
+        return;
+    }
+
+    listContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            ${bookings.map((b, idx) => `
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-left: 5px solid ${b.status === 'Confermata' ? '#10b981' : (b.status === 'Cancellata' ? '#ef4444' : '#1b4f72')}; border-radius: 10px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold;">${escapeHtml(b.code || '#SPT-BOOK')}</span>
+                            <strong style="color: #1b4f72; font-size: 1.1rem; margin-left: 8px;">${escapeHtml(b.tourTitle)}</strong>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold; font-size: 0.85rem; padding: 4px 10px; border-radius: 12px; background: ${b.status === 'Confermata' ? '#d1fae5; color:#065f46;' : (b.status === 'Cancellata' ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;')};">
+                                ${escapeHtml(b.status || 'In attesa')}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; color: #334155; margin-bottom: 12px; background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div>📅 <strong>Data:</strong> ${escapeHtml(b.dateReadable || b.dateISO)}</div>
+                        <div>⏰ <strong>Orario:</strong> ${escapeHtml(b.time || '09:30')}</div>
+                        <div>👥 <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
+                        <div>💰 <strong>Totale:</strong> €${escapeHtml(b.total || '0.00')}</div>
+                    </div>
+
+                    <div style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">
+                        👤 <strong>Cliente:</strong> ${escapeHtml(b.customerName)} | 📧 ${escapeHtml(b.customerEmail)} | 📞 ${escapeHtml(b.customerPhone)}
+                        ${b.notes ? `<br>📝 <strong>Note:</strong> <em>"${escapeHtml(b.notes)}"</em>` : ''}
+                        ${b.extraDegustazione ? `<br>🍷 <strong>Extra:</strong> Degustazione inclusa` : ''}
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                        <button class="btn-primary btn-small" style="background-color: #25d366;" onclick="apriChatWhatsAppCliente('${escapeHtml(b.customerPhone)}', '${escapeHtml(b.customerName)}', '${escapeHtml(b.tourTitle)}')">💬 Chatta su WhatsApp</button>
+                        <button class="btn-secondary btn-small" style="background-color: #10b981;" onclick="cambiaStatoPrenotazione('${b.id}', 'Confermata')">✅ Conferma</button>
+                        <button class="btn-secondary btn-small" style="background-color: #f59e0b;" onclick="cambiaStatoPrenotazione('${b.id}', 'Cancellata')">⚠️ Annulla</button>
+                        <button class="btn-danger btn-small" onclick="eliminaPrenotazioneAdmin('${b.id}')">🗑️ Elimina</button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function apriChatWhatsAppCliente(telefono, nome, tour) {
+    const cleanNum = telefono.replace(/[^0-9]/g, '');
+    const msg = `Ciao ${nome}! Ti contattiamo da Sicily Palermo Tour riguardo la tua prenotazione per il tour "${tour}".`;
+    window.open(`https://wa.me/${cleanNum}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function cambiaStatoPrenotazione(id, nuovoStato) {
+    try {
+        let bookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+        bookings = bookings.map(b => {
+            if (String(b.id) === String(id)) {
+                b.status = nuovoStato;
+            }
+            return b;
+        });
+        localStorage.setItem('spt_bookings', JSON.stringify(bookings));
+        caricaPrenotazioniAdmin();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function eliminaPrenotazioneAdmin(id) {
+    if (!confirm('Sei sicuro di voler eliminare questa prenotazione?')) return;
+    try {
+        let bookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+        bookings = bookings.filter(b => String(b.id) !== String(id));
+        localStorage.setItem('spt_bookings', JSON.stringify(bookings));
+        caricaPrenotazioniAdmin();
+    } catch (e) {
+        console.error(e);
+    }
 }
