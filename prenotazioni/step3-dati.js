@@ -1,6 +1,6 @@
 /**
- * STEP 3: Dati Personali Completi di TUTTI i Partecipanti (Obbligatori)
- * Nome, Cognome, Età e Luogo di Provenienza per ciascun partecipante.
+ * STEP 3: Dati Personali Completi e Note per CIASCUN Partecipante (Obbligatori)
+ * Nome, Cognome, Età, Luogo di Provenienza e Note per ciascun partecipante.
  */
 
 class Step3Dati {
@@ -62,7 +62,7 @@ class Step3Dati {
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div>
                         <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Email di Conferma *</label>
                         <input type="email" id="step3-lead-email" required placeholder="mario@example.com" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
@@ -71,6 +71,11 @@ class Step3Dati {
                         <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Telefono / WhatsApp *</label>
                         <input type="tel" id="step3-lead-phone" required placeholder="+39 340 1234567" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
                     </div>
+                </div>
+
+                <div>
+                    <label for="step3-notes-1" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Note / Esigenze Particolari Partecipante 1 (Opzionale)</label>
+                    <input type="text" id="step3-notes-1" placeholder="Es. Lingua parlata, allergie, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                 </div>
             </div>
         `;
@@ -91,7 +96,7 @@ class Step3Dati {
                         <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
                             <label for="step3-age-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Età *</label>
                             <input type="number" id="step3-age-${partCounter}" min="1" max="110" required placeholder="Es. 30" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
@@ -100,6 +105,11 @@ class Step3Dati {
                             <label for="step3-origin-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Città / Provenienza *</label>
                             <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Roma / Francia" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Note / Esigenze Particolari Partecipante ${partCounter} (Opzionale)</label>
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, preferenze, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
                     </div>
                 </div>
             `;
@@ -119,7 +129,7 @@ class Step3Dati {
                         <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
                             <label for="step3-age-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Età *</label>
                             <input type="number" id="step3-age-${partCounter}" min="1" max="12" required placeholder="Es. 8" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
@@ -129,18 +139,18 @@ class Step3Dati {
                             <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Torino / Spagna" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
                     </div>
+
+                    <div>
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Note / Esigenze Particolari Bambino ${partCounter} (Opzionale)</label>
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
                 </div>
             `;
             partCounter++;
         }
 
         html += `
-            <div class="form-group" style="margin-top: 18px; margin-bottom: 22px;">
-                <label for="step3-user-notes" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Note o Richieste Particolari (Opzionale)</label>
-                <textarea id="step3-user-notes" rows="3" placeholder="Es. Lingua parlata preferita, passeggini, allergie alimentari..." style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;"></textarea>
-            </div>
-
-            <div class="step-nav-bar">
+            <div class="step-nav-bar" style="margin-top: 25px;">
                 <button type="button" class="btn-nav-prev" id="btn-step3-prev">
                     ← Indietro
                 </button>
@@ -162,7 +172,6 @@ class Step3Dati {
     validaEProsegui() {
         const leadEmail = this.container.querySelector('#step3-lead-email').value.trim();
         const leadPhone = this.container.querySelector('#step3-lead-phone').value.trim();
-        const notes = this.container.querySelector('#step3-user-notes').value.trim();
 
         if (!leadEmail || !leadPhone) {
             alert('Per favore compila l\'Email ed il Telefono del Referente Principale.');
@@ -172,15 +181,17 @@ class Step3Dati {
         const totalePartecipanti = this.adults + this.children;
         const listaPartecipanti = [];
 
-        // Valida Nome, Età e Provenienza per ciascun partecipante da 1 a N
+        // Valida Nome, Età, Provenienza e leggi Note per ciascun partecipante da 1 a N
         for (let i = 1; i <= totalePartecipanti; i++) {
             const nameEl = this.container.querySelector(`#step3-name-${i}`);
             const ageEl = this.container.querySelector(`#step3-age-${i}`);
             const originEl = this.container.querySelector(`#step3-origin-${i}`);
+            const notesEl = this.container.querySelector(`#step3-notes-${i}`);
 
             const nameVal = nameEl ? nameEl.value.trim() : '';
             const ageVal = ageEl ? ageEl.value.trim() : '';
             const originVal = originEl ? originEl.value.trim() : '';
+            const notesVal = notesEl ? notesEl.value.trim() : '';
 
             if (!nameVal) {
                 alert(`⚠️ Attenzione: è obbligatorio inserire il Nome e Cognome per il Partecipante ${i}.`);
@@ -209,6 +220,7 @@ class Step3Dati {
                 name: nameVal,
                 age: ageVal,
                 origin: originVal,
+                notes: notesVal,
                 type: typeLabel
             });
         }
@@ -220,7 +232,7 @@ class Step3Dati {
                 customerName: leadName,
                 customerEmail: leadEmail,
                 customerPhone: leadPhone,
-                notes: notes,
+                notes: listaPartecipanti[0].notes || '',
                 participantsList: listaPartecipanti
             });
         }

@@ -81,9 +81,10 @@ class Step4Conferma {
                     <strong style="color: #1b4f72; display: block; margin-bottom: 8px;">👥 Elenco Dettagliato Partecipanti (${data.participantsList.length}):</strong>
                     <ol style="margin: 0; padding-left: 20px; font-size: 0.92rem; color: #334155; line-height: 1.7;">
                         ${data.participantsList.map(p => `
-                            <li>
+                            <li style="margin-bottom: 6px;">
                                 <strong>${p.name}</strong>
                                 <span style="color:#64748b;">(${p.age ? p.age + ' anni' : p.type}${p.origin ? ' - da ' + p.origin : ''})</span>
+                                ${p.notes ? `<div style="font-size:0.83rem; color:#475569; margin-top:2px;">📝 <em>Note: ${p.notes}</em></div>` : ''}
                             </li>
                         `).join('')}
                     </ol>

@@ -733,11 +733,16 @@ function caricaPrenotazioniAdmin() {
                             <div style="margin-top: 8px; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
                                 <strong>👥 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
                                 <ol style="margin: 4px 0 0 18px; padding: 0; font-size: 0.85rem; color: #1e293b; line-height: 1.6;">
-                                    ${b.participantsList.map(p => `<li><strong>${escapeHtml(p.name)}</strong> (${p.age ? escapeHtml(p.age) + ' anni' : escapeHtml(p.type)}${p.origin ? ' - da ' + escapeHtml(p.origin) : ''})</li>`).join('')}
+                                    ${b.participantsList.map(p => `
+                                        <li style="margin-bottom: 4px;">
+                                            <strong>${escapeHtml(p.name)}</strong> (${p.age ? escapeHtml(p.age) + ' anni' : escapeHtml(p.type)}${p.origin ? ' - da ' + escapeHtml(p.origin) : ''})
+                                            ${p.notes ? `<div style="font-size:0.8rem; color:#64748b; margin-top:2px;">📝 <em>Note: ${escapeHtml(p.notes)}</em></div>` : ''}
+                                        </li>
+                                    `).join('')}
                                 </ol>
                             </div>
                         ` : ''}
-                        ${b.notes ? `<br>📝 <strong>Note:</strong> <em>"${escapeHtml(b.notes)}"</em>` : ''}
+                        ${b.notes ? `<br>📝 <strong>Note Generali:</strong> <em>"${escapeHtml(b.notes)}"</em>` : ''}
                     </div>
 
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
