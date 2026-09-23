@@ -1,5 +1,5 @@
 /**
- * Gestione Dati e Rendering Itinerari con Carosello Foto Scorrevoli - Sicily Palermo Tour
+ * Gestione Dati e Rendering Itinerari con Carosello Foto e Timeline Tappe - Sicily Palermo Tour
  */
 
 const STORAGE_KEY = 'spt_itineraries';
@@ -23,7 +23,7 @@ const DEFAULT_ITINERARIES = [
             'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
         ],
         shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
-        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo. Tappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
+        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo.\n\nTappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
     },
     {
         id: '2',
@@ -38,7 +38,7 @@ const DEFAULT_ITINERARIES = [
             'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
         ],
         shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
-        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari. Assaggerai:\n- Panelle e Crocchè calde\n- Sfincione palermitano\n- Pane con la milza (per i più audaci)\n- Cannolo siciliano artigianale.'
+        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari.\n\nAssaggerai:\n1. Panelle e Crocchè calde\n2. Sfincione palermitano artigianale\n3. Pane con la milza (per i più audaci)\n4. Cannolo siciliano con ricotta fresca.'
     },
     {
         id: '3',
@@ -52,7 +52,7 @@ const DEFAULT_ITINERARIES = [
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
         ],
         shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
-        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello. Comprende passeggiata panoramica e sosta per gelato artigianale sul mare.'
+        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello.\n\nTappe e Momenti:\n1. Passeggiata sul lungomare di Mondello\n2. Ammirare le Ville Liberty e dello Stabilimento Balneare\n3. Sosta per gelato artigianale o granita siciliana\n4. Rientro panoramico verso Palermo.'
     }
 ];
 
@@ -236,7 +236,7 @@ function apriDettagliModal(id) {
 
     itinerarioSelezionatoAttuale = tour;
 
-    // Renderizza il carosello anche nella modale
+    // Renderizza il carosello nella modale
     const modalCoverBox = document.getElementById('modal-cover-box');
     if (modalCoverBox) {
         modalCoverBox.innerHTML = generaHtmlCarosello(tour, 'modal');
@@ -252,8 +252,64 @@ function apriDettagliModal(id) {
     }
 
     document.getElementById('modal-title').textContent = tour.title;
-    document.getElementById('modal-meta').innerHTML = `⏱️ <strong>Durata:</strong> ${escapeHtml(tour.duration || 'N/D')} &nbsp;|&nbsp; 💰 <strong>Info/Prezzo:</strong> ${escapeHtml(tour.price || 'N/D')}`;
-    document.getElementById('modal-body').textContent = tour.fullDesc || tour.shortDesc;
+
+    // Popola Box Dettagli Pratici
+    const durationEl = document.getElementById('modal-duration');
+    const priceEl = document.getElementById('modal-price');
+    if (durationEl) durationEl.textContent = tour.duration || 'Flessibile';
+    if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
+
+    // Genera la Timeline delle Tappe partendo dalla descrizione
+    const modalTimeline = document.getElementById('modal-timeline');
+    const modalDescText = document.getElementById('modal-description-text');
+
+    const fullText = tour.fullDesc || tour.shortDesc || '';
+    const righe = fullText.split('\n').filter(r => r.trim() !== '');
+
+    const tappeTrovate = [];
+    let testoGenerale = [];
+
+    righe.forEach(riga => {
+        const trimmed = riga.trim();
+        // Cerca se la riga comincia con un numero (es. "1.", "2-") o un trattino "-"
+        if (/^(\d+[\.\)-]|-|\*)/.test(trimmed)) {
+            const pulita = trimmed.replace(/^(\d+[\.\)-]|-|\*)\s*/, '');
+            if (pulita) tappeTrovate.push(pulita);
+        } else {
+            testoGenerale.push(trimmed);
+        }
+    });
+
+    if (modalDescText) {
+        modalDescText.textContent = testoGenerale.join('\n\n') || tour.shortDesc;
+    }
+
+    if (modalTimeline) {
+        if (tappeTrovate.length > 0) {
+            modalTimeline.innerHTML = tappeTrovate.map((tappa, idx) => `
+                <div class="timeline-step">
+                    <span class="step-number">${idx + 1}</span>
+                    <span class="step-text">${escapeHtml(tappa)}</span>
+                </div>
+            `).join('');
+        } else {
+            // Se non ci sono righe numerate, mostra tappe di default basate sul titolo
+            modalTimeline.innerHTML = `
+                <div class="timeline-step">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Incontro con la guida e partenza per il tour "${escapeHtml(tour.title)}"</span>
+                </div>
+                <div class="timeline-step">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Passeggiata tra i luoghi storici, monumenti e punti di interesse del percorso</span>
+                </div>
+                <div class="timeline-step">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Conclusione dell'itinerario e consigli personalizzati su cosa visitare a Palermo</span>
+                </div>
+            `;
+        }
+    }
 
     document.getElementById('modal-dettaglio').classList.remove('hidden');
     document.body.style.overflow = 'hidden';

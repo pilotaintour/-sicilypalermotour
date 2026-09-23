@@ -182,7 +182,7 @@
     flex-grow: 1;
 }
 
-/* Modal Dettagli Tour */
+/* Modal Dettagli Tour Ridisegnato */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -201,7 +201,7 @@
 .modal-content {
     background: white;
     border-radius: 12px;
-    max-width: 650px;
+    max-width: 680px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
@@ -213,8 +213,8 @@
     position: absolute;
     top: 15px;
     right: 20px;
-    font-size: 2rem;
-    background: rgba(0,0,0,0.5);
+    font-size: 1.8rem;
+    background: rgba(0,0,0,0.6);
     color: white;
     border: none;
     width: 38px;
@@ -229,36 +229,125 @@
 }
 
 .modal-close:hover {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
 }
 
 .modal-header-info {
-    padding: 20px 25px 10px 25px;
+    padding: 22px 25px 12px 25px;
 }
 
 .modal-header-info h2 {
     font-size: 1.8rem;
-    color: #1e293b;
-    margin-top: 5px;
-    margin-bottom: 8px;
+    color: #1b4f72;
+    margin-top: 6px;
+    margin-bottom: 14px;
 }
 
-.modal-meta {
-    font-size: 0.95rem;
-    color: #64748b;
-    margin-bottom: 15px;
+/* Box Dettagli Pratici */
+.tour-highlights-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
 }
 
+.highlight-item {
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+/* Contenuto della Modale */
 .modal-body {
     padding: 0 25px 20px 25px;
-    font-size: 1rem;
+    font-size: 0.98rem;
     color: #334155;
-    line-height: 1.7;
-    white-space: pre-line;
+    line-height: 1.6;
+}
+
+.modal-body h3 {
+    font-size: 1.2rem;
+    color: #1b4f72;
+    margin-top: 22px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Timeline Tappe del Tour */
+.timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding-left: 5px;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #e67e22;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.step-number {
+    background-color: #e67e22;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-text {
+    font-size: 0.95rem;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Chips Servizi Inclusi */
+.services-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.service-chip {
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-whatsapp-modal {
+    background-color: #25d366 !important;
+}
+
+.btn-whatsapp-modal:hover {
+    background-color: #1da851 !important;
 }
 
 .modal-footer {
-    padding: 15px 25px 25px 25px;
+    padding: 18px 25px 25px 25px;
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
