@@ -373,7 +373,7 @@
             </div>
         </div>
 
-        <form id="booking-form" onsubmit="confermaPrenotazioneWhatsApp(event)">
+        <form id="booking-form" onsubmit="confermaPrenotazioneForm(event)">
             <div class="booking-grid">
 
                 <!-- Colonna Sinistra: Moduli della Prenotazione -->
@@ -498,12 +498,8 @@
                             <span id="sum-price">€50.00</span>
                         </div>
 
-                        <button type="submit" class="btn-whatsapp-confirm">
-                            💬 Prenota Subito via WhatsApp
-                        </button>
-
-                        <button type="button" class="btn-email-confirm" onclick="salvaPrenotazioneEmail()">
-                            📩 Invia Richiesta via Email
+                        <button type="submit" class="btn-confirm-main" style="width: 100%; background: linear-gradient(135deg, #1b4f72, #2980b9); color: #ffffff; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 16px rgba(27, 79, 114, 0.3); transition: all 0.2s ease;">
+                            ✅ Conferma e Invia Prenotazione
                         </button>
 
                         <div style="margin-top: 18px; background: #f8fafc; border-radius: 10px; padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.8rem; color: #64748b; line-height: 1.5;">
@@ -652,66 +648,22 @@
             document.getElementById('sum-price').textContent = `€${prezzi.finale}`;
         }
 
-        function confermaPrenotazioneWhatsApp(event) {
+        function confermaPrenotazioneForm(event) {
             event.preventDefault();
 
             const nome = document.getElementById('user-name').value.trim();
             const email = document.getElementById('user-email').value.trim();
             const phone = document.getElementById('user-phone').value.trim();
             const note = document.getElementById('user-notes').value.trim();
-            const prezzi = calcolaTotale();
-
-            const testoMsg = `🏛️ *NUOVA PRENOTAZIONE TOUR - SICILY PALERMO TOUR*
-Codice: *${codicePrenotazione}*
-
-📌 *Tour:* ${tourCorrente ? tourCorrente.title : 'Tour Palermo'}
-📅 *Data:* ${dataLeggibile || dataISO}
-⏰ *Orario Partenza:* ${orarioScelto}
-👥 *Partecipanti:* ${numAdulti} Adulti${numBambini > 0 ? `, ${numBambini} Bambini` : ''}
-${haExtraDegustazione ? '🍷 *Extra:* Degustazione Street Food & Vino Inclusa' : ''}
-
-💰 *TOTALE:* €${prezzi.finale} (Pagamento sul posto)
-
-👤 *Referente:* ${nome}
-📧 *Email:* ${email}
-📞 *Telefono:* ${phone}
-${note ? `📝 *Note:* ${note}` : ''}`;
-
-            salvaStorage({
-                code: codicePrenotazione,
-                tourTitle: tourCorrente ? tourCorrente.title : 'Tour Palermo',
-                dateISO: dataISO,
-                dateReadable: dataLeggibile,
-                time: orarioScelto,
-                adults: numAdulti,
-                children: numBambini,
-                extraDegustazione: haExtraDegustazione,
-                total: prezzi.finale,
-                customerName: nome,
-                customerEmail: email,
-                customerPhone: phone,
-                notes: note,
-                status: 'Confermata via WA'
-            });
-
-            const targetPhone = localStorage.getItem('spt_wa_number') || '393401234567';
-            const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(testoMsg)}`;
-            window.open(url, '_blank');
-        }
-
-        function salvaPrenotazioneEmail() {
-            const nome = document.getElementById('user-name').value.trim();
-            const email = document.getElementById('user-email').value.trim();
-            const phone = document.getElementById('user-phone').value.trim();
 
             if (!nome || !email || !phone) {
-                alert('Compila tutti i campi obbligatori del referente (Nome, Email e Telefono).');
+                alert('Per favore compila tutti i campi obbligatori del referente (Nome, Email e Telefono).');
                 return;
             }
 
             const prezzi = calcolaTotale();
-            const note = document.getElementById('user-notes').value.trim();
 
+            // Salva la prenotazione per la dashboard Admin
             salvaStorage({
                 code: codicePrenotazione,
                 tourTitle: tourCorrente ? tourCorrente.title : 'Tour Palermo',
@@ -729,7 +681,8 @@ ${note ? `📝 *Note:* ${note}` : ''}`;
                 status: 'In attesa'
             });
 
-            alert(`Richiesta di prenotazione (${codicePrenotazione}) inviata con successo! Ti risponderemo a breve all'indirizzo ${email}.`);
+            alert(`🎉 Prenotazione Registrata con Successo!\n\nCodice: ${codicePrenotazione}\nTour: ${tourCorrente ? tourCorrente.title : 'Tour Palermo'}\nData: ${dataLeggibile} - Orario: ${orarioScelto}\nOspiti: ${numAdulti} Adulti${numBambini > 0 ? `, ${numBambini} Bambini` : ''}\n\nGrazie ${nome}, la tua prenotazione è stata ricevuta. Ti risponderemo al più presto via Email o WhatsApp!`);
+
             window.location.href = '../index.html';
         }
 
