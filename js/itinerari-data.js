@@ -112,7 +112,7 @@ function scorriCarosello(tourId, direzione, prefissoId = 'card', event) {
     if (event) event.stopPropagation();
 
     const itinerari = getItinerari();
-    const tour = itinerari.find(t => t.id === tourId);
+    const tour = itinerari.find(t => String(t.id) === String(tourId));
     if (!tour) return;
 
     const fotoList = (tour.images && tour.images.length > 0) ? tour.images : [tour.imageUrl];
@@ -138,7 +138,7 @@ function vaiAFotoIndex(tourId, index, prefissoId = 'card', event) {
     if (event) event.stopPropagation();
 
     const itinerari = getItinerari();
-    const tour = itinerari.find(t => t.id === tourId);
+    const tour = itinerari.find(t => String(t.id) === String(tourId));
     if (!tour) return;
 
     const fotoList = (tour.images && tour.images.length > 0) ? tour.images : [tour.imageUrl];
@@ -230,7 +230,7 @@ function filtraCategoria(categoria, btnElement) {
 // Apre la finestra modale con le tappe e il carosello dell'itinerario
 function apriDettagliModal(id) {
     const itinerari = getItinerari();
-    const tour = itinerari.find(t => t.id === id);
+    const tour = itinerari.find(t => String(t.id) === String(id));
 
     if (!tour) return;
 
@@ -242,16 +242,20 @@ function apriDettagliModal(id) {
         modalCoverBox.innerHTML = generaHtmlCarosello(tour, 'modal');
     }
 
-    document.getElementById('modal-badge').textContent = tour.category;
+    const badgeEl = document.getElementById('modal-badge');
+    if (badgeEl) badgeEl.textContent = tour.category;
 
     const featuredBadge = document.getElementById('modal-featured');
-    if (tour.featured === 'true') {
-        featuredBadge.classList.remove('hidden');
-    } else {
-        featuredBadge.classList.add('hidden');
+    if (featuredBadge) {
+        if (tour.featured === 'true') {
+            featuredBadge.classList.remove('hidden');
+        } else {
+            featuredBadge.classList.add('hidden');
+        }
     }
 
-    document.getElementById('modal-title').textContent = tour.title;
+    const titleEl = document.getElementById('modal-title');
+    if (titleEl) titleEl.textContent = tour.title;
 
     // Popola Box Dettagli Pratici
     const durationEl = document.getElementById('modal-duration');
@@ -293,7 +297,6 @@ function apriDettagliModal(id) {
                 </div>
             `).join('');
         } else {
-            // Se non ci sono righe numerate, mostra tappe di default basate sul titolo
             modalTimeline.innerHTML = `
                 <div class="timeline-step">
                     <span class="step-number">1</span>
@@ -311,15 +314,20 @@ function apriDettagliModal(id) {
         }
     }
 
-    document.getElementById('modal-dettaglio').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    const modalOverlay = document.getElementById('modal-dettaglio');
+    if (modalOverlay) {
+        modalOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 // Chiude la finestra modale
 function chiudiModal(event) {
     const modal = document.getElementById('modal-dettaglio');
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
 }
 
 // Precompila il form di contatto dalla modale
