@@ -10,6 +10,9 @@ const WA_STORAGE_KEY = 'spt_whatsapp_number';
 // Email Autorizzata Amministratore
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
+// Array contenente le foto correnti per l'itinerario in modifica/creazione
+let fotoItinerarioCorrenti = [];
+
 // Itinerari Iniziali Predefiniti
 const DEFAULT_ITINERARIES = [
     {
@@ -20,6 +23,11 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 25€',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
+            'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=800',
+            'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
+        ],
         shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
         fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo. Tappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
     },
@@ -31,6 +39,10 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 20€',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
+            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
+        ],
         shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
         fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari. Assaggerai:\n- Panelle e Crocchè calde\n- Sfincione palermitano\n- Pane con la milza (per i più audaci)\n- Cannolo siciliano artigianale.'
     },
@@ -42,19 +54,22 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 30€',
         featured: 'false',
         imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
+        ],
         shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
         fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello. Comprende passeggiata panoramica e sosta per gelato artigianale sul mare.'
     }
 ];
 
-// Inizializzazione all'avvio: Accesso Diretto per l'Admin
+// Inizializzazione all'avvio
 document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(AUTH_KEY, 'true');
     verificaStatoAutenticazione();
     caricaNumeroWhatsApp();
 });
 
-// Passaggio tra le Schede Admin (Gestione Itinerari / Impostazioni Sito)
+// Passaggio tra le Schede Admin
 function mostraSezione(sezioneId, btnElement) {
     const sezioneItinerari = document.getElementById('sezione-itinerari');
     const sezioneImpostazioni = document.getElementById('sezione-impostazioni');
@@ -91,53 +106,93 @@ function toggleSettingBox(boxId) {
     }
 }
 
-// Gestione Caricamento Foto dal Dispositivo (Con Ottimizzazione & Compressione Canvas)
-function gestisciCaricamentoFoto(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+// Gestione Caricamento Foto Multiple dal Dispositivo
+function gestisciCaricamentoFotoMultiple(event) {
+    const files = Array.from(event.target.files);
+    if (!files || files.length === 0) return;
 
-    if (!file.type.startsWith('image/')) {
-        alert('Seleziona un file immagine valido (JPG, PNG, WebP, ecc.).');
+    let completati = 0;
+
+    files.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1200;
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                fotoItinerarioCorrenti.push(compressedDataUrl);
+
+                completati++;
+                if (completati === files.length) {
+                    renderGalleriaAnteprima();
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Aggiungi Foto da URL Web
+function aggiungiUrlFoto() {
+    const urlInput = document.getElementById('image-url');
+    if (!urlInput) return;
+
+    const url = urlInput.value.trim();
+    if (url) {
+        fotoItinerarioCorrenti.push(url);
+        urlInput.value = '';
+        renderGalleriaAnteprima();
+    }
+}
+
+// Rimuove una foto dalla galleria di anteprima
+function rimuoviFotoGalleria(index) {
+    fotoItinerarioCorrenti.splice(index, 1);
+    renderGalleriaAnteprima();
+}
+
+// Renderizza le miniature nell'Admin
+function renderGalleriaAnteprima() {
+    const container = document.getElementById('gallery-preview-container');
+    if (!container) return;
+
+    if (fotoItinerarioCorrenti.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; grid-column:1/-1;">Nessuna foto ancora aggiunta.</p>';
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            // Ottimizzazione e ridimensionamento immagine per velocizzare il sito
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 1200;
-            const MAX_HEIGHT = 800;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-            } else {
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Converte l'immagine in Data URL compresso
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            document.getElementById('image-url').value = compressedDataUrl;
-            anteprimaImmagine();
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    container.innerHTML = fotoItinerarioCorrenti.map((imgUrl, index) => `
+        <div class="gallery-thumb-item">
+            <img src="${imgUrl}" alt="Foto ${index + 1}">
+            <button type="button" class="gallery-thumb-remove" onclick="rimuoviFotoGalleria(${index})" title="Rimuovi foto">✕</button>
+        </div>
+    `).join('');
 }
 
 // Verifica e attiva la vista Dashboard
@@ -184,7 +239,7 @@ function salvaNumeroWhatsApp() {
     }
 }
 
-// Recupera gli itinerari dal localStorage (o inizializza con i default)
+// Recupera gli itinerari dal localStorage
 function getItinerari() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) {
@@ -218,22 +273,28 @@ function caricaElencoItinerari() {
         return;
     }
 
-    container.innerHTML = itinerari.map(item => `
-        <div class="itinerary-item">
-            <img class="item-thumb" src="${item.imageUrl || 'https://via.placeholder.com/90?text=Palermo'}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/90?text=Foto'">
-            <div class="item-content">
-                <span class="item-badge">${item.category}</span>
-                ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
-                <div class="item-title">${escapeHtml(item.title)}</div>
-                <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')}</div>
-                <div class="item-desc">${escapeHtml(item.shortDesc)}</div>
+    container.innerHTML = itinerari.map(item => {
+        const coverImg = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || 'https://via.placeholder.com/90?text=Palermo');
+        const totalPhotos = (item.images && item.images.length > 0) ? item.images.length : (item.imageUrl ? 1 : 0);
+
+        return `
+            <div class="itinerary-item">
+                <img class="item-thumb" src="${coverImg}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/90?text=Foto'">
+                <div class="item-content">
+                    <span class="item-badge">${item.category}</span>
+                    <span class="item-badge" style="background:#e0f2fe; color:#0369a1;">🖼️ ${totalPhotos} Foto</span>
+                    ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
+                    <div class="item-title">${escapeHtml(item.title)}</div>
+                    <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')}</div>
+                    <div class="item-desc">${escapeHtml(item.shortDesc)}</div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-secondary btn-small" onclick="preparaModifica('${item.id}')">✏️ Edit</button>
+                    <button class="btn-danger btn-small" onclick="eliminaItinerario('${item.id}')">🗑️</button>
+                </div>
             </div>
-            <div class="item-actions">
-                <button class="btn-secondary btn-small" onclick="preparaModifica('${item.id}')">✏️ Edit</button>
-                <button class="btn-danger btn-small" onclick="eliminaItinerario('${item.id}')">🗑️</button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Aggiunge o aggiorna un itinerario
@@ -246,28 +307,36 @@ function salvaItinerario(event) {
     const duration = document.getElementById('duration').value.trim();
     const price = document.getElementById('price').value.trim();
     const featured = document.getElementById('featured').value;
-    const imageUrl = document.getElementById('image-url').value.trim();
     const shortDesc = document.getElementById('short-desc').value.trim();
     const fullDesc = document.getElementById('full-desc').value.trim();
+
+    // Se non ha caricato foto nella galleria ma ha inserito qualcosa nel campo URL
+    const singleUrl = document.getElementById('image-url').value.trim();
+    if (singleUrl && !fotoItinerarioCorrenti.includes(singleUrl)) {
+        fotoItinerarioCorrenti.push(singleUrl);
+    }
+
+    const images = [...fotoItinerarioCorrenti];
+    const imageUrl = images.length > 0 ? images[0] : 'https://via.placeholder.com/400x200?text=Palermo+Tour';
 
     let itinerari = getItinerari();
 
     if (id) {
-        // Aggiornamento esistente
+        // Aggiornamento
         itinerari = itinerari.map(item => {
             if (item.id === id) {
-                return { id, title, category, duration, price, featured, imageUrl, shortDesc, fullDesc };
+                return { id, title, category, duration, price, featured, imageUrl, images, shortDesc, fullDesc };
             }
             return item;
         });
         alert('Itinerario aggiornato con successo!');
     } else {
-        // Nuovo Inserimento
+        // Nuovo
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, featured, imageUrl, shortDesc, fullDesc
+            title, category, duration, price, featured, imageUrl, images, shortDesc, fullDesc
         };
-        itinerari.unshift(nuovoItinerario); // Aggiunge in cima
+        itinerari.unshift(nuovoItinerario);
         alert('Nuovo itinerario pubblicato con successo!');
     }
 
@@ -289,18 +358,25 @@ function preparaModifica(id) {
     document.getElementById('duration').value = item.duration || '';
     document.getElementById('price').value = item.price || '';
     document.getElementById('featured').value = item.featured || 'false';
-    document.getElementById('image-url').value = item.imageUrl || '';
     document.getElementById('short-desc').value = item.shortDesc || '';
     document.getElementById('full-desc').value = item.fullDesc || '';
+
+    // Carica galleria foto
+    if (item.images && item.images.length > 0) {
+        fotoItinerarioCorrenti = [...item.images];
+    } else if (item.imageUrl) {
+        fotoItinerarioCorrenti = [item.imageUrl];
+    } else {
+        fotoItinerarioCorrenti = [];
+    }
+
+    renderGalleriaAnteprima();
 
     // UI Updates
     document.getElementById('form-title').textContent = '✏️ Modifica Itinerario';
     document.getElementById('save-btn').textContent = '💾 Salva Modifiche';
     document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
-    anteprimaImmagine();
-
-    // Scroll verso il form
     document.getElementById('form-title').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -315,10 +391,11 @@ function resetForm() {
     document.getElementById('itinerary-id').value = '';
     const fileInput = document.getElementById('image-file-input');
     if (fileInput) fileInput.value = '';
+    fotoItinerarioCorrenti = [];
+    renderGalleriaAnteprima();
     document.getElementById('form-title').textContent = '➕ Aggiungi Nuovo Itinerario';
     document.getElementById('save-btn').textContent = '💾 Salva Itinerario';
     document.getElementById('cancel-edit-btn').classList.add('hidden');
-    document.getElementById('image-preview-box').classList.add('hidden');
 }
 
 // Elimina itinerario
@@ -329,7 +406,6 @@ function eliminaItinerario(id) {
     itinerari = itinerari.filter(i => i.id !== id);
     saveItinerari(itinerari);
 
-    // Se stavamo modificando proprio questo itinerario, resetta il form
     if (document.getElementById('itinerary-id').value === id) {
         resetForm();
     }
@@ -343,20 +419,6 @@ function resetDemoData() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
         resetForm();
         caricaElencoItinerari();
-    }
-}
-
-// Anteprima immagine in tempo reale
-function anteprimaImmagine() {
-    const url = document.getElementById('image-url').value.trim();
-    const box = document.getElementById('image-preview-box');
-    const img = document.getElementById('image-preview');
-
-    if (url) {
-        img.src = url;
-        box.classList.remove('hidden');
-    } else {
-        box.classList.add('hidden');
     }
 }
 

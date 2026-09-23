@@ -87,7 +87,10 @@
     <div id="modal-dettaglio" class="modal-overlay hidden" onclick="chiudiModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="chiudiModal()">&times;</button>
-            <img id="modal-img" src="" alt="Copertina Tour" class="modal-cover">
+
+            <!-- Contenitore Carosello Copertina Modale -->
+            <div id="modal-cover-box"></div>
+
             <div class="modal-header-info">
                 <div class="badges-row">
                     <span id="modal-badge" class="badge"></span>

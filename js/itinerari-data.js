@@ -1,8 +1,11 @@
 /**
- * Gestione Dati e Rendering Itinerari - Sicily Palermo Tour
+ * Gestione Dati e Rendering Itinerari con Carosello Foto Scorrevoli - Sicily Palermo Tour
  */
 
 const STORAGE_KEY = 'spt_itineraries';
+
+// Traccia l'indice della foto corrente nel carosello per ciascun tour
+const indiciCarosello = {};
 
 // Itinerari Iniziali Predefiniti
 const DEFAULT_ITINERARIES = [
@@ -14,6 +17,11 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 25€',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
+            'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=800',
+            'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
+        ],
         shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
         fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo. Tappe principali:\n1. Cattedrale di Palermo\n2. Palazzo dei Normanni e Cappella Palatina\n3. Chiesa di San Giovanni degli Eremiti\n4. Quattro Canti e Piazza Pretoria.'
     },
@@ -25,6 +33,10 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 20€',
         featured: 'true',
         imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
+        images: [
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
+            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
+        ],
         shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
         fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari. Assaggerai:\n- Panelle e Crocchè calde\n- Sfincione palermitano\n- Pane con la milza (per i più audaci)\n- Cannolo siciliano artigianale.'
     },
@@ -36,7 +48,10 @@ const DEFAULT_ITINERARIES = [
         price: 'Da 30€',
         featured: 'false',
         imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
-        shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira les splendide ville Liberty e il centro barocco.',
+        images: [
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
+        ],
+        shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
         fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello. Comprende passeggiata panoramica e sosta per gelato artigianale sul mare.'
     }
 ];
@@ -58,6 +73,105 @@ function getItinerari() {
     }
 }
 
+// Genera l'HTML del Carosello Foto per una card o per la modale
+function generaHtmlCarosello(tour, prefissoId = 'card') {
+    const fotoList = (tour.images && tour.images.length > 0) ? tour.images : [tour.imageUrl || 'https://via.placeholder.com/400x220?text=Palermo+Tour'];
+    const tourId = tour.id;
+
+    if (!indiciCarosello[prefissoId + '_' + tourId]) {
+        indiciCarosello[prefissoId + '_' + tourId] = 0;
+    }
+
+    const currentIndex = indiciCarosello[prefissoId + '_' + tourId];
+    const currentImg = fotoList[currentIndex] || fotoList[0];
+    const haPiuFoto = fotoList.length > 1;
+
+    let html = `
+        <div class="card-img-container" id="${prefissoId}-container-${tourId}">
+            <img class="carousel-img" id="${prefissoId}-img-${tourId}" src="${currentImg}" alt="${escapeHtml(tour.title)}" onerror="this.src='https://via.placeholder.com/400x220?text=Foto+Tour'">
+    `;
+
+    if (haPiuFoto) {
+        html += `
+            <button class="carousel-nav-btn prev" onclick="scorriCarosello('${tourId}', -1, '${prefissoId}', event)" title="Foto precedente">❮</button>
+            <button class="carousel-nav-btn next" onclick="scorriCarosello('${tourId}', 1, '${prefissoId}', event)" title="Foto successiva">❯</button>
+            <div class="carousel-dots">
+                ${fotoList.map((_, i) => `
+                    <span class="carousel-dot ${i === currentIndex ? 'active' : ''}" onclick="vaiAFotoIndex('${tourId}', ${i}, '${prefissoId}', event)"></span>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    html += `</div>`;
+    return html;
+}
+
+// Scorre le foto del carosello
+function scorriCarosello(tourId, direzione, prefissoId = 'card', event) {
+    if (event) event.stopPropagation();
+
+    const itinerari = getItinerari();
+    const tour = itinerari.find(t => t.id === tourId);
+    if (!tour) return;
+
+    const fotoList = (tour.images && tour.images.length > 0) ? tour.images : [tour.imageUrl];
+    const key = prefissoId + '_' + tourId;
+
+    if (typeof indiciCarosello[key] === 'undefined') {
+        indiciCarosello[key] = 0;
+    }
+
+    let nextIndex = indiciCarosello[key] + direzione;
+    if (nextIndex < 0) {
+        nextIndex = fotoList.length - 1;
+    } else if (nextIndex >= fotoList.length) {
+        nextIndex = 0;
+    }
+
+    indiciCarosello[key] = nextIndex;
+    aggiornaVistaCarosello(tourId, prefissoId, fotoList, nextIndex);
+}
+
+// Salta direttamente a un'immagine del carosello tramite pallino
+function vaiAFotoIndex(tourId, index, prefissoId = 'card', event) {
+    if (event) event.stopPropagation();
+
+    const itinerari = getItinerari();
+    const tour = itinerari.find(t => t.id === tourId);
+    if (!tour) return;
+
+    const fotoList = (tour.images && tour.images.length > 0) ? tour.images : [tour.imageUrl];
+    const key = prefissoId + '_' + tourId;
+
+    indiciCarosello[key] = index;
+    aggiornaVistaCarosello(tourId, prefissoId, fotoList, index);
+}
+
+// Aggiorna l'immagine e i pallini attivi
+function aggiornaVistaCarosello(tourId, prefissoId, fotoList, newIndex) {
+    const imgElement = document.getElementById(`${prefissoId}-img-${tourId}`);
+    if (imgElement) {
+        imgElement.style.opacity = '0.3';
+        setTimeout(() => {
+            imgElement.src = fotoList[newIndex];
+            imgElement.style.opacity = '1';
+        }, 150);
+    }
+
+    const container = document.getElementById(`${prefissoId}-container-${tourId}`);
+    if (container) {
+        const dots = container.querySelectorAll('.carousel-dot');
+        dots.forEach((dot, i) => {
+            if (i === newIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+}
+
 // Carica e renderizza la griglia degli itinerari
 function caricaItinerari(categoria = 'Tutti') {
     categoriaSelezionata = categoria;
@@ -66,7 +180,6 @@ function caricaItinerari(categoria = 'Tutti') {
 
     if (!grid) return;
 
-    // Filtra in base alla categoria scelta
     const filtrati = categoria === 'Tutti'
         ? itinerari
         : itinerari.filter(i => i.category === categoria);
@@ -83,12 +196,11 @@ function caricaItinerari(categoria = 'Tutti') {
 
     grid.innerHTML = filtrati.map(tour => `
         <div class="card">
-            <div class="card-img-container">
-                <img class="card-img" src="${tour.imageUrl || 'https://via.placeholder.com/400x200?text=Palermo+Tour'}" alt="${escapeHtml(tour.title)}" onerror="this.src='https://via.placeholder.com/400x200?text=Foto+Tour'">
-            </div>
+            ${generaHtmlCarosello(tour, 'card')}
             <div class="card-content">
                 <div class="badges-row">
                     <span class="badge">${escapeHtml(tour.category)}</span>
+                    ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
                     ${tour.featured === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
                 </div>
                 <h3>${escapeHtml(tour.title)}</h3>
@@ -115,7 +227,7 @@ function filtraCategoria(categoria, btnElement) {
     caricaItinerari(categoria);
 }
 
-// Apre la finestra modale con le tappe e i dettagli dell'itinerario
+// Apre la finestra modale con le tappe e il carosello dell'itinerario
 function apriDettagliModal(id) {
     const itinerari = getItinerari();
     const tour = itinerari.find(t => t.id === id);
@@ -124,7 +236,12 @@ function apriDettagliModal(id) {
 
     itinerarioSelezionatoAttuale = tour;
 
-    document.getElementById('modal-img').src = tour.imageUrl || 'https://via.placeholder.com/600x300?text=Palermo+Tour';
+    // Renderizza il carosello anche nella modale
+    const modalCoverBox = document.getElementById('modal-cover-box');
+    if (modalCoverBox) {
+        modalCoverBox.innerHTML = generaHtmlCarosello(tour, 'modal');
+    }
+
     document.getElementById('modal-badge').textContent = tour.category;
 
     const featuredBadge = document.getElementById('modal-featured');
