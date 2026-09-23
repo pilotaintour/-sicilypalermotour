@@ -123,7 +123,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn-tour btn-whatsapp-modal" onclick="apriChatWhatsApp(`Ciao! Desidero prenotare o chiedere informazioni sul tour: ${itinerarioSelezionatoAttuale ? itinerarioSelezionatoAttuale.title : ''}`)">💬 Prenota su WhatsApp</button>
+                <button id="btn-modal-prenota-calendario" class="btn-tour" onclick="vaiAllaPaginaPrenotazione()">📅 Prenota Tour</button>
                 <button class="btn-secondary" onclick="prenotaTourModal()">📩 Richiedi via Email</button>
                 <button class="btn-secondary" onclick="chiudiModal()">Chiudi</button>
             </div>
@@ -137,7 +137,7 @@
 
     <!-- Collegamento agli Script JavaScript -->
     <script src="whatsapp/whatsapp.js"></script>
-    <script src="js/itinerari-data.js"></script>
+    <script src="itinerari/itinerari-data.js"></script>
     <script src="main.js"></script>
 
 </body>

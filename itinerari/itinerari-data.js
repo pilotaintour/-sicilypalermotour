@@ -234,7 +234,10 @@ function caricaItinerari(categoria = 'Tutti') {
                     <span>💰 ${escapeHtml(tour.price || 'Su richiesta')}</span>
                 </div>
                 <div class="card-desc">${escapeHtml(tour.shortDesc)}</div>
-                <button type="button" class="btn-tour" onclick="apriDettagliModal('${tour.id}')">Scopri Dettagli & Tappe →</button>
+                <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn-tour" style="flex: 1; min-width: 140px;" onclick="apriDettagliModal('${tour.id}')">Dettagli & Tappe →</button>
+                    <button type="button" class="btn-secondary" style="background: #1b4f72; color: #ffffff; border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="vaiAllaPaginaPrenotazione('${tour.id}')">📅 Prenota</button>
+                </div>
             </div>
         </div>
     `).join('');
@@ -291,6 +294,12 @@ function apriDettagliModal(id) {
         if (durationEl) durationEl.textContent = tour.duration || 'Flessibile';
         if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
         if (meetingEl) meetingEl.textContent = tour.meetingPoint || 'Palermo Centro';
+
+        // Binda il pulsante di prenotazione con calendario
+        const btnCalFooter = document.getElementById('btn-modal-prenota-calendario');
+        if (btnCalFooter) {
+            btnCalFooter.onclick = () => vaiAllaPaginaPrenotazione(tour.id);
+        }
 
         // Genera la Timeline delle Tappe
         const modalTimeline = document.getElementById('modal-timeline');
@@ -373,6 +382,12 @@ function chiudiModal(event) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
+}
+
+// Reindirizza alla pagina di prenotazione completa con calendario
+function vaiAllaPaginaPrenotazione(id) {
+    const tourId = id || (itinerarioSelezionatoAttuale ? itinerarioSelezionatoAttuale.id : '1');
+    window.location.href = `prenotazioni/prenotazione.html?tourId=${encodeURIComponent(tourId)}`;
 }
 
 // Precompila il form di contatto dalla modale

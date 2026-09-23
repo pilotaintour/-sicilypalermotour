@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazione Tour - Sicily Palermo Tour</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../itinerari/itinerari.css">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css">
+    <link rel="stylesheet" href="calendario.css">
+    <style>
+        .booking-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .booking-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 30px;
+        }
+
+        @media (max-width: 820px) {
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-title {
+            color: #1b4f72;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tour-selected-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #1b4f72;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 25px;
+        }
+
+        .tour-selected-title {
+            font-size: 1.2rem;
+            color: #1b4f72;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .time-slot-btn {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+
+        .time-slot-btn:hover {
+            border-color: #1b4f72;
+            background: #e2e8f0;
+        }
+
+        .time-slot-btn.selected {
+            background: #1b4f72;
+            color: #ffffff;
+            border-color: #1b4f72;
+        }
+
+        .counter-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .counter-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1b4f72;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .counter-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
+        .summary-total {
+            border-top: 2px dashed #cbd5e1;
+            padding-top: 12px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1b4f72;
+        }
+
+        .btn-booking-primary {
+            width: 100%;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-booking-primary:hover {
+            background-color: #1eb857;
+        }
+
+        .btn-booking-secondary {
+            width: 100%;
+            background-color: #1b4f72;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn-booking-secondary:hover {
+            background-color: #143d59;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Principale -->
+    <header>
+        <h1>Sicily Palermo Tour</h1>
+        <p>Prenotazione Online Tour e Itinerari Guidati</p>
+    </header>
+
+    <!-- Barra di Navigazione -->
+    <nav>
+        <ul>
+            <li><a href="../index.html">← Torna agli Itinerari</a></li>
+            <li><a href="../index.html#contatti">Contatti</a></li>
+        </ul>
+    </nav>
+
+    <div class="booking-container">
+
+        <!-- Box Sezione Tour Selezionato -->
+        <div class="tour-selected-box" id="tour-selected-box">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <span id="booking-tour-category" class="badge">Storia e Cultura</span>
+                    <h2 id="booking-tour-title" class="tour-selected-title" style="margin-top: 6px;">Caricamento Tour...</h2>
+                    <p id="booking-tour-meta" style="color: #64748b; font-size: 0.9rem;">⏱️ Durata: -- | 📍 Partenza: Palermo Centro</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 0.85rem; color: #64748b;">Prezzo base:</span>
+                    <div id="booking-tour-price" style="font-size: 1.3rem; font-weight: bold; color: #1b4f72;">--</div>
+                </div>
+            </div>
+        </div>
+
+        <form id="booking-form" onsubmit="confermaPrenotazioneForm(event)">
+            <div class="booking-grid">
+
+                <!-- Colonna Sinistra: Configurazione Prenotazione -->
+                <div>
+                    <!-- Step 1: Calendario e Orari (Integrazione Modulo Calendario) -->
+                    <div class="booking-card">
+                        <h3 class="section-title">📅 1. Seleziona Data e Orario</h3>
+                        <div id="tour-calendar-app">
+                            <!-- Inserito dinamicamente da calendario.js -->
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Partecipanti -->
+                    <div class="booking-card">
+                        <h3 class="section-title">👥 2. Partecipanti</h3>
+
+                        <div class="counter-group">
+                            <div>
+                                <strong style="color: #334155; display: block;">Adulti</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Età 13+ anni</span>
+                            </div>
+                            <div class="counter-controls">
+                                <button type="button" class="counter-btn" onclick="modificaContatore('adulti', -1)">-</button>
+                                <span id="cnt-adulti" style="font-weight: bold; font-size: 1.1rem; width: 24px; text-align: center;">2</span>
+                                <button type="button" class="counter-btn" onclick="modificaContatore('adulti', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-group">
+                            <div>
+                                <strong style="color: #334155; display: block;">Bambini</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Età 4-12 anni (-50%)</span>
+                            </div>
+                            <div class="counter-controls">
+                                <button type="button" class="counter-btn" onclick="modificaContatore('bambini', -1)">-</button>
+                                <span id="cnt-bambini" style="font-weight: bold; font-size: 1.1rem; width: 24px; text-align: center;">0</span>
+                                <button type="button" class="counter-btn" onclick="modificaContatore('bambini', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Dati di Contatto -->
+                    <div class="booking-card">
+                        <h3 class="section-title">👤 3. I Tuoi Dati</h3>
+
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label for="user-name">Nome e Cognome *</label>
+                            <input type="text" id="user-name" required placeholder="Es. Mario Rossi" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div class="form-group">
+                                <label for="user-email">Email *</label>
+                                <input type="email" id="user-email" required placeholder="mario@example.com" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label for="user-phone">Telefono / WhatsApp *</label>
+                                <input type="tel" id="user-phone" required placeholder="+39 340 1234567" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user-notes">Note / Richieste Particolari (Opzionale)</label>
+                            <textarea id="user-notes" rows="3" placeholder="Es. Lingua preferita, allergie o esigenze particolari..." style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonna Destra: Riepilogo e Azione -->
+                <div>
+                    <div class="summary-card">
+                        <h3 style="color: #1b4f72; font-size: 1.15rem; margin-bottom: 16px;">📋 Riepilogo Prenotazione</h3>
+
+                        <div class="summary-item">
+                            <span>Tour:</span>
+                            <strong id="sum-tour-title" style="text-align: right; max-width: 170px;">--</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Data:</span>
+                            <strong id="sum-date">Non Selezionata</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Orario:</span>
+                            <strong id="sum-time">09:30</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Partecipanti:</span>
+                            <strong id="sum-guests">2 Adulti</strong>
+                        </div>
+
+                        <div class="summary-total">
+                            <span>Totale Stimato:</span>
+                            <span id="sum-price">€50.00</span>
+                        </div>
+
+                        <button type="submit" class="btn-booking-primary">
+                            💬 Prenota via WhatsApp
+                        </button>
+
+                        <button type="button" class="btn-booking-secondary" onclick="salvaPrenotazioneLocale()">
+                            📩 Invia Richiesta Email
+                        </button>
+
+                        <p style="font-size: 0.78rem; color: #64748b; margin-top: 12px; text-align: center;">
+                            🔒 Nessun pagamento anticipato richiesto. Pagamento direttamente al punto di partenza.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+    </footer>
+
+    <script src="../itinerari/itinerari-data.js"></script>
+    <script src="calendario.js"></script>
+    <script>
+        let tourCorrente = null;
+        let calendarInstance = null;
+        let dataSelezionataISO = '';
+        let dataSelezionataLeggibile = '';
+        let orarioSelezionato = '09:30';
+        let numAdulti = 2;
+        let numBambini = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ottieni tourId da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tourId = urlParams.get('tourId') || '1';
+
+            const itinerari = getItinerari();
+            tourCorrente = itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0];
+
+            popolaDatiTour();
+
+            // Inizializza il Calendario Avanzato
+            calendarInstance = new TourCalendar('tour-calendar-app', {
+                onDateChange: (isoStr, dateObj) => {
+                    dataSelezionataISO = isoStr;
+                    dataSelezionataLeggibile = calendarInstance ? calendarInstance.formatDateReadable(dateObj) : isoStr;
+                    if (calendarInstance && calendarInstance.selectedSlot) {
+                        orarioSelezionato = calendarInstance.selectedSlot;
+                    }
+                    aggiornaRiepilogo();
+                },
+                onSlotChange: (time) => {
+                    orarioSelezionato = time;
+                    aggiornaRiepilogo();
+                }
+            });
+
+            // Sincronizza stato iniziale del calendario
+            if (calendarInstance) {
+                const initData = calendarInstance.getSelectedData();
+                dataSelezionataISO = initData.dateISO;
+                dataSelezionataLeggibile = initData.dateReadable;
+                orarioSelezionato = initData.slotTime;
+            }
+
+            aggiornaRiepilogo();
+        });
+
+        function popolaDatiTour() {
+            if (!tourCorrente) return;
+
+            document.getElementById('booking-tour-category').textContent = tourCorrente.category || 'Tour';
+            document.getElementById('booking-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
+            document.getElementById('booking-tour-meta').textContent = `⏱️ Durata: ${tourCorrente.duration || 'Flessibile'} | 📍 Partenza: ${tourCorrente.meetingPoint || 'Palermo Centro'}`;
+            document.getElementById('booking-tour-price').textContent = tourCorrente.price || 'Da 25€';
+
+            document.getElementById('sum-tour-title').textContent = tourCorrente.title || 'Tour Palermo';
+        }
+
+        function selezionaOrario(element, time) {
+            document.querySelectorAll('.time-slot-btn').forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+            orarioSelezionato = time;
+            aggiornaRiepilogo();
+        }
+
+        function modificaContatore(tipo, delta) {
+            if (tipo === 'adulti') {
+                numAdulti = Math.max(1, numAdulti + delta);
+                document.getElementById('cnt-adulti').textContent = numAdulti;
+            } else if (tipo === 'bambini') {
+                numBambini = Math.max(0, numBambini + delta);
+                document.getElementById('cnt-bambini').textContent = numBambini;
+            }
+            aggiornaRiepilogo();
+        }
+
+        function calcolaPrezzo() {
+            if (!tourCorrente) return 50;
+
+            // Estrai numero dal prezzo stringa (es. "Da 25€" -> 25)
+            const match = (tourCorrente.price || '').match(/\d+/);
+            const prezzoUnitario = match ? parseInt(match[0], 10) : 25;
+
+            const totale = (numAdulti * prezzoUnitario) + (numBambini * (prezzoUnitario * 0.5));
+            return totale.toFixed(2);
+        }
+
+        function aggiornaRiepilogo() {
+            document.getElementById('sum-date').textContent = dataSelezionataLeggibile ? dataSelezionataLeggibile : 'Non Selezionata';
+            document.getElementById('sum-time').textContent = orarioSelezionato;
+
+            let ospiteText = `${numAdulti} Adulti`;
+            if (numBambini > 0) {
+                ospiteText += `, ${numBambini} Bambini`;
+            }
+            document.getElementById('sum-guests').textContent = ospiteText;
+
+            const totale = calcolaPrezzo();
+            document.getElementById('sum-price').textContent = `€${totale}`;
+        }
+
+        function confermaPrenotazioneForm(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('user-name').value.trim();
+            const email = document.getElementById('user-email').value.trim();
+            const phone = document.getElementById('user-phone').value.trim();
+            const dateVal = dataSelezionataLeggibile || dataSelezionataISO;
+            const note = document.getElementById('user-notes').value.trim();
+            const totale = calcolaPrezzo();
+
+            const messaggioWA = `Ciao! Desidero prenotare il tour:
+📌 *${tourCorrente ? tourCorrente.title : 'Tour Palermo'}*
+📅 Data: ${dateVal}
+⏰ Orario: ${orarioSelezionato}
+👥 Partecipanti: ${numAdulti} Adulti${numBambini > 0 ? `, ${numBambini} Bambini` : ''}
+💰 Totale: €${totale}
+
+👤 Nome: ${nome}
+📧 Email: ${email}
+📞 Telefono: ${phone}
+${note ? `📝 Note: ${note}` : ''}`;
+
+            // Salva nel localStorage delle prenotazioni
+            salvaPrenotazioneSuStorage({
+                tourTitle: tourCorrente ? tourCorrente.title : 'Tour Palermo',
+                date: dataSelezionataISO,
+                dateReadable: dataSelezionataLeggibile,
+                time: orarioSelezionato,
+                adults: numAdulti,
+                children: numBambini,
+                total: totale,
+                customerName: nome,
+                customerEmail: email,
+                customerPhone: phone,
+                notes: note,
+                status: 'In attesa'
+            });
+
+            // Apri WhatsApp
+            const targetPhone = localStorage.getItem('spt_wa_number') || '393401234567';
+            const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(messaggioWA)}`;
+            window.open(url, '_blank');
+        }
+
+        function salvaPrenotazioneLocale() {
+            const nome = document.getElementById('user-name').value.trim();
+            const email = document.getElementById('user-email').value.trim();
+            const phone = document.getElementById('user-phone').value.trim();
+            const dateVal = dataSelezionataISO;
+
+            if (!nome || !email || !phone || !dateVal) {
+                alert('Per favore compila tutti i campi obbligatori (Nome, Email e Telefono).');
+                return;
+            }
+
+            const totale = calcolaPrezzo();
+            const note = document.getElementById('user-notes').value.trim();
+
+            salvaPrenotazioneSuStorage({
+                tourTitle: tourCorrente ? tourCorrente.title : 'Tour Palermo',
+                date: dataSelezionataISO,
+                dateReadable: dataSelezionataLeggibile,
+                time: orarioSelezionato,
+                adults: numAdulti,
+                children: numBambini,
+                total: totale,
+                customerName: nome,
+                customerEmail: email,
+                customerPhone: phone,
+                notes: note,
+                status: 'Richiesta Email'
+            });
+
+            alert(`Grazie ${nome}! La tua richiesta di prenotazione per "${tourCorrente.title}" il ${dataSelezionataLeggibile} alle ${orarioSelezionato} è stata inviata con successo.`);
+            window.location.href = '../index.html';
+        }
+                notes: note,
+                status: 'Richiesta Email'
+            });
+
+            alert(`Grazie ${nome}! La tua richiesta di prenotazione per "${tourCorrente.title}" il ${dateVal} alle ${orarioSelezionato} è stata inviata con successo.`);
+            window.location.href = 'index.html';
+        }
+
+        function salvaPrenotazioneSuStorage(prenotazioneObj) {
+            try {
+                const esistenti = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+                prenotazioneObj.id = Date.now().toString();
+                prenotazioneObj.createdAt = new Date().toLocaleString();
+                esistenti.push(prenotazioneObj);
+                localStorage.setItem('spt_bookings', JSON.stringify(esistenti));
+            } catch (e) {
+                console.error("Errore salvataggio prenotazione:", e);
+            }
+        }
+    </script>
+</body>
+</html>
