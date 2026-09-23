@@ -76,8 +76,16 @@ class Step4Conferma {
                 <span style="color: #64748b;">Referente:</span>
                 <strong>${data.customerName} (${data.customerPhone})</strong>
             </div>
+            ${data.participantsList && data.participantsList.length > 0 ? `
+                <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e8f0;">
+                    <strong style="color: #1b4f72; display: block; margin-bottom: 8px;">👥 Elenco Nomi Partecipanti (${data.participantsList.length}):</strong>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 0.92rem; color: #334155; line-height: 1.6;">
+                        ${data.participantsList.map(p => `<li><strong>${p.name}</strong> <small style="color:#64748b;">(${p.type})</small></li>`).join('')}
+                    </ol>
+                </div>
+            ` : ''}
             ${data.notes ? `
-                <div style="margin-bottom: 12px; font-size: 0.95rem; color: #475569;">
+                <div style="margin-top: 12px; font-size: 0.95rem; color: #475569;">
                     <span>Note:</span> <em>"${data.notes}"</em>
                 </div>
             ` : ''}

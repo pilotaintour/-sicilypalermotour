@@ -728,9 +728,16 @@ function caricaPrenotazioniAdmin() {
                     </div>
 
                     <div style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">
-                        👤 <strong>Cliente:</strong> ${escapeHtml(b.customerName)} | 📧 ${escapeHtml(b.customerEmail)} | 📞 ${escapeHtml(b.customerPhone)}
+                        👤 <strong>Referente:</strong> ${escapeHtml(b.customerName)} | 📧 ${escapeHtml(b.customerEmail)} | 📞 ${escapeHtml(b.customerPhone)}
+                        ${b.participantsList && b.participantsList.length > 0 ? `
+                            <div style="margin-top: 8px; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                <strong>👥 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
+                                <ol style="margin: 4px 0 0 18px; padding: 0; font-size: 0.85rem; color: #1e293b;">
+                                    ${b.participantsList.map(p => `<li><strong>${escapeHtml(p.name)}</strong> (${escapeHtml(p.type)})</li>`).join('')}
+                                </ol>
+                            </div>
+                        ` : ''}
                         ${b.notes ? `<br>📝 <strong>Note:</strong> <em>"${escapeHtml(b.notes)}"</em>` : ''}
-                        ${b.extraDegustazione ? `<br>🍷 <strong>Extra:</strong> Degustazione inclusa` : ''}
                     </div>
 
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">

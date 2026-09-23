@@ -165,6 +165,9 @@
                     onComplete: (data) => {
                         this.bookingData.adults = data.adults;
                         this.bookingData.children = data.children;
+                        if (this.step3Module) {
+                            this.step3Module.setPartecipanti(data.adults, data.children);
+                        }
                         this.goToStep(3);
                     }
                 });
@@ -176,6 +179,7 @@
                         this.bookingData.customerEmail = data.customerEmail;
                         this.bookingData.customerPhone = data.customerPhone;
                         this.bookingData.notes = data.notes;
+                        this.bookingData.participantsList = data.participantsList;
 
                         this.calcolaEInviaRiepilogo();
                         this.goToStep(4);
