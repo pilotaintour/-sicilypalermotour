@@ -106,25 +106,19 @@
                                 </select>
                             </div>
 
-                            <!-- Builder Orari di Partenza Multi-Selezione (Griglia 15 min) -->
+                            <!-- Sezione Orari di Partenza per il Calendario -->
                             <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 18px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
-                                    <label style="color: #1b4f72; margin: 0; font-weight: bold;">⏰ Orari di Partenza Disponibili (a passi di 15 min)</label>
-                                    <span style="font-size: 0.8rem; font-weight: bold; color: #0369a1; background: #e0f2fe; padding: 2px 8px; border-radius: 12px;" id="cnt-orari-selezionati">0 orari attivi</span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                                    <label style="color: #1b4f72; margin: 0; font-weight: bold;">⏰ Orari di Partenza (per il Calendario Clienti)</label>
+                                    <button type="button" class="btn-primary btn-small" style="background-color: #1b4f72;" onclick="apriModalTabellaOrari()">
+                                        🗓️ Apri Tabella Orari (a 15 min)
+                                    </button>
                                 </div>
-                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">Clicca sugli orari per attivarli o disattivarli per questo tour:</p>
+                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">Orari attivi per questo tour (verranno mostrati sotto il calendario nella prenotazione):</p>
 
-                                <!-- Preset Veloci -->
-                                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
-                                    <button type="button" class="btn-secondary btn-small" style="font-size: 0.75rem;" onclick="applicaPresetOrari('mattina')">☀️ Mattina (09:00-12:30)</button>
-                                    <button type="button" class="btn-secondary btn-small" style="font-size: 0.75rem;" onclick="applicaPresetOrari('pomeriggio')">ose Pomeriggio (15:00-19:30)</button>
-                                    <button type="button" class="btn-secondary btn-small" style="font-size: 0.75rem;" onclick="applicaPresetOrari('sera')">🌙 Sera (20:00-22:30)</button>
-                                    <button type="button" class="btn-danger btn-small" style="font-size: 0.75rem;" onclick="applicaPresetOrari('reset')">🧹 Deseleziona Tutti</button>
-                                </div>
-
-                                <!-- Griglia Orari Interattiva 15 min -->
-                                <div id="orari-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; max-height: 220px; overflow-y: auto; padding: 8px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;">
-                                    <!-- Popolato da JS -->
+                                <!-- Lista orari attivi (chips) -->
+                                <div id="orari-active-chips" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 8px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                    <!-- Popolato via JS -->
                                 </div>
                             </div>
 
@@ -257,6 +251,50 @@
         </section>
 
     </main>
+
+    <!-- Popup Modale Tabella Selettore Orari 15 min -->
+    <div id="modal-tabella-orari" class="modal-overlay hidden" onclick="chiudiModalTabellaOrari(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 620px; padding: 25px; border-radius: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+                <h3 style="color: #1b4f72; margin: 0; font-size: 1.3rem;">🗓️ Seleziona Orari di Partenza (Tabella 15 min)</h3>
+                <button type="button" onclick="chiudiModalTabellaOrari()" style="background: transparent; border: none; font-size: 1.8rem; cursor: pointer; color: #64748b;">&times;</button>
+            </div>
+
+            <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">Clicca sulle celle per attivare/disattivare gli orari. Le celle blu con <strong>✓</strong> sono quelle attive:</p>
+
+            <!-- Presets Veloci -->
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
+                <button type="button" class="btn-secondary btn-small" onclick="applicaPresetOrari('mattina')">☀️ Mattina (09:00 - 12:30)</button>
+                <button type="button" class="btn-secondary btn-small" onclick="applicaPresetOrari('pomeriggio')">🌇 Pomeriggio (15:00 - 19:30)</button>
+                <button type="button" class="btn-secondary btn-small" onclick="applicaPresetOrari('sera')">🌙 Sera (20:00 - 22:30)</button>
+                <button type="button" class="btn-danger btn-small" onclick="applicaPresetOrari('reset')">🧹 Deseleziona Tutti</button>
+            </div>
+
+            <!-- Tabella Orari (Ore sulle righe, Minuti :00 :15 :30 :45 sulle colonne) -->
+            <div style="max-height: 380px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.88rem;">
+                    <thead>
+                        <tr style="background: #1b4f72; color: white; position: sticky; top: 0; z-index: 5;">
+                            <th style="padding: 10px; border: 1px solid #0f3654; width: 80px;">Ora</th>
+                            <th style="padding: 10px; border: 1px solid #0f3654;">:00</th>
+                            <th style="padding: 10px; border: 1px solid #0f3654;">:15</th>
+                            <th style="padding: 10px; border: 1px solid #0f3654;">:30</th>
+                            <th style="padding: 10px; border: 1px solid #0f3654;">:45</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orari-table-body">
+                        <!-- Popolato dinamicamente via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 18px; text-align: right;">
+                <button type="button" class="btn-primary" style="background-color: #1b4f72; padding: 10px 22px; font-weight: bold;" onclick="chiudiModalTabellaOrari()">
+                    ✅ Salva e Chiudi Tabella
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="admin.js"></script>
 </body>

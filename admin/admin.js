@@ -97,48 +97,74 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCampiOrari();
 });
 
-// Gestione Builder Orari per Calendario (Griglia 15 min)
-function generaListaOrari15Min() {
-    const slots = [];
-    for (let h = 7; h <= 23; h++) {
-        for (let m = 0; m < 60; m += 15) {
-            const hStr = String(h).padStart(2, '0');
-            const mStr = String(m).padStart(2, '0');
-            slots.push(`${hStr}:${mStr}`);
-        }
+// Gestione Modale e Tabella Orari
+function apriModalTabellaOrari() {
+    const modal = document.getElementById('modal-tabella-orari');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        renderCampiOrari();
     }
-    return slots;
+}
+
+function chiudiModalTabellaOrari(event) {
+    const modal = document.getElementById('modal-tabella-orari');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        renderCampiOrari();
+    }
 }
 
 function renderCampiOrari() {
-    const container = document.getElementById('orari-grid-container');
-    const badgeCount = document.getElementById('cnt-orari-selezionati');
-    if (!container) return;
-
-    if (!orariCorrenti) {
-        orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
+    // 1. Renderizza i chips attivi nel form dell'admin
+    const chipsContainer = document.getElementById('orari-active-chips');
+    if (chipsContainer) {
+        if (!orariCorrenti || orariCorrenti.length === 0) {
+            chipsContainer.innerHTML = '<span style="font-size:0.85rem; color:#94a3b8;">Nessun orario selezionato. Clicca su "Apri Tabella Orari" per sceglierli!</span>';
+        } else {
+            chipsContainer.innerHTML = orariCorrenti.map((timeStr) => `
+                <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
+                    ⏰ ${escapeHtml(timeStr)}
+                    <button type="button" onclick="toggleOrario('${timeStr}')" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
+                </span>
+            `).join('');
+        }
     }
 
-    if (badgeCount) {
-        badgeCount.textContent = `${orariCorrenti.length} orari attivi`;
+    // 2. Renderizza la Tabella Orari nel Popup Modale (Righe = Ore, Colonne = Minuti :00, :15, :30, :45)
+    const tableBody = document.getElementById('orari-table-body');
+    if (!tableBody) return;
+
+    let rowsHtml = '';
+    for (let h = 8; h <= 23; h++) {
+        const hStr = String(h).padStart(2, '0');
+        rowsHtml += `<tr>`;
+        rowsHtml += `<td style="padding: 8px; font-weight: bold; background: #f8fafc; border: 1px solid #e2e8f0; color: #1b4f72;">${hStr}:00</td>`;
+
+        ['00', '15', '30', '45'].forEach(mStr => {
+            const timeStr = `${hStr}:${mStr}`;
+            const isSelected = orariCorrenti && orariCorrenti.includes(timeStr);
+
+            const bgStyle = isSelected
+                ? 'background: #1b4f72; color: #ffffff; font-weight: bold;'
+                : 'background: #ffffff; color: #334155;';
+
+            rowsHtml += `
+                <td style="padding: 4px; border: 1px solid #e2e8f0;">
+                    <button type="button"
+                            onclick="toggleOrario('${timeStr}')"
+                            style="${bgStyle} width: 100%; padding: 8px 4px; border: 1px solid ${isSelected ? '#1b4f72' : '#cbd5e1'}; border-radius: 6px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s ease;">
+                        ${isSelected ? '✓ ' : ''}${timeStr}
+                    </button>
+                </td>
+            `;
+        });
+
+        rowsHtml += `</tr>`;
     }
 
-    const tuttiGliOrari = generaListaOrari15Min();
-
-    container.innerHTML = tuttiGliOrari.map(timeStr => {
-        const isSelected = orariCorrenti.includes(timeStr);
-        const style = isSelected
-            ? 'background: #1b4f72; color: #ffffff; border: 1.5px solid #1b4f72; font-weight: bold; box-shadow: 0 2px 6px rgba(27,79,114,0.3);'
-            : 'background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-weight: 500;';
-
-        return `
-            <button type="button"
-                    onclick="toggleOrario('${timeStr}')"
-                    style="${style} padding: 6px 4px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.15s ease;">
-                ${isSelected ? '✓ ' : ''}${timeStr}
-            </button>
-        `;
-    }).join('');
+    tableBody.innerHTML = rowsHtml;
 }
 
 function toggleOrario(timeStr) {
