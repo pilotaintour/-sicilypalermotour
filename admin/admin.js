@@ -97,38 +97,81 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCampiOrari();
 });
 
-// Gestione Builder Orari per Calendario
+// Gestione Builder Orari per Calendario (Griglia 15 min)
+function generaListaOrari15Min() {
+    const slots = [];
+    for (let h = 7; h <= 23; h++) {
+        for (let m = 0; m < 60; m += 15) {
+            const hStr = String(h).padStart(2, '0');
+            const mStr = String(m).padStart(2, '0');
+            slots.push(`${hStr}:${mStr}`);
+        }
+    }
+    return slots;
+}
+
 function renderCampiOrari() {
-    const container = document.getElementById('orari-chips-container');
+    const container = document.getElementById('orari-grid-container');
+    const badgeCount = document.getElementById('cnt-orari-selezionati');
     if (!container) return;
 
-    if (!orariCorrenti || orariCorrenti.length === 0) {
+    if (!orariCorrenti) {
         orariCorrenti = ['09:30', '11:30', '15:30', '18:00'];
     }
 
-    container.innerHTML = orariCorrenti.map((orarioText, idx) => `
-        <span style="background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;">
-            ⏰ ${escapeHtml(orarioText)}
-            <button type="button" onclick="rimuoviOrario(${idx})" style="background: transparent; border: none; color: #0369a1; font-weight: bold; cursor: pointer; padding: 0 2px;" title="Rimuovi orario">✕</button>
-        </span>
-    `).join('');
-}
-
-function aggiungiOrarioPersonalizzato() {
-    const input = document.getElementById('nuovo-orario-input');
-    if (!input) return;
-
-    const val = input.value.trim();
-    if (val && !orariCorrenti.includes(val)) {
-        orariCorrenti.push(val);
-        orariCorrenti.sort();
-        renderCampiOrari();
-        input.value = '';
+    if (badgeCount) {
+        badgeCount.textContent = `${orariCorrenti.length} orari attivi`;
     }
+
+    const tuttiGliOrari = generaListaOrari15Min();
+
+    container.innerHTML = tuttiGliOrari.map(timeStr => {
+        const isSelected = orariCorrenti.includes(timeStr);
+        const style = isSelected
+            ? 'background: #1b4f72; color: #ffffff; border: 1.5px solid #1b4f72; font-weight: bold; box-shadow: 0 2px 6px rgba(27,79,114,0.3);'
+            : 'background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-weight: 500;';
+
+        return `
+            <button type="button"
+                    onclick="toggleOrario('${timeStr}')"
+                    style="${style} padding: 6px 4px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.15s ease;">
+                ${isSelected ? '✓ ' : ''}${timeStr}
+            </button>
+        `;
+    }).join('');
 }
 
-function rimuoviOrario(index) {
-    orariCorrenti.splice(index, 1);
+function toggleOrario(timeStr) {
+    if (orariCorrenti.includes(timeStr)) {
+        orariCorrenti = orariCorrenti.filter(t => t !== timeStr);
+    } else {
+        orariCorrenti.push(timeStr);
+        orariCorrenti.sort();
+    }
+    renderCampiOrari();
+}
+
+function applicaPresetOrari(tipo) {
+    let presetSlots = [];
+    if (tipo === 'mattina') {
+        presetSlots = ['09:00', '09:15', '09:30', '09:45', '10:00', '10:15', '10:30', '10:45', '11:00', '11:15', '11:30', '11:45', '12:00', '12:15', '12:30'];
+    } else if (tipo === 'pomeriggio') {
+        presetSlots = ['15:00', '15:15', '15:30', '15:45', '16:00', '16:15', '16:30', '16:45', '17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30'];
+    } else if (tipo === 'sera') {
+        presetSlots = ['20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30'];
+    } else if (tipo === 'reset') {
+        orariCorrenti = [];
+        renderCampiOrari();
+        return;
+    }
+
+    presetSlots.forEach(t => {
+        if (!orariCorrenti.includes(t)) {
+            orariCorrenti.push(t);
+        }
+    });
+
+    orariCorrenti.sort();
     renderCampiOrari();
 }
 
