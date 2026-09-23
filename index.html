@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sicily Palermo Tour - Esplora Palermo</title>
-    <!-- Collegamento al file CSS Esterno -->
+    <!-- Fogli di stile CSS Separati -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/itinerari.css">
 </head>
 <body>
 
@@ -44,7 +45,7 @@
                 <button class="filter-btn" onclick="filtraCategoria('Esperienze e Tradizioni', this)">🎭 Esperienze</button>
             </div>
 
-            <!-- Griglia dinamica Itinerari (Popolata da main.js) -->
+            <!-- Griglia dinamica Itinerari (Popolata da js/itinerari-data.js) -->
             <div id="itinerari-grid" class="grid">
                 <!-- Verrà popolato dinamicamente via JavaScript -->
             </div>
@@ -102,7 +103,8 @@
         <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati. | <a href="admin/index.html" target="_blank" style="color: #e67e22; text-decoration: none;">Area Riservata Admin</a></p>
     </footer>
 
-    <!-- Collegamento al file JavaScript Esterno -->
+    <!-- Collegamento agli Script JavaScript -->
+    <script src="js/itinerari-data.js"></script>
     <script src="main.js"></script>
 
 </body>

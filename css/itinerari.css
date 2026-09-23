@@ -1,0 +1,219 @@
+/* ==========================================================================
+   STILI SPECIFICI PER GLI ITINERARI - Sicily Palermo Tour
+   ========================================================================== */
+
+/* Filtri Categoria */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 35px;
+}
+
+.filter-btn {
+    background-color: #fff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: #e67e22;
+    color: #e67e22;
+}
+
+.filter-btn.active {
+    background-color: #e67e22;
+    color: white;
+    border-color: #e67e22;
+    box-shadow: 0 3px 8px rgba(230, 126, 34, 0.3);
+}
+
+/* Griglia Card Tour */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #f1f5f9;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.card-img-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background-color: #eee;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.card:hover .card-img {
+    transform: scale(1.05);
+}
+
+.card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.badges-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background-color: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+}
+
+.badge-star {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+.card h3 {
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.card-meta {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 15px;
+}
+
+.card-desc {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* Modal Dettagli Tour */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 650px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.modal-cover {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.modal-header-info {
+    padding: 20px 25px 10px 25px;
+}
+
+.modal-header-info h2 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.modal-meta {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.modal-body {
+    padding: 0 25px 20px 25px;
+    font-size: 1rem;
+    color: #334155;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.modal-footer {
+    padding: 15px 25px 25px 25px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid #f1f5f9;
+}
