@@ -2,9 +2,10 @@
  * Gestione Pannello Amministrazione - Sicily Palermo Tour
  */
 
-// Chiave LocalStorage per la persistenza dei dati
+// Chiavi LocalStorage
 const STORAGE_KEY = 'spt_itineraries';
 const AUTH_KEY = 'spt_admin_logged_in';
+const WA_STORAGE_KEY = 'spt_whatsapp_number';
 
 // Email Autorizzata Amministratore
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
@@ -48,9 +49,9 @@ const DEFAULT_ITINERARIES = [
 
 // Inizializzazione all'avvio: Accesso Diretto per l'Admin
 document.addEventListener('DOMContentLoaded', () => {
-    // Riconosce automaticamente l'accesso dell'Admin
     localStorage.setItem(AUTH_KEY, 'true');
     verificaStatoAutenticazione();
+    caricaNumeroWhatsApp();
 });
 
 // Verifica e attiva la vista Dashboard
@@ -73,6 +74,27 @@ function verificaStatoAutenticazione() {
         if (loginSection) loginSection.classList.remove('hidden');
         if (dashboardSection) dashboardSection.classList.add('hidden');
         if (userControls) userControls.classList.add('hidden');
+    }
+}
+
+// Gestione Numero WhatsApp
+function caricaNumeroWhatsApp() {
+    const input = document.getElementById('wa-number-input');
+    if (input) {
+        input.value = localStorage.getItem(WA_STORAGE_KEY) || '393000000000';
+    }
+}
+
+function salvaNumeroWhatsApp() {
+    const input = document.getElementById('wa-number-input');
+    if (!input) return;
+
+    const num = input.value.trim().replace(/[^0-9]/g, '');
+    if (num.length >= 8) {
+        localStorage.setItem(WA_STORAGE_KEY, num);
+        alert(`Numero WhatsApp salvato con successo: +${num}`);
+    } else {
+        alert('Inserisci un numero di telefono valido con prefisso (es. 393401234567).');
     }
 }
 

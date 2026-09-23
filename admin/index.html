@@ -46,6 +46,16 @@
         <!-- Pannello Dashboard Amministratore (Visibile solo se autenticato) -->
         <section id="dashboard-section" class="hidden">
 
+            <!-- Box Configurazione WhatsApp -->
+            <div class="card" style="margin-bottom: 25px; border-left: 5px solid #25d366;">
+                <h2 style="color: #25d366; font-size: 1.3rem; margin-bottom: 5px;">📱 Numero WhatsApp per le Prenotazioni</h2>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 12px;">Inserisci il tuo numero di telefono con prefisso internazionale (es. <code>393401234567</code>):</p>
+                <div style="display: flex; gap: 12px; max-width: 500px; flex-wrap: wrap;">
+                    <input type="text" id="wa-number-input" aria-label="Numero WhatsApp" placeholder="Es. 393401234567" style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <button onclick="salvaNumeroWhatsApp()" class="btn-primary" style="background-color: #25d366;">💾 Salva Numero</button>
+                </div>
+            </div>
+
             <div class="dashboard-grid">
                 <!-- Colonna Form: Aggiungi / Modifica Itinerario -->
                 <div class="card form-card">

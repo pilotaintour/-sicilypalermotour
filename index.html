@@ -7,6 +7,7 @@
     <!-- Fogli di stile CSS Separati -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="itinerari/itinerari.css">
+    <link rel="stylesheet" href="whatsapp/whatsapp.css">
 </head>
 <body>
 
@@ -77,6 +78,11 @@
 
     </div>
 
+    <!-- Pulsante Fluttuante WhatsApp -->
+    <button class="whatsapp-float" onclick="apriChatWhatsApp('Ciao! Desidero maggiori informazioni sui tour di Palermo.')" title="Chatta su WhatsApp">
+        <span class="whatsapp-icon">💬</span> Chatta su WhatsApp
+    </button>
+
     <!-- Modal Dettaglio Itinerario -->
     <div id="modal-dettaglio" class="modal-overlay hidden" onclick="chiudiModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -92,7 +98,8 @@
             </div>
             <div id="modal-body" class="modal-body"></div>
             <div class="modal-footer">
-                <button class="btn-tour" onclick="prenotaTourModal()">📩 Richiedi Info / Prenota Questo Tour</button>
+                <button class="btn-tour" onclick="apriChatWhatsApp(`Ciao! Desidero prenotare o chiedere informazioni sul tour: ${itinerarioSelezionatoAttuale ? itinerarioSelezionatoAttuale.title : ''}`)">💬 Chatta su WhatsApp</button>
+                <button class="btn-secondary" onclick="prenotaTourModal()">📩 Invia Email</button>
                 <button class="btn-secondary" onclick="chiudiModal()">Chiudi</button>
             </div>
         </div>
@@ -104,6 +111,7 @@
     </footer>
 
     <!-- Collegamento agli Script JavaScript -->
+    <script src="whatsapp/whatsapp.js"></script>
     <script src="js/itinerari-data.js"></script>
     <script src="main.js"></script>
 
