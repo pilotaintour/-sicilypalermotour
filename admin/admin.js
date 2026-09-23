@@ -46,12 +46,14 @@ const DEFAULT_ITINERARIES = [
     }
 ];
 
-// Inizializzazione all'avvio
+// Inizializzazione all'avvio: Accesso Diretto per l'Admin
 document.addEventListener('DOMContentLoaded', () => {
+    // Riconosce automaticamente l'accesso dell'Admin
+    localStorage.setItem(AUTH_KEY, 'true');
     verificaStatoAutenticazione();
 });
 
-// Verifica se l'utente è attualmente connesso
+// Verifica e attiva la vista Dashboard
 function verificaStatoAutenticazione() {
     const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
     const loginSection = document.getElementById('login-section');
@@ -60,40 +62,18 @@ function verificaStatoAutenticazione() {
     const welcomeMsg = document.getElementById('welcome-msg');
 
     if (isLoggedIn) {
-        loginSection.classList.add('hidden');
-        dashboardSection.classList.remove('hidden');
-        userControls.classList.remove('hidden');
+        if (loginSection) loginSection.classList.add('hidden');
+        if (dashboardSection) dashboardSection.classList.remove('hidden');
+        if (userControls) userControls.classList.remove('hidden');
         if (welcomeMsg) {
             welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL}`;
         }
         caricaElencoItinerari();
     } else {
-        loginSection.classList.remove('hidden');
-        dashboardSection.classList.add('hidden');
-        userControls.classList.add('hidden');
+        if (loginSection) loginSection.classList.remove('hidden');
+        if (dashboardSection) dashboardSection.classList.add('hidden');
+        if (userControls) userControls.classList.add('hidden');
     }
-}
-
-// Gestione Form Login
-function effettuaLogin(event) {
-    event.preventDefault();
-    const inputEmail = document.getElementById('admin-email').value.trim().toLowerCase();
-    const errorBox = document.getElementById('login-error');
-
-    if (inputEmail === AUTHORIZED_EMAIL.toLowerCase()) {
-        localStorage.setItem(AUTH_KEY, 'true');
-        errorBox.classList.add('hidden');
-        document.getElementById('loginForm').reset();
-        verificaStatoAutenticazione();
-    } else {
-        errorBox.classList.remove('hidden');
-    }
-}
-
-// Logout
-function logout() {
-    localStorage.removeItem(AUTH_KEY);
-    verificaStatoAutenticazione();
 }
 
 // Recupera gli itinerari dal localStorage (o inizializza con i default)

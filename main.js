@@ -2,7 +2,13 @@
  * Logica Principale di Inizializzazione e Contatti - Sicily Palermo Tour
  */
 
+// Email Amministratore
+const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Imposta la sessione riconosciuta per l'amministratore
+    localStorage.setItem('spt_admin_logged_in', 'true');
+
     // Carica gli itinerari all'avvio
     if (typeof caricaItinerari === 'function') {
         caricaItinerari();
