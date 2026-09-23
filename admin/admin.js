@@ -91,6 +91,55 @@ function toggleSettingBox(boxId) {
     }
 }
 
+// Gestione Caricamento Foto dal Dispositivo (Con Ottimizzazione & Compressione Canvas)
+function gestisciCaricamentoFoto(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        alert('Seleziona un file immagine valido (JPG, PNG, WebP, ecc.).');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // Ottimizzazione e ridimensionamento immagine per velocizzare il sito
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Converte l'immagine in Data URL compresso
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            document.getElementById('image-url').value = compressedDataUrl;
+            anteprimaImmagine();
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
 // Verifica e attiva la vista Dashboard
 function verificaStatoAutenticazione() {
     const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
@@ -264,6 +313,8 @@ function annullaModifica() {
 function resetForm() {
     document.getElementById('itineraryForm').reset();
     document.getElementById('itinerary-id').value = '';
+    const fileInput = document.getElementById('image-file-input');
+    if (fileInput) fileInput.value = '';
     document.getElementById('form-title').textContent = '➕ Aggiungi Nuovo Itinerario';
     document.getElementById('save-btn').textContent = '💾 Salva Itinerario';
     document.getElementById('cancel-edit-btn').classList.add('hidden');
