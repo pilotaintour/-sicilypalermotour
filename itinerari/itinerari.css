@@ -205,6 +205,7 @@
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
@@ -241,6 +242,8 @@
     color: #1b4f72;
     margin-top: 6px;
     margin-bottom: 14px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Box Dettagli Pratici */
@@ -258,6 +261,7 @@
 .highlight-item {
     font-size: 0.9rem;
     color: #334155;
+    overflow-wrap: anywhere;
 }
 
 /* Contenuto della Modale */
@@ -266,6 +270,7 @@
     font-size: 0.98rem;
     color: #334155;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 .modal-body h3 {
@@ -276,6 +281,21 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+/* Riquadro Panoramica del Tour (Scritta sempre in lungo, mai in largo!) */
+#modal-description-text {
+    background-color: #f8fafc;
+    border-left: 4px solid #1b4f72;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
 }
 
 /* Timeline Tappe del Tour */
@@ -298,6 +318,8 @@
     border-radius: 8px;
     padding: 12px 16px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .step-number {
@@ -318,6 +340,9 @@
     font-size: 0.95rem;
     color: #1e293b;
     font-weight: 600;
+    flex: 1;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Chips Servizi Inclusi */
