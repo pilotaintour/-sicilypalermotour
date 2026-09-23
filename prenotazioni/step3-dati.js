@@ -1,6 +1,6 @@
 /**
  * STEP 3: Dati Personali Completi e Data di Nascita per CIASCUN Partecipante (Obbligatori)
- * Design System Premium - Carte Passeggeri con Layout Elegante
+ * Nome, Cognome, Data di Nascita (Giorno/Mese/Anno), Luogo di Provenienza e Note per ciascun partecipante.
  */
 
 class Step3Dati {
@@ -57,14 +57,14 @@ class Step3Dati {
         });
 
         return `
-            <div style="display: grid; grid-template-columns: 1fr 1.3fr 1.1fr; gap: 10px;">
-                <select id="${idPrefix}-day" required style="padding: 11px 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.92rem; background: #ffffff; color: #0f172a; box-sizing: border-box; font-weight: 500;">
+            <div style="display: grid; grid-template-columns: 1fr 1.3fr 1.1fr; gap: 8px;">
+                <select id="${idPrefix}-day" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${daysHtml}
                 </select>
-                <select id="${idPrefix}-month" required style="padding: 11px 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.92rem; background: #ffffff; color: #0f172a; box-sizing: border-box; font-weight: 500;">
+                <select id="${idPrefix}-month" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${monthsHtml}
                 </select>
-                <select id="${idPrefix}-year" required style="padding: 11px 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.92rem; background: #ffffff; color: #0f172a; box-sizing: border-box; font-weight: 500;">
+                <select id="${idPrefix}-year" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${yearsHtml}
                 </select>
             </div>
@@ -78,52 +78,48 @@ class Step3Dati {
 
         let html = `
             <div class="step-card-header">
-                📛 Step 3: Dati Personali dei Passeggeri (${totalePartecipanti} Persone)
+                🧑 Step 3: Dati Personali dei Partecipanti (${totalePartecipanti} Persone Obbligatorie)
             </div>
 
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 14px 18px; border-radius: 14px; border: 1px solid #bae6fd; margin-bottom: 24px; font-size: 0.9rem; color: #0369a1; font-weight: 600; box-shadow: 0 2px 8px rgba(3, 105, 161, 0.05);">
-                📋 Registro Passeggeri Ufficiale: Inserisci Nome, Cognome, Data di Nascita e Provenienza per ciascuno dei <strong>${totalePartecipanti} partecipanti</strong> (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}).
+            <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
+                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong>.
             </div>
 
-            <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE (PREMIUM GOLD & NAVY CARD) -->
-            <div style="background: #ffffff; border: 2px solid #0b2545; border-radius: 16px; padding: 22px; margin-bottom: 22px; box-shadow: 0 8px 20px rgba(11, 37, 69, 0.08); position: relative;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
-                    <span style="background: linear-gradient(135deg, #0b2545, #134074); color: #ffffff; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.3px;">
-                        ⭐ PASSEGGERO 1 - REFERENTE PRINCIPALE
-                    </span>
-                    <span style="font-size: 0.8rem; color: #d97706; font-weight: 700; background: #fef3c7; padding: 3px 10px; border-radius: 12px;">Capogruppo Tour</span>
+            <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE -->
+            <div style="background: #ffffff; border: 2px solid #1b4f72; border-radius: 12px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(27,79,114,0.08);">
+                <div style="font-weight: 800; color: #1b4f72; font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    ⭐ Partecipante 1 - Referente Principale (Adulto)
                 </div>
 
-                <div class="form-group" style="margin-bottom: 14px;">
-                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo *</label>
-                    <input type="text" id="step3-name-1" required placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Nome e Cognome Completo *</label>
+                    <input type="text" id="step3-name-1" required placeholder="Es. Mario Rossi" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                    <div>
-                        <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">🎂 Data di Nascita *</label>
-                        ${this.renderSelectDataNascita('step3-dob-1', false)}
-                    </div>
-                    <div>
-                        <label for="step3-origin-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📍 Città / Provenienza *</label>
-                        <input type="text" id="step3-origin-1" required placeholder="Es. Milano / Germania" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
-                    </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Data di Nascita *</label>
+                    ${this.renderSelectDataNascita('step3-dob-1', false)}
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="step3-origin-1" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Città / Luogo di Provenienza *</label>
+                    <input type="text" id="step3-origin-1" required placeholder="Es. Milano / Germania" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div>
-                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📧 Email di Conferma *</label>
-                        <input type="email" id="step3-lead-email" required placeholder="mario@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Email di Conferma *</label>
+                        <input type="email" id="step3-lead-email" required placeholder="mario@example.com" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
                     </div>
                     <div>
-                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📞 Telefono / WhatsApp *</label>
-                        <input type="tel" id="step3-lead-phone" required placeholder="+39 340 1234567" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b;">Telefono / WhatsApp *</label>
+                        <input type="tel" id="step3-lead-phone" required placeholder="+39 340 1234567" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.98rem; box-sizing: border-box;">
                     </div>
                 </div>
 
                 <div>
-                    <label for="step3-notes-1" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #475569;">📝 Note / Esigenze Particolari Referente 1 (Opzionale)</label>
-                    <input type="text" id="step3-notes-1" placeholder="Es. Lingua parlata preferita, allergie alimentari, esigenze particolari..." style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                    <label for="step3-notes-1" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Note / Esigenze Particolari Partecipante 1 (Opzionale)</label>
+                    <input type="text" id="step3-notes-1" placeholder="Es. Lingua parlata, allergie, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                 </div>
             </div>
         `;
@@ -134,32 +130,29 @@ class Step3Dati {
         // Altri Adulti (da 2 a adults)
         for (let a = 2; a <= this.adults; a++) {
             html += `
-                <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-                        <span style="background: #f1f5f9; color: #334155; padding: 4px 12px; border-radius: 16px; font-size: 0.83rem; font-weight: 800;">
-                            🧑 PASSEGGERO ${partCounter} - ADULTO
-                        </span>
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+                    <div style="font-weight: 700; color: #334155; font-size: 0.98rem; margin-bottom: 10px;">
+                        🧑 Partecipante ${partCounter} - Adulto *
                     </div>
 
-                    <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo *</label>
-                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                    <div style="margin-bottom: 10px;">
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Nome e Cognome Completo *</label>
+                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                        <div>
-                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">🎂 Data di Nascita *</label>
-                            ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, false)}
-                        </div>
-                        <div>
-                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📍 Città / Provenienza *</label>
-                            <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Roma / Francia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
-                        </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Data di Nascita *</label>
+                        ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, false)}
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label for="step3-origin-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Città / Provenienza *</label>
+                        <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Roma / Francia" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
                     <div>
-                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #64748b;">📝 Note / Esigenze Particolari Partecipante ${partCounter} (Opzionale)</label>
-                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, preferenze, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #475569;">Note / Esigenze Particolari Partecipante ${partCounter} (Opzionale)</label>
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, preferenze, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
                     </div>
                 </div>
             `;
@@ -169,32 +162,29 @@ class Step3Dati {
         // Bambini (da 1 a children)
         for (let c = 1; c <= this.children; c++) {
             html += `
-                <div style="background: #fffbf5; border: 1.5px solid #fed7aa; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(217, 119, 6, 0.04);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #ffedd5; padding-bottom: 8px;">
-                        <span style="background: #ffedd5; color: #c2410c; padding: 4px 12px; border-radius: 16px; font-size: 0.83rem; font-weight: 800;">
-                            🧒 PASSEGGERO ${partCounter} - BAMBINO (4-12 Anni)
-                        </span>
+                <div style="background: #fff7ed; border: 1.5px solid #ffedd5; border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+                    <div style="font-weight: 700; color: #c2410c; font-size: 0.98rem; margin-bottom: 10px;">
+                        🧒 Partecipante ${partCounter} - Bambino (4-12 anni) *
                     </div>
 
-                    <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo *</label>
-                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                    <div style="margin-bottom: 10px;">
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Nome e Cognome Completo *</label>
+                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                        <div>
-                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">🎂 Data di Nascita *</label>
-                            ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, true)}
-                        </div>
-                        <div>
-                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📍 Città / Provenienza *</label>
-                            <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Torino / Spagna" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
-                        </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Data di Nascita *</label>
+                        ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, true)}
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label for="step3-origin-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Città / Provenienza *</label>
+                        <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Torino / Spagna" style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
                     <div>
-                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #c2410c;">📝 Note / Esigenze Particolari Bambino ${partCounter} (Opzionale)</label>
-                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze alimentari..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.88rem; color: #9a3412;">Note / Esigenze Particolari Bambino ${partCounter} (Opzionale)</label>
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 8px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
                     </div>
                 </div>
             `;
@@ -202,7 +192,7 @@ class Step3Dati {
         }
 
         html += `
-            <div class="step-nav-bar" style="margin-top: 28px;">
+            <div class="step-nav-bar" style="margin-top: 25px;">
                 <button type="button" class="btn-nav-prev" id="btn-step3-prev">
                     ← Indietro
                 </button>
