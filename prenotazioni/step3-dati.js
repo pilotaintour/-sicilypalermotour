@@ -78,7 +78,7 @@ class Step3Dati {
 
         let html = `
             <div class="step-card-header">
-                🛡️ Step 3: Dati Personali dei Passeggeri (${totalePartecipanti} Persone)
+                📛 Step 3: Dati Personali dei Passeggeri (${totalePartecipanti} Persone)
             </div>
 
             <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 14px 18px; border-radius: 14px; border: 1px solid #bae6fd; margin-bottom: 24px; font-size: 0.9rem; color: #0369a1; font-weight: 600; box-shadow: 0 2px 8px rgba(3, 105, 161, 0.05);">
@@ -95,7 +95,7 @@ class Step3Dati {
                 </div>
 
                 <div class="form-group" style="margin-bottom: 14px;">
-                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">👤 Nome e Cognome Completo *</label>
+                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo *</label>
                     <input type="text" id="step3-name-1" required placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                 </div>
 
@@ -137,12 +137,12 @@ class Step3Dati {
                 <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
                         <span style="background: #f1f5f9; color: #334155; padding: 4px 12px; border-radius: 16px; font-size: 0.83rem; font-weight: 800;">
-                            👤 PASSEGGERO ${partCounter} - ADULTO
+                            🧑 PASSEGGERO ${partCounter} - ADULTO
                         </span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">👤 Nome e Cognome Completo *</label>
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo *</label>
                         <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
@@ -177,7 +177,7 @@ class Step3Dati {
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">👤 Nome e Cognome Completo *</label>
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo *</label>
                         <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
