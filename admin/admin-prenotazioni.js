@@ -179,7 +179,6 @@ function getConteggioPasseggeriOrario(bookingsList, timeStr) {
 
 // Renderizza la vista Dettaglio Cartella di un Singolo Tour
 function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
-    // Recupera la configurazione dell'itinerario per estrarre tutti gli orari attivi
     let itinerariConfig = [];
     try {
         itinerariConfig = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
@@ -188,14 +187,12 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     }
     const tourConfig = itinerariConfig.find(i => i.title === titoloTour) || {};
 
-    // Estrai tutti gli orari attivi configurati per questo itinerario
     let configTimeSlots = [];
     if (tourConfig.timeSlots && Array.isArray(tourConfig.timeSlots)) {
         configTimeSlots = tourConfig.timeSlots.map(t => typeof t === 'string' ? t : (t && t.time)).filter(Boolean);
     }
     const bookingTimeSlots = bookingsOfTour.map(b => b.time).filter(Boolean);
 
-    // Unisci, deduplica e ordina tutti gli orari dell'itinerario
     const orariUnici = [...new Set([...configTimeSlots, ...bookingTimeSlots])].sort();
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
 
@@ -211,18 +208,19 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                     </h3>
                 </div>
 
+                <!-- PULSANTI AZIONE: ESPORTAZIONE, STAMPA E INVIO AGENZIA -->
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'EXCEL' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('EXCEL')">
-                        📊 Lista Unica Excel
+                    <button type="button" class="btn-secondary btn-small" style="background:#25d366; color:#ffffff; font-weight:bold;" onclick="inviaListaWhatsAppAgenzia('${escapeHtmlBooking(titoloTour)}')">
+                        💬 Invia ad Agenzia via WhatsApp
                     </button>
-                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'SCHEDE' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">
-                        📋 Vista Schede
+                    <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff; font-weight:bold;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
+                        📄 Salva PDF / Stampa Manifest
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSVParticolare('${escapeHtmlBooking(titoloTour)}')">
                         📥 Esporta CSV (${filtroOrarioSelezionato})
                     </button>
-                    <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        🖨️ Stampa Foglio Guida
+                    <button type="button" class="btn-secondary btn-small" style="background:#6366f1; color:#ffffff;" onclick="inviaListaEmailAgenzia('${escapeHtmlBooking(titoloTour)}')">
+                        📧 Invia via Email
                     </button>
                 </div>
             </div>
@@ -244,7 +242,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                 </div>
             </div>
 
-            <!-- Filtri Data, Stato e Ricerca dentro il Tour -->
+            <!-- Filtri Data, Stato, Modalità e Ricerca dentro il Tour -->
             <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <div>
@@ -261,6 +259,11 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                             <option value="Confermata" ${filtroStatoPrenotazioni === 'Confermata' ? 'selected' : ''}>Confermate</option>
                             <option value="Cancellata" ${filtroStatoPrenotazioni === 'Cancellata' ? 'selected' : ''}>Annullate</option>
                         </select>
+                    </div>
+
+                    <div style="display: flex; gap: 4px;">
+                        <button type="button" class="btn-secondary btn-small" style="padding: 6px 10px; ${vistaAttualePrenotazioni === 'EXCEL' ? 'background:#0b2545; color:#fff;' : 'background:#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('EXCEL')">📊 Lista Unica</button>
+                        <button type="button" class="btn-secondary btn-small" style="padding: 6px 10px; ${vistaAttualePrenotazioni === 'SCHEDE' ? 'background:#0b2545; color:#fff;' : 'background:#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">📋 Schede</button>
                     </div>
                 </div>
 
@@ -363,7 +366,7 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                     📋 Lista Unica Partecipanti ${infoOrarioTitolo} (Totale ${righePasseggeri.length} Passeggeri)
                 </span>
                 <span style="font-size: 0.82rem; opacity: 0.9; background: rgba(255,255,255,0.18); padding: 3px 10px; border-radius: 10px;">
-                    Documento d'Imbarco Tour
+                    Documento Ufficiale Tour
                 </span>
             </div>
 
@@ -490,6 +493,87 @@ function renderSchedePrenotazioni(bookingsList) {
     }).join('');
 }
 
+// Invia lista via WhatsApp all'Agenzia o alla Guida
+function inviaListaWhatsAppAgenzia(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) list = list.filter(b => b.tourTitle === titoloTour);
+    if (filtroOrarioSelezionato !== 'TUTTI') list = list.filter(b => b.time === filtroOrarioSelezionato);
+    if (filtroDataSelezionata !== 'TUTTI') list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
+
+    if (list.length === 0) {
+        alert("Nessuna prenotazione presente per i filtri selezionati.");
+        return;
+    }
+
+    let msg = `🏛️ *SICILY PALERMO TOUR - MANIFEST PASSEGGERI*\n`;
+    msg += `📍 Tour: *${titoloTour || 'Palermo Tour'}*\n`;
+    if (filtroOrarioSelezionato !== 'TUTTI') msg += `⏰ Orario: *${filtroOrarioSelezionato}*\n`;
+    if (filtroDataSelezionata !== 'TUTTI') msg += `📅 Data: *${filtroDataSelezionata}*\n`;
+
+    let counter = 1;
+    msg += `\n📋 *LISTA PASSEGGERI UFFICIALE:*\n`;
+
+    list.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach(p => {
+                msg += `${counter++}. *${p.name}* (${p.type || 'Adulto'})`;
+                if (p.dob) msg += ` - Nato/a: ${p.dob}`;
+                if (p.origin) msg += ` - da ${p.origin}`;
+                if (p.notes) msg += ` - _Note: ${p.notes}_`;
+                msg += `\n`;
+            });
+        }
+    });
+
+    if (list[0] && list[0].customerPhone) {
+        msg += `\n👤 Referente: ${list[0].customerName} (${list[0].customerPhone})`;
+    }
+
+    const numAgenzia = prompt("Inserisci il numero WhatsApp dell'agenzia/guida con prefisso (oppure lascia vuoto per inviare su WhatsApp Web):", "");
+    const cleanNum = numAgenzia ? numAgenzia.replace(/[^0-9]/g, '') : '';
+
+    if (cleanNum) {
+        window.open(`https://wa.me/${cleanNum}?text=${encodeURIComponent(msg)}`, '_blank');
+    } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+}
+
+// Invia lista via Email all'Agenzia
+function inviaListaEmailAgenzia(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) list = list.filter(b => b.tourTitle === titoloTour);
+    if (filtroOrarioSelezionato !== 'TUTTI') list = list.filter(b => b.time === filtroOrarioSelezionato);
+    if (filtroDataSelezionata !== 'TUTTI') list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
+
+    if (list.length === 0) {
+        alert("Nessuna prenotazione presente per i filtri selezionati.");
+        return;
+    }
+
+    let subject = `[Manifest Passeggeri] Tour: ${titoloTour || 'Palermo'}`;
+    if (filtroOrarioSelezionato !== 'TUTTI') subject += ` - Ore ${filtroOrarioSelezionato}`;
+
+    let body = `SICILY PALERMO TOUR - MANIFEST PASSEGGERI UFFICIALE\n`;
+    body += `Tour: ${titoloTour || 'Palermo Tour'}\n`;
+    if (filtroOrarioSelezionato !== 'TUTTI') body += `Orario: ${filtroOrarioSelezionato}\n`;
+    if (filtroDataSelezionata !== 'TUTTI') body += `Data: ${filtroDataSelezionata}\n\n`;
+
+    let counter = 1;
+    body += `LISTA PASSEGGERI:\n`;
+    list.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach(p => {
+                body += `${counter++}. ${p.name} (${p.type || 'Adulto'}) - Nato/a il ${p.dob || 'N/D'} da ${p.origin || 'N/D'}\n`;
+                if (p.notes) body += `   Note: ${p.notes}\n`;
+            });
+        }
+    });
+
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+}
+
 // Esporta CSV di un singolo Tour ed eventualmente singolo Orario
 function esportaRegistroExcelCSVParticolare(titoloTour) {
     let list = getPrenotazioniAdmin();
@@ -550,7 +634,7 @@ function esportaListaCSV(bookingsList, filenamePrefix) {
     document.body.removeChild(link);
 }
 
-// Stampa Registro Guida di un Tour per Orario
+// Stampa Registro Guida o Salva in PDF di un Tour per Orario
 function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) {
@@ -608,7 +692,7 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
         </head>
         <body>
             <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
-            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> ${infoOrario} | Documento Guida del ${new Date().toLocaleString('it-IT')}</p>
+            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> ${infoOrario} | Documento Guida / PDF del ${new Date().toLocaleString('it-IT')}</p>
             <table>
                 <thead>
                     <tr>
