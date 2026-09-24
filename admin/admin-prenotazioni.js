@@ -208,19 +208,19 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                     </h3>
                 </div>
 
-                <!-- PULSANTI AZIONE: ESPORTAZIONE, STAMPA E INVIO AGENZIA -->
+                <!-- PULSANTI AZIONE: ESPORTAZIONE EXCEL, CONDIVISIONE WHATSAPP, STAMPA PDF -->
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button type="button" class="btn-secondary btn-small" style="background:#25d366; color:#ffffff; font-weight:bold;" onclick="inviaListaWhatsAppAgenzia('${escapeHtmlBooking(titoloTour)}')">
-                        💬 Invia ad Agenzia via WhatsApp
+                    <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff; font-weight:bold;" onclick="esportaRegistroExcelCSVParticolare('${escapeHtmlBooking(titoloTour)}')">
+                        📊 Scarica Excel (.CSV)
+                    </button>
+                    <button type="button" class="btn-secondary btn-small" style="background:#25d366; color:#ffffff; font-weight:bold;" onclick="condividiFileExcelWhatsApp('${escapeHtmlBooking(titoloTour)}')">
+                        📲 Condividi File Excel / WhatsApp
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff; font-weight:bold;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        📄 Salva PDF / Stampa Manifest
-                    </button>
-                    <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSVParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        📥 Esporta CSV (${filtroOrarioSelezionato})
+                        📄 Salva PDF / Stampa
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#6366f1; color:#ffffff;" onclick="inviaListaEmailAgenzia('${escapeHtmlBooking(titoloTour)}')">
-                        📧 Invia via Email
+                        📧 Invia Email
                     </button>
                 </div>
             </div>
@@ -493,50 +493,131 @@ function renderSchedePrenotazioni(bookingsList) {
     }).join('');
 }
 
-// Invia lista via WhatsApp all'Agenzia o alla Guida
-function inviaListaWhatsAppAgenzia(titoloTour) {
+// CONDIVISIONE DIRETTA FILE EXCEL SU WHATSAPP O WEB SHARE
+function condividiFileExcelWhatsApp(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) list = list.filter(b => b.tourTitle === titoloTour);
     if (filtroOrarioSelezionato !== 'TUTTI') list = list.filter(b => b.time === filtroOrarioSelezionato);
     if (filtroDataSelezionata !== 'TUTTI') list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
 
     if (list.length === 0) {
-        alert("Nessuna prenotazione presente per i filtri selezionati.");
+        alert("Nessuna prenotazione presente per l'orario ed il tour selezionato.");
         return;
     }
 
-    let msg = `🏛️ *SICILY PALERMO TOUR - MANIFEST PASSEGGERI*\n`;
-    msg += `📍 Tour: *${titoloTour || 'Palermo Tour'}*\n`;
-    if (filtroOrarioSelezionato !== 'TUTTI') msg += `⏰ Orario: *${filtroOrarioSelezionato}*\n`;
-    if (filtroDataSelezionata !== 'TUTTI') msg += `📅 Data: *${filtroDataSelezionata}*\n`;
+    // 1. Genera il file CSV Excel con formato professionale
+    const csvContent = generaStringaCSVExcel(list);
+    const fileName = `Manifest_Passeggeri_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tour'}.csv`;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    // Se il browser supporta la condivisione diretta di File (es. Smartphone o Edge/Chrome)
+    if (navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'text/csv' })] })) {
+        const fileObj = new File([blob], fileName, { type: 'text/csv' });
+        navigator.share({
+            title: `Manifest Passeggeri - ${titoloTour || 'Sicily Palermo Tour'}`,
+            text: `Ecco il file Excel con la lista passeggeri per il tour ${titoloTour || ''} ${filtroOrarioSelezionato !== 'TUTTI' ? 'delle ore ' + filtroOrarioSelezionato : ''}`,
+            files: [fileObj]
+        }).catch(err => {
+            console.log("Condivisione annullata o non completata:", err);
+        });
+    } else {
+        // Fallback: Scarica automaticamente il file CSV ed apre WhatsApp Web con il messaggio pronto
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        let msg = `🏛️ *SICILY PALERMO TOUR - MANIFEST PASSEGGERI*\n`;
+        msg += `📍 Tour: *${titoloTour || 'Palermo Tour'}*\n`;
+        if (filtroOrarioSelezionato !== 'TUTTI') msg += `⏰ Orario: *${filtroOrarioSelezionato}*\n`;
+        if (filtroDataSelezionata !== 'TUTTI') msg += `📅 Data: *${filtroDataSelezionata}*\n\n`;
+
+        let counter = 1;
+        msg += `📋 *LISTA PASSEGGERI:*\n`;
+        list.forEach(b => {
+            if (b.participantsList && b.participantsList.length > 0) {
+                b.participantsList.forEach(p => {
+                    msg += `${counter++}. *${p.name}* (${p.type || 'Adulto'}) - Nato/a: ${p.dob || 'N/D'} (da ${p.origin || 'N/D'})\n`;
+                });
+            }
+        });
+
+        msg += `\n📥 *Allegato:* Ho appena scaricato il file Excel *${fileName}*, te lo trascino qui in chat!`;
+
+        alert(`📥 File Excel "${fileName}" scaricato sul tuo dispositivo!\n\nOra si aprirà WhatsApp: trascina semplicemente il file scaricato nella chat dell'agenzia.`);
+
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+}
+
+// Genera la stringa CSV Excel formattata in modo pulito e professionale
+function generaStringaCSVExcel(bookingsList) {
+    let csv = "\uFEFF"; // UTF-8 BOM per garantire che Microsoft Excel apra il file con accenti e colonne perfette
+    csv += "N°;PASSEGGERO (NOME E COGNOME);RUOLO / TIPO;DATA DI NASCITA;PROVENIENZA;ITINERARIO TOUR;DATA TOUR;ORARIO TOUR;NOTE PASSEGGERO;REFERENTE PRENOTAZIONE;TELEFONO REFERENTE;EMAIL REFERENTE;CODICE BOOKING;STATO PRENOTAZIONE\n";
 
     let counter = 1;
-    msg += `\n📋 *LISTA PASSEGGERI UFFICIALE:*\n`;
-
-    list.forEach(b => {
+    bookingsList.forEach(b => {
         if (b.participantsList && b.participantsList.length > 0) {
             b.participantsList.forEach(p => {
-                msg += `${counter++}. *${p.name}* (${p.type || 'Adulto'})`;
-                if (p.dob) msg += ` - Nato/a: ${p.dob}`;
-                if (p.origin) msg += ` - da ${p.origin}`;
-                if (p.notes) msg += ` - _Note: ${p.notes}_`;
-                msg += `\n`;
+                const row = [
+                    counter++,
+                    `"${(p.name || '').replace(/"/g, '""')}"`,
+                    `"${(p.type || '').replace(/"/g, '""')}"`,
+                    `"${(p.dob || '').replace(/"/g, '""')}"`,
+                    `"${(p.origin || '').replace(/"/g, '""')}"`,
+                    `"${(b.tourTitle || '').replace(/"/g, '""')}"`,
+                    `"${(b.dateReadable || b.dateISO || '').replace(/"/g, '""')}"`,
+                    `"${(b.time || '').replace(/"/g, '""')}"`,
+                    `"${(p.notes || '').replace(/"/g, '""')}"`,
+                    `"${(b.customerName || '').replace(/"/g, '""')}"`,
+                    `"${(b.customerPhone || '').replace(/"/g, '""')}"`,
+                    `"${(b.customerEmail || '').replace(/"/g, '""')}"`,
+                    `"${(b.code || '').replace(/"/g, '""')}"`,
+                    `"${(b.status || 'In attesa').replace(/"/g, '""')}"`
+                ];
+                csv += row.join(";") + "\n";
             });
         }
     });
 
-    if (list[0] && list[0].customerPhone) {
-        msg += `\n👤 Referente: ${list[0].customerName} (${list[0].customerPhone})`;
+    return csv;
+}
+
+// Esporta CSV di un singolo Tour ed eventualmente singolo Orario
+function esportaRegistroExcelCSVParticolare(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) {
+        list = list.filter(b => b.tourTitle === titoloTour);
+    }
+    if (filtroOrarioSelezionato !== 'TUTTI') {
+        list = list.filter(b => b.time === filtroOrarioSelezionato);
+    }
+    const suffix = filtroOrarioSelezionato !== 'TUTTI' ? `_Ore_${filtroOrarioSelezionato.replace(':', '_')}` : '';
+    esportaListaCSV(list, `Manifest_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tutti_Tour'}${suffix}`);
+}
+
+function esportaRegistroExcelCSVAll() {
+    esportaListaCSV(getPrenotazioniAdmin(), "Manifest_Tutti_I_Tour_Palermo");
+}
+
+function esportaListaCSV(bookingsList, filenamePrefix) {
+    if (bookingsList.length === 0) {
+        alert("Nessuna prenotazione presente da esportare.");
+        return;
     }
 
-    const numAgenzia = prompt("Inserisci il numero WhatsApp dell'agenzia/guida con prefisso (oppure lascia vuoto per inviare su WhatsApp Web):", "");
-    const cleanNum = numAgenzia ? numAgenzia.replace(/[^0-9]/g, '') : '';
-
-    if (cleanNum) {
-        window.open(`https://wa.me/${cleanNum}?text=${encodeURIComponent(msg)}`, '_blank');
-    } else {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+    const csvContent = generaStringaCSVExcel(bookingsList);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${filenamePrefix}_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Invia lista via Email all'Agenzia
@@ -572,66 +653,6 @@ function inviaListaEmailAgenzia(titoloTour) {
 
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
-}
-
-// Esporta CSV di un singolo Tour ed eventualmente singolo Orario
-function esportaRegistroExcelCSVParticolare(titoloTour) {
-    let list = getPrenotazioniAdmin();
-    if (titoloTour) {
-        list = list.filter(b => b.tourTitle === titoloTour);
-    }
-    if (filtroOrarioSelezionato !== 'TUTTI') {
-        list = list.filter(b => b.time === filtroOrarioSelezionato);
-    }
-    const suffix = filtroOrarioSelezionato !== 'TUTTI' ? `_Ore_${filtroOrarioSelezionato.replace(':', '_')}` : '';
-    esportaListaCSV(list, `Manifest_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tutti_Tour'}${suffix}`);
-}
-
-function esportaRegistroExcelCSVAll() {
-    esportaListaCSV(getPrenotazioniAdmin(), "Manifest_Tutti_I_Tour_Palermo");
-}
-
-function esportaListaCSV(bookingsList, filenamePrefix) {
-    if (bookingsList.length === 0) {
-        alert("Nessuna prenotazione presente da esportare.");
-        return;
-    }
-
-    let csvContent = "\uFEFF";
-    csvContent += "N;Nome Passeggero;Ruolo;Data Nascita;Provenienza;Tour;Data;Orario;Email Referente;Telefono Referente;Note Passeggero;Codice;Stato\n";
-
-    let counter = 1;
-    bookingsList.forEach(b => {
-        if (b.participantsList && b.participantsList.length > 0) {
-            b.participantsList.forEach(p => {
-                const row = [
-                    counter++,
-                    `"${(p.name || '').replace(/"/g, '""')}"`,
-                    `"${(p.type || '').replace(/"/g, '""')}"`,
-                    `"${(p.dob || '').replace(/"/g, '""')}"`,
-                    `"${(p.origin || '').replace(/"/g, '""')}"`,
-                    `"${(b.tourTitle || '').replace(/"/g, '""')}"`,
-                    `"${(b.dateReadable || b.dateISO || '').replace(/"/g, '""')}"`,
-                    `"${(b.time || '').replace(/"/g, '""')}"`,
-                    `"${(b.customerEmail || '').replace(/"/g, '""')}"`,
-                    `"${(b.customerPhone || '').replace(/"/g, '""')}"`,
-                    `"${(p.notes || '').replace(/"/g, '""')}"`,
-                    `"${(b.code || '').replace(/"/g, '""')}"`,
-                    `"${(b.status || 'In attesa').replace(/"/g, '""')}"`
-                ];
-                csvContent += row.join(";") + "\n";
-            });
-        }
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `${filenamePrefix}_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 // Stampa Registro Guida o Salva in PDF di un Tour per Orario
