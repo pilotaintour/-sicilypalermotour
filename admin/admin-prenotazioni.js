@@ -360,64 +360,52 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
     const infoOrarioTitolo = (filtroOrarioSelezionato !== 'TUTTI') ? ` - Ore ${filtroOrarioSelezionato}` : '';
 
     return `
-        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-            <div style="background: #ffffff; padding: 16px 20px; border-bottom: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div style="background: #ffffff; border: 1.5px solid #000000; border-radius: 8px; padding: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-top: 10px;">
+            <div style="border-bottom: 2px solid #000000; padding-bottom: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
                 <div>
-                    <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem; font-weight: 800;">
+                    <h3 style="color: #0b2545; margin: 0; font-size: 1.4rem; font-weight: 800;">
                         🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri
                     </h3>
-                    <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">
-                        Tour: <strong>${escapeHtmlBooking(titoloTour || 'Palermo Tour')}</strong>${infoOrarioTitolo} | Documento Guida / PDF del ${new Date().toLocaleDateString('it-IT')}
+                    <p style="color: #475569; font-size: 0.9rem; margin: 4px 0 0 0;">
+                        Tour: <strong>${escapeHtmlBooking(titoloTour || 'Palermo Tour')}</strong>${infoOrarioTitolo} | Documento Guida del ${new Date().toLocaleDateString('it-IT')}
                     </p>
                 </div>
-                <span style="font-size: 0.85rem; font-weight: bold; background: #e0f2fe; color: #0369a1; padding: 6px 14px; border-radius: 20px;">
+                <span style="font-size: 0.88rem; font-weight: bold; background: #f1f5f9; color: #0b2545; padding: 6px 14px; border-radius: 12px; border: 1px solid #cbd5e1;">
                     Totale ${righePasseggeri.length} Passeggeri
                 </span>
             </div>
 
-            <div style="max-height: 540px; overflow-x: auto; overflow-y: auto;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+            <div style="max-height: 560px; overflow-x: auto; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; background: #ffffff;">
                     <thead>
-                        <tr style="background: #ffffff; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
-                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; width: 50px;">Check</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; width: 35px;">#</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;">Passeggero</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Tipo</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Data Nascita</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Provenienza</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Tour</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Data & Ora</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Telefono / Email</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Note</th>
-                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center;">Stato</th>
+                        <tr style="background: #ffffff; color: #000000; font-weight: 800; border-bottom: 2px solid #000000; position: sticky; top: 0; z-index: 10;">
+                            <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 48px; background: #ffffff;">Check</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 32px; background: #ffffff;">#</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Passeggero</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Tipo</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Data Nascita</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Provenienza</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Tour</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Data & Ora</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Telefono</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Note</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${righePasseggeri.map((r, i) => {
-                            const isConfermata = r.status === 'Confermata';
-                            const isCancellata = r.status === 'Cancellata';
-                            const statusBg = isConfermata ? '#d1fae5; color:#065f46;' : (isCancellata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
-
-                            return `
-                                <tr style="background: #ffffff; border-bottom: 1px solid #cbd5e1;">
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; color: #64748b; font-family: monospace;">[ &nbsp; ]</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: #1e293b;">${r.rowNum}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 800; color: #0f172a; background: #ffffff;">${escapeHtmlBooking(r.passengerName)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #475569;">${escapeHtmlBooking(r.passengerType)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; color: #1e293b; font-weight: 500;">${escapeHtmlBooking(r.passengerDob)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; color: #1e293b;">${escapeHtmlBooking(r.passengerOrigin)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; color: #334155; font-size: 0.82rem;">${escapeHtmlBooking(r.dateStr)}<br><strong>Ore ${escapeHtmlBooking(r.timeStr)}</strong></td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #475569;">📞 ${escapeHtmlBooking(r.leadPhone)}<br>📧 ${escapeHtmlBooking(r.leadEmail)}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
-                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center;">
-                                        <span style="font-weight: bold; font-size: 0.78rem; padding: 3px 8px; border-radius: 10px; background: ${statusBg}; cursor: pointer;" onclick="cambiaStatoPrenotazione('${r.bookingId}', '${r.status === 'Confermata' ? 'In attesa' : 'Confermata'}')" title="Clicca per cambiare stato">
-                                            ${escapeHtmlBooking(r.status)}
-                                        </span>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('')}
+                        ${righePasseggeri.map((r) => `
+                            <tr style="background: #ffffff; border-bottom: 1px solid #cbd5e1;">
+                                <td style="padding: 10px 8px; border: 1px solid #000000; text-align: center; color: #1e293b; font-family: monospace; font-size: 0.95rem;">[ &nbsp; ]</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; text-align: center; font-weight: bold; color: #1e293b;">${r.rowNum}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 800; color: #000000;">${escapeHtmlBooking(r.passengerName)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #334155;">${escapeHtmlBooking(r.passengerType)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; color: #1e293b; font-weight: 600;">${escapeHtmlBooking(r.passengerDob)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; color: #1e293b;">${escapeHtmlBooking(r.passengerOrigin)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 600; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 600; color: #334155; font-size: 0.83rem;">${escapeHtmlBooking(r.dateStr)}<br><strong>Ore ${escapeHtmlBooking(r.timeStr)}</strong></td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #334155;">${escapeHtmlBooking(r.leadPhone)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #475569;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
+                            </tr>
+                        `).join('')}
                     </tbody>
                 </table>
             </div>
