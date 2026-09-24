@@ -428,7 +428,6 @@ function logout() {
 
 // Riconoscimento automatico immediato per pilotaintour13@gmail.com
 function verificaStatoAutenticazione() {
-    // Inserisce ed imposta l'email riconosciuta per l'accesso diretto
     if (!localStorage.getItem('spt_admin_email')) {
         localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL);
     }
@@ -452,13 +451,9 @@ function verificaStatoAutenticazione() {
             welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL}`;
         }
         caricaElencoItinerari();
-        caricaPrenotazioniAdmin();
-    } else {
-        if (loginSection) loginSection.classList.remove('hidden');
-        if (dashboardSection) dashboardSection.classList.add('hidden');
-        if (userControls) userControls.classList.add('hidden');
-    }
-}
+        if (typeof caricaPrenotazioniAdmin === 'function') {
+            caricaPrenotazioniAdmin();
+        }
     } else {
         if (loginSection) loginSection.classList.remove('hidden');
         if (dashboardSection) dashboardSection.classList.add('hidden');

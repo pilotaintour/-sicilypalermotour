@@ -11,8 +11,7 @@ class AdminPrenotazioniManager {
         this.ricercaTesto = '';
     }
 
-    get
-    Prenotazioni() {
+    getPrenotazioni() {
         try {
             return JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
         } catch (e) {
@@ -31,8 +30,7 @@ class AdminPrenotazioniManager {
 
         if (!listContainer) return;
 
-        let bookings = this.get
-        Prenotazioni();
+        let bookings = this.getPrenotazioni();
 
         if (badgeCount) badgeCount.textContent = bookings.length;
 
@@ -158,8 +156,7 @@ class AdminPrenotazioniManager {
     }
 
     cambiaStato(id, nuovoStato) {
-        let list = this.get
-        Prenotazioni();
+        let list = this.getPrenotazioni();
         list = list.map(b => {
             if (String(b.id) === String(id)) {
                 b.status = nuovoStato;
@@ -172,8 +169,7 @@ class AdminPrenotazioniManager {
 
     elimina(id) {
         if (!confirm('Sei sicuro di voler eliminare definitivamente questa prenotazione?')) return;
-        let list = this.get
-        Prenotazioni();
+        let list = this.getPrenotazioni();
         list = list.filter(b => String(b.id) !== String(id));
         this.savePrenotazioni(list);
         this.render();
