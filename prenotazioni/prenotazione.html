@@ -14,17 +14,23 @@
 </head>
 <body>
 
-    <!-- Header e Navigazione -->
+    <!-- Header e Navigazione con Selettore Multilingua -->
     <header>
-        <h1>Sicily Palermo Tour</h1>
-        <p>Prenotazione Guidata Tour e Itinerari</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; padding: 0 10px; flex-wrap: wrap; gap: 10px;">
+            <div style="text-align: left;">
+                <h1 style="margin: 0;">Sicily Palermo Tour</h1>
+                <p style="margin: 4px 0 0 0;">Prenotazione Guidata Tour e Itinerari</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">
+                <div id="google_translate_element"></div>
+            </div>
+        </div>
     </header>
 
     <nav>
         <ul>
             <li><a href="../index.html">← Torna agli Itinerari</a></li>
             <li><a href="../index.html#contatti">Contatti</a></li>
-            <li style="margin-left: auto; padding-right: 15px;"><div id="google_translate_element"></div></li>
         </ul>
     </nav>
 

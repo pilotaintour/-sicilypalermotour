@@ -13,8 +13,15 @@
 
     <!-- Copertina Principale (Hero Section) con ID Home -->
     <header id="home">
-        <h1>Sicily Palermo Tour</h1>
-        <p>Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 0 15px; flex-wrap: wrap; gap: 10px;">
+            <div style="text-align: left;">
+                <h1 style="margin: 0;">Sicily Palermo Tour</h1>
+                <p style="margin: 6px 0 0 0;">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">
+                <div id="google_translate_element"></div>
+            </div>
+        </div>
     </header>
 
     <!-- Barra di Navigazione -->
@@ -24,7 +31,6 @@
             <li><a href="#itinerari">Itinerari</a></li>
             <li><a href="#contatti">Contatti</a></li>
             <li id="nav-admin-slot"></li>
-            <li style="margin-left: auto; padding-right: 15px;"><div id="google_translate_element"></div></li>
         </ul>
     </nav>
 
