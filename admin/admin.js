@@ -67,9 +67,6 @@ function verificaStatoAutenticazione() {
     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
 }
-        if (userControls) userControls.classList.add('hidden');
-    }
-}
 
 // PASSAGGIO TRA SCHEDE (TABS)
 function mostraSezione(sezioneId, btnElement) {
