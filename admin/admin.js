@@ -48,7 +48,15 @@ function logout() {
 }
 
 function verificaStatoAutenticazione() {
-    const savedEmail = (localStorage.getItem('spt_admin_email') || '').toLowerCase();
+    // Inizializza automaticamente l'accesso diretto per pilotaintour13@gmail.com
+    if (!localStorage.getItem('spt_admin_email')) {
+        localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
+    }
+    if (localStorage.getItem(AUTH_KEY_MAIN) !== 'true') {
+        localStorage.setItem(AUTH_KEY_MAIN, 'true');
+    }
+
+    const savedEmail = (localStorage.getItem('spt_admin_email') || AUTHORIZED_EMAIL_MAIN).toLowerCase();
     const isLoggedIn = localStorage.getItem(AUTH_KEY_MAIN) === 'true';
 
     const loginSection = document.getElementById('login-section');
