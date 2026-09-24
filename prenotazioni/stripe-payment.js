@@ -6,8 +6,8 @@
 const STRIPE_PK_KEY = 'spt_stripe_pk';
 const STRIPE_SK_KEY = 'spt_stripe_sk';
 
-// Key di default per i Test (sostituibile nell'Admin)
-const DEFAULT_STRIPE_PK = 'pk_test_51MzN3vL8m9X0y1z2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z';
+// Key ufficiale di Test Stripe dell'Amministratore
+const DEFAULT_STRIPE_PK = 'pk_test_51UJGJt383oZgJlwEDcZkzbdzODlKRxPfanpz31XrWbmJDpmQnCnsA3qPLtCIn8FoR5DlTX2rqnzAmr4UWdo1bo2k00tAdmIYH1';
 
 class StripePaymentManager {
     constructor() {
