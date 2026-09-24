@@ -204,6 +204,13 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                         🏛️ Tour: ${escapeHtmlBooking(titoloTour)}
                     </h3>
                 </div>
+
+                <!-- PULSANTE UNICO PER SCARICARE E SALVARE IL FILE LISTA COMPLETA -->
+                <div>
+                    <button type="button" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); padding: 10px 18px; font-weight: 800; font-size: 0.92rem; border-radius: 10px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);" onclick="scaricaSalvaDocumentoLista('${escapeHtmlBooking(titoloTour)}')">
+                        📥 Scarica / Salva Lista Ufficiale Passeggeri
+                    </button>
+                </div>
             </div>
 
             <!-- PULSANTI INTERATTIVI DI SELEZIONE ORARIO PRENOTATO -->
@@ -460,6 +467,116 @@ function renderSchedePrenotazioni(bookingsList) {
             </div>
         `;
     }).join('');
+}
+
+// SCARICA E SALVA IL DOCUMENTO UFFICIALE APRIBILE E CONDIVISIBILE SU QUALSIASI DISPOSITIVO
+function scaricaSalvaDocumentoLista(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) {
+        list = list.filter(b => b.tourTitle === titoloTour);
+    }
+    if (filtroOrarioSelezionato !== 'TUTTI') {
+        list = list.filter(b => b.time === filtroOrarioSelezionato);
+    }
+    if (filtroDataSelezionata !== 'TUTTI') {
+        list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
+    }
+
+    if (list.length === 0) {
+        alert("Nessun passeggero presente per l'orario e i filtri selezionati.");
+        return;
+    }
+
+    let rowsHtml = '';
+    let counter = 1;
+
+    list.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach(p => {
+                rowsHtml += `
+                    <tr>
+                        <td style="text-align:center;">[ &nbsp; ]</td>
+                        <td style="text-align:center; font-weight:bold;">${counter++}</td>
+                        <td><strong>${escapeHtmlBooking(p.name || 'N/D')}</strong></td>
+                        <td>${escapeHtmlBooking(p.type || 'Adulto')}</td>
+                        <td>${escapeHtmlBooking(p.dob || '-')}</td>
+                        <td>${escapeHtmlBooking(p.origin || '-')}</td>
+                        <td>${escapeHtmlBooking(b.tourTitle || 'Tour Palermo')}</td>
+                        <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || '09:30')}</strong></td>
+                        <td>${escapeHtmlBooking(b.customerPhone || '-')}</td>
+                        <td>${p.notes ? escapeHtmlBooking(p.notes) : '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+    });
+
+    const infoOrario = filtroOrarioSelezionato !== 'TUTTI' ? ` - Ore ${filtroOrarioSelezionato}` : '';
+
+    const htmlDocContent = `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Passeggeri - ${escapeHtmlBooking(titoloTour || 'Sicily Palermo Tour')}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 25px; color: #1e293b; background: #ffffff; margin: 0; }
+        .no-print { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 12px 18px; border-radius: 10px; border: 1px solid #cbd5e1; }
+        .btn-print { background: #0b2545; color: #ffffff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        h1 { color: #0b2545; font-size: 1.4rem; margin: 0 0 6px 0; font-weight: 800; }
+        p { color: #64748b; font-size: 0.9rem; margin: 0 0 20px 0; border-bottom: 2px solid #000000; padding-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: #ffffff; }
+        th, td { border: 1px solid #000000; padding: 10px 8px; text-align: left; }
+        th { background: #ffffff; color: #000000; font-weight: 800; }
+        tr:nth-child(even) { background: #f8fafc; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <span style="font-weight: bold; color: #0b2545;">🏛️ Sicily Palermo Tour - Documento Ufficiale d'Imbarco</span>
+        <button class="btn-print" onclick="window.print()">🖨️ Stampa / Salva in PDF</button>
+    </div>
+
+    <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
+    <p>Tour: <strong>${escapeHtmlBooking(titoloTour || 'Tutti i Tour')}</strong> ${infoOrario} | Documento Guida del ${new Date().toLocaleString('it-IT')}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:center; width: 45px;">Check</th>
+                <th style="text-align:center; width: 30px;">#</th>
+                <th>Passeggero</th>
+                <th>Tipo</th>
+                <th>Data Nascita</th>
+                <th>Provenienza</th>
+                <th>Tour</th>
+                <th>Data & Ora</th>
+                <th>Telefono</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rowsHtml}
+        </tbody>
+    </table>
+</body>
+</html>`;
+
+    const cleanTitle = (titoloTour || 'Tour').replace(/[^a-zA-Z0-9]/g, '_');
+    const cleanTime = (filtroOrarioSelezionato || 'Tutti').replace(':', '_');
+    const fileName = `Lista_Ufficiale_Passeggeri_${cleanTitle}_${cleanTime}.html`;
+
+    const blob = new Blob([htmlDocContent], { type: 'text/html;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    alert(`📄 Documento "${fileName}" scaricato con successo!\n\nPuoi aprirlo, inviarlo su WhatsApp, salvarlo in PDF o mandarlo all'agenzia da qualsiasi dispositivo (Telefono / PC).`);
 }
 
 function setFiltroPrenotazioni(stato) {
