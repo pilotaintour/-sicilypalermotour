@@ -398,8 +398,41 @@ function renderGalleriaAnteprima() {
     `).join('');
 }
 
-// Verifica e attiva la vista Dashboard
+// Login Amministratore (con riconocimento email autorizzata)
+function effettuaLogin(event) {
+    if (event) event.preventDefault();
+    const emailInput = document.getElementById('admin-email');
+    const loginError = document.getElementById('login-error');
+
+    if (!emailInput) return;
+
+    const email = emailInput.value.trim().toLowerCase();
+
+    if (email === AUTHORIZED_EMAIL.toLowerCase()) {
+        localStorage.setItem(AUTH_KEY, 'true');
+        if (loginError) loginError.classList.add('hidden');
+        verificaStatoAutenticazione();
+    } else {
+        if (loginError) {
+            loginError.classList.remove('hidden');
+            loginError.textContent = `Accesso negato: l'email ${email} non è autorizzata.`;
+        }
+    }
+}
+
+// Logout Amministratore
+function logout() {
+    localStorage.removeItem(AUTH_KEY);
+    verificaStatoAutenticazione();
+}
+
+// Verifica e attiva la vista Dashboard (con accesso diretto per l'amministratore)
 function verificaStatoAutenticazione() {
+    // Imposta l'accesso diretto automatico per l'amministratore
+    if (localStorage.getItem(AUTH_KEY) === null) {
+        localStorage.setItem(AUTH_KEY, 'true');
+    }
+
     const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
@@ -416,9 +449,9 @@ function verificaStatoAutenticazione() {
         caricaElencoItinerari();
         caricaPrenotazioniAdmin();
     } else {
-        if (loginSection) loginSection.remove('hidden');
-        if (dashboardSection) dashboardSection.add('hidden');
-        if (userControls) userControls.add('hidden');
+        if (loginSection) loginSection.classList.remove('hidden');
+        if (dashboardSection) dashboardSection.classList.add('hidden');
+        if (userControls) userControls.classList.add('hidden');
     }
 }
 
