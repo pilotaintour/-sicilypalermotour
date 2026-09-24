@@ -8,7 +8,7 @@ class Step2Partecipanti {
         this.onComplete = options.onComplete || null;
         this.onPrev = options.onPrev || null;
 
-        this.numAdulti = 2;
+        this.numAdulti = 1;
         this.numBambini = 0;
         this.maxCap = 15;
         this.timeSlot = '09:30';
@@ -41,7 +41,7 @@ class Step2Partecipanti {
 
                 <div style="display: flex; align-items: center; gap: 14px;">
                     <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center;" id="btn-adulti-minus">-</button>
-                    <span id="step2-cnt-adulti" style="font-weight: 800; font-size: 1.4rem; color: #0b2545; width: 32px; text-align: center;">2</span>
+                    <span id="step2-cnt-adulti" style="font-weight: 800; font-size: 1.4rem; color: #0b2545; width: 32px; text-align: center;">1</span>
                     <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center;" id="btn-adulti-plus">+</button>
                 </div>
             </div>
