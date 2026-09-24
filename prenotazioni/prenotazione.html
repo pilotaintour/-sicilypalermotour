@@ -257,6 +257,10 @@
                 if (activeCard) {
                     activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+
+                if (typeof aggiornaTraduzioneDinamica === 'function') {
+                    aggiornaTraduzioneDinamica();
+                }
             }
 
             tryGoToStep(stepNum) {

@@ -111,6 +111,10 @@ class Step2Partecipanti {
             const el = this.container.querySelector('#step2-cnt-bambini');
             if (el) el.textContent = this.numBambini;
         }
+
+        if (typeof aggiornaTraduzioneDinamica === 'function') {
+            aggiornaTraduzioneDinamica();
+        }
     }
 
     validaEProsegui() {
