@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof caricaNumeroWhatsApp === 'function') caricaNumeroWhatsApp();
     if (typeof renderCampiTappe === 'function') renderCampiTappe();
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
+    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
+    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
 });
 
 // LOGIN E AUTENTICAZIONE RISERVATA A PILOTAINTOR13@GMAIL.COM
