@@ -24,6 +24,7 @@
         <ul>
             <li><a href="../index.html">← Torna agli Itinerari</a></li>
             <li><a href="../index.html#contatti">Contatti</a></li>
+            <li style="margin-left: auto; padding-right: 15px;"><div id="google_translate_element"></div></li>
         </ul>
     </nav>
 
@@ -286,6 +287,8 @@
             }
         }
 
+    <script src="../translate/translator.js"></script>
+    <script>
         let wizardManager = null;
         document.addEventListener('DOMContentLoaded', () => {
             wizardManager = new BookingWizardManager();
