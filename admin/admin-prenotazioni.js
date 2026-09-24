@@ -1,11 +1,14 @@
 /**
- * MODULO 2: Gestione Prenotazioni Ricevute dai Clienti
+ * MODULO 2: Gestione Prenotazioni Ricevute e Registro Excel Passeggeri
  * Sicily Palermo Tour - Admin
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
 
+let vistaAttualePrenotazioni = 'TABELLA_EXCEL'; // 'SCHEDE' oppure 'TABELLA_EXCEL'
 let filtroStatoPrenotazioni = 'TUTTI';
+let filtroTourSelezionato = 'TUTTI';
+let filtroDataSelezionata = 'TUTTI';
 let ricercaPrenotazioniText = '';
 
 // Recupera le prenotazioni dal localStorage
@@ -24,7 +27,13 @@ function savePrenotazioniAdmin(list) {
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
 }
 
-// Funzione principale che carica e renderizza le prenotazioni ricevute dai clienti
+// Cambia la modalità di visualizzazione tra Schede e Foglio Excel
+function impostaVistaPrenotazioni(modo) {
+    vistaAttualePrenotazioni = modo;
+    caricaPrenotazioniAdmin();
+}
+
+// Funzione principale di caricamento e rendering
 function caricaPrenotazioniAdmin() {
     const listContainer = document.getElementById('admin-bookings-list');
     const badgeCount = document.getElementById('cnt-prenotazioni-badge');
@@ -45,46 +54,235 @@ function caricaPrenotazioniAdmin() {
         return;
     }
 
-    let htmlHeader = `
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <span style="font-size: 0.85rem; font-weight: bold; color: #1b4f72;">Filtra per Stato:</span>
-                <button type="button" class="btn-secondary btn-small" style="${filtroStatoPrenotazioni === 'TUTTI' ? 'background:#1b4f72; color:#fff;' : 'background:#e2e8f0; color:#334155;'}" onclick="setFiltroPrenotazioni('TUTTI')">Tutti (${bookings.length})</button>
-                <button type="button" class="btn-secondary btn-small" style="${filtroStatoPrenotazioni === 'In attesa' ? 'background:#f59e0b; color:#fff;' : 'background:#e2e8f0; color:#334155;'}" onclick="setFiltroPrenotazioni('In attesa')">In Attesa</button>
-                <button type="button" class="btn-secondary btn-small" style="${filtroStatoPrenotazioni === 'Confermata' ? 'background:#10b981; color:#fff;' : 'background:#e2e8f0; color:#334155;'}" onclick="setFiltroPrenotazioni('Confermata')">Confermate</button>
-                <button type="button" class="btn-secondary btn-small" style="${filtroStatoPrenotazioni === 'Cancellata' ? 'background:#ef4444; color:#fff;' : 'background:#e2e8f0; color:#334155;'}" onclick="setFiltroPrenotazioni('Cancellata')">Annullate</button>
+    // Estrai la lista unica dei Tour e delle Date per i filtri a tendina
+    const titoliTourUnici = [...new Set(bookings.map(b => b.tourTitle).filter(Boolean))];
+    const dateUniche = [...new Set(bookings.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
+
+    // Barra Navigazione e Comandi Superiori
+    let htmlBarraComandi = `
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <!-- Selettore Modalità Vista -->
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-primary btn-small" style="${vistaAttualePrenotazioni === 'TABELLA_EXCEL' ? 'background:#0b2545; color:#ffffff;' : 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;'}" onclick="impostaVistaPrenotazioni('TABELLA_EXCEL')">
+                        📊 Registro Excel Passeggeri
+                    </button>
+                    <button type="button" class="btn-primary btn-small" style="${vistaAttualePrenotazioni === 'SCHEDE' ? 'background:#0b2545; color:#ffffff;' : 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">
+                        📋 Schede Singole
+                    </button>
+                </div>
+
+                <!-- Pulsanti di Esportazione ed Azioni Excel -->
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSV()">
+                        📥 Esporta in Excel (.CSV)
+                    </button>
+                    <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff;" onclick="stampaFoglioPresenzeGuida()">
+                        🖨️ Stampa Registro Guida
+                    </button>
+                </div>
             </div>
-            <div>
-                <input type="text" id="admin-search-booking" placeholder="🔎 Cerca per Nome, Email o Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; width: 220px;">
+
+            <!-- Filtri Aggiuntivi: Tour, Data, Stato e Ricerca -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <!-- Filtro Itinerario -->
+                    <div>
+                        <select onchange="filtroTourSelezionato = this.value; caricaPrenotazioniAdmin();" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
+                            <option value="TUTTI">🏛️ Tutti gli Itinerari (${titoliTourUnici.length})</option>
+                            ${titoliTourUnici.map(t => `<option value="${escapeHtmlBooking(t)}" ${filtroTourSelezionato === t ? 'selected' : ''}>${escapeHtmlBooking(t)}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Data -->
+                    <div>
+                        <select onchange="filtroDataSelezionata = this.value; caricaPrenotazioniAdmin();" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
+                            <option value="TUTTI">📅 Tutte le Date</option>
+                            ${dateUniche.map(d => `<option value="${escapeHtmlBooking(d)}" ${filtroDataSelezionata === d ? 'selected' : ''}>${escapeHtmlBooking(d)}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Stato -->
+                    <div>
+                        <select onchange="setFiltroPrenotazioni(this.value);" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
+                            <option value="TUTTI" ${filtroStatoPrenotazioni === 'TUTTI' ? 'selected' : ''}>🏷️ Tutti gli Stati</option>
+                            <option value="In attesa" ${filtroStatoPrenotazioni === 'In attesa' ? 'selected' : ''}>In Attesa</option>
+                            <option value="Confermata" ${filtroStatoPrenotazioni === 'Confermata' ? 'selected' : ''}>Confermate</option>
+                            <option value="Cancellata" ${filtroStatoPrenotazioni === 'Cancellata' ? 'selected' : ''}>Annullate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <input type="text" id="admin-search-booking" placeholder="🔎 Cerca Nome, Email, Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 220px;">
+                </div>
             </div>
         </div>
     `;
 
-    let filtrate = bookings.filter(b => {
-        if (filtroStatoPrenotazioni !== 'TUTTI' && b.status !== filtroStatoPrenotazioni) {
-            return false;
-        }
+    // Filtra le prenotazioni in base ai selettori impostati
+    let prenotazioniFiltrate = bookings.filter(b => {
+        if (filtroTourSelezionato !== 'TUTTI' && b.tourTitle !== filtroTourSelezionato) return false;
+
+        const dateStr = b.dateReadable || b.dateISO;
+        if (filtroDataSelezionata !== 'TUTTI' && dateStr !== filtroDataSelezionata) return false;
+
+        if (filtroStatoPrenotazioni !== 'TUTTI' && b.status !== filtroStatoPrenotazioni) return false;
+
         if (ricercaPrenotazioniText) {
             const term = ricercaPrenotazioniText.toLowerCase();
             const matchCode = (b.code || '').toLowerCase().includes(term);
             const matchName = (b.customerName || '').toLowerCase().includes(term);
             const matchEmail = (b.customerEmail || '').toLowerCase().includes(term);
             const matchTour = (b.tourTitle || '').toLowerCase().includes(term);
-            return matchCode || matchName || matchEmail || matchTour;
+
+            // Cerca anche all'interno dei nomi dei passeggeri
+            const matchPasseggero = b.participantsList && b.participantsList.some(p => (p.name || '').toLowerCase().includes(term) || (p.origin || '').toLowerCase().includes(term));
+
+            return matchCode || matchName || matchEmail || matchTour || matchPasseggero;
         }
         return true;
     });
 
-    if (filtrate.length === 0) {
-        listContainer.innerHTML = htmlHeader + `
+    if (vistaAttualePrenotazioni === 'TABELLA_EXCEL') {
+        listContainer.innerHTML = htmlBarraComandi + renderRegistroExcelPasseggeri(prenotazioniFiltrate);
+    } else {
+        listContainer.innerHTML = htmlBarraComandi + renderSchedePrenotazioni(prenotazioniFiltrate);
+    }
+}
+
+// Genera la vista Tabella stile Foglio Excel
+function renderRegistroExcelPasseggeri(bookingsList) {
+    if (bookingsList.length === 0) {
+        return `
+            <div style="text-align: center; padding: 30px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <p>Nessun passeggero trovato per i filtri correnti.</p>
+            </div>
+        `;
+    }
+
+    // Ricostruiamo la lista piatta di CIASCUN passeggero con i suoi dati associati
+    const righePasseggeri = [];
+    let counter = 1;
+
+    bookingsList.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach((p, idxP) => {
+                righePasseggeri.push({
+                    rowNum: counter++,
+                    bookingId: b.id,
+                    code: b.code || '#SPT-BOOK',
+                    tourTitle: b.tourTitle || 'Tour Palermo',
+                    dateStr: b.dateReadable || b.dateISO || 'N/D',
+                    timeStr: b.time || '09:30',
+                    passengerName: p.name || 'N/D',
+                    passengerType: p.type || (idxP === 0 ? 'Referente' : 'Adulto'),
+                    passengerDob: p.dob || 'N/D',
+                    passengerOrigin: p.origin || 'N/D',
+                    passengerNotes: p.notes || '',
+                    leadEmail: b.customerEmail || 'N/D',
+                    leadPhone: b.customerPhone || 'N/D',
+                    status: b.status || 'In attesa'
+                });
+            });
+        } else {
+            // Fallback se la prenotazione non ha lista di passeggeri
+            righePasseggeri.push({
+                rowNum: counter++,
+                bookingId: b.id,
+                code: b.code || '#SPT-BOOK',
+                tourTitle: b.tourTitle || 'Tour Palermo',
+                dateStr: b.dateReadable || b.dateISO || 'N/D',
+                timeStr: b.time || '09:30',
+                passengerName: b.customerName || 'N/D',
+                passengerType: 'Referente',
+                passengerDob: 'N/D',
+                passengerOrigin: 'N/D',
+                passengerNotes: b.notes || '',
+                leadEmail: b.customerEmail || 'N/D',
+                leadPhone: b.customerPhone || 'N/D',
+                status: b.status || 'In attesa'
+            });
+        }
+    });
+
+    return `
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+            <div style="background: #0b2545; color: #ffffff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <span style="font-weight: 800; font-size: 0.98rem; letter-spacing: 0.3px;">
+                    📊 Registro Passeggeri Ufficiale - Totale ${righePasseggeri.length} Presenze
+                </span>
+                <span style="font-size: 0.82rem; opacity: 0.9;">Ordinati per Itinerario, Data ed Ora</span>
+            </div>
+
+            <div style="max-height: 520px; overflow-x: auto; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+                    <thead>
+                        <tr style="background: #f1f5f9; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; text-align: center; width: 40px;">#</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Codice</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Itinerario Tour</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data & Ora</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; background: #e0f2fe;">Passeggero (Nome e Cognome)</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ruolo</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data Nascita</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Provenienza</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Contatti (Email / Tel)</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Note Passeggero</th>
+                            <th style="padding: 12px 10px; text-align: center;">Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${righePasseggeri.map((r, i) => {
+                            const isConfermata = r.status === 'Confermata';
+                            const isCancellata = r.status === 'Cancellata';
+                            const statusBg = isConfermata ? '#d1fae5; color:#065f46;' : (isCancellata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
+                            const rowBg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+
+                            return `
+                                <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0; transition: background 0.15s ease;">
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #64748b;">${r.rowNum}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 700; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 600; color: #334155;">${escapeHtmlBooking(r.dateStr)} - ⏰ ${escapeHtmlBooking(r.timeStr)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; background: rgba(224, 242, 254, 0.25);">${escapeHtmlBooking(r.passengerName)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0;">
+                                        <span style="font-size: 0.78rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: ${r.passengerType.includes('Referente') ? '#fef3c7; color:#92400e;' : (r.passengerType.includes('Bambino') ? '#ffedd5; color:#c2410c;' : '#f1f5f9; color:#334155;')};">
+                                            ${escapeHtmlBooking(r.passengerType)}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155;">${escapeHtmlBooking(r.passengerDob)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155;">${escapeHtmlBooking(r.passengerOrigin)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #475569;">
+                                        📧 ${escapeHtmlBooking(r.leadEmail)}<br>📞 ${escapeHtmlBooking(r.leadPhone)}
+                                    </td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
+                                    <td style="padding: 10px; text-align: center;">
+                                        <span style="font-weight: bold; font-size: 0.78rem; padding: 3px 8px; border-radius: 10px; background: ${statusBg}; cursor: pointer;" onclick="cambiaStatoPrenotazione('${r.bookingId}', '${r.status === 'Confermata' ? 'In attesa' : 'Confermata'}')" title="Clicca per cambiare stato">
+                                            ${escapeHtmlBooking(r.status)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// Genera la vista Schede Singole
+function renderSchedePrenotazioni(bookingsList) {
+    if (bookingsList.length === 0) {
+        return `
             <div style="text-align: center; padding: 30px; color: #64748b;">
                 <p>Nessuna prenotazione corrisponde ai filtri selezionati.</p>
             </div>
         `;
-        return;
     }
 
-    let htmlList = filtrate.map((b) => {
+    return bookingsList.map((b) => {
         const isConfermata = b.status === 'Confermata';
         const isCancellata = b.status === 'Cancellata';
         const borderColor = isConfermata ? '#10b981' : (isCancellata ? '#ef4444' : '#1b4f72');
@@ -140,8 +338,127 @@ function caricaPrenotazioniAdmin() {
             </div>
         `;
     }).join('');
+}
 
-    listContainer.innerHTML = htmlHeader + htmlList;
+// Genera e scarica un vero file CSV apribile direttamente su Microsoft Excel
+function esportaRegistroExcelCSV() {
+    const bookingsList = getPrenotazioniAdmin();
+    if (bookingsList.length === 0) {
+        alert("Nessuna prenotazione presente da esportare.");
+        return;
+    }
+
+    let csvContent = "\uFEFF"; // UTF-8 BOM per garantire accenti corretti in Excel
+    csvContent += "N;Codice;Tour;Data;Orario;Nome Passeggero;Tipo;Data Nascita;Provenienza;Email Referente;Telefono Referente;Note Passeggero;Stato\n";
+
+    let counter = 1;
+    bookingsList.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach(p => {
+                const row = [
+                    counter++,
+                    `"${(b.code || '').replace(/"/g, '""')}"`,
+                    `"${(b.tourTitle || '').replace(/"/g, '""')}"`,
+                    `"${(b.dateReadable || b.dateISO || '').replace(/"/g, '""')}"`,
+                    `"${(b.time || '').replace(/"/g, '""')}"`,
+                    `"${(p.name || '').replace(/"/g, '""')}"`,
+                    `"${(p.type || '').replace(/"/g, '""')}"`,
+                    `"${(p.dob || '').replace(/"/g, '""')}"`,
+                    `"${(p.origin || '').replace(/"/g, '""')}"`,
+                    `"${(b.customerEmail || '').replace(/"/g, '""')}"`,
+                    `"${(b.customerPhone || '').replace(/"/g, '""')}"`,
+                    `"${(p.notes || '').replace(/"/g, '""')}"`,
+                    `"${(b.status || 'In attesa').replace(/"/g, '""')}"`
+                ];
+                csvContent += row.join(";") + "\n";
+            });
+        }
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Manifest_Passeggeri_SicilyPalermoTour_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Genera una finestra di stampa pulita pronta per la guida turistica
+function stampaFoglioPresenzeGuida() {
+    const bookingsList = getPrenotazioniAdmin();
+    if (bookingsList.length === 0) {
+        alert("Nessuna prenotazione presente da stampare.");
+        return;
+    }
+
+    const printWin = window.open('', '_blank');
+    let rowsHtml = '';
+    let counter = 1;
+
+    bookingsList.forEach(b => {
+        if (b.participantsList && b.participantsList.length > 0) {
+            b.participantsList.forEach(p => {
+                rowsHtml += `
+                    <tr>
+                        <td style="text-align:center;">[ &nbsp; ]</td>
+                        <td>${counter++}</td>
+                        <td><strong>${p.name || 'N/D'}</strong></td>
+                        <td>${p.type || 'Adulto'}</td>
+                        <td>${p.dob || '-'}</td>
+                        <td>${p.origin || '-'}</td>
+                        <td>${b.tourTitle || 'Tour Palermo'}</td>
+                        <td>${b.dateReadable || b.dateISO} - ${b.time || '09:30'}</td>
+                        <td>${b.customerPhone || '-'}</td>
+                        <td>${p.notes || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+    });
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Registro Presenze Guida - Sicily Palermo Tour</title>
+            <style>
+                body { font-family: sans-serif; padding: 20px; color: #1e293b; }
+                h1 { color: #0b2545; font-size: 1.5rem; margin-bottom: 5px; }
+                p { color: #64748b; font-size: 0.9rem; margin-top: 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.88rem; }
+                th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+                th { background: #f1f5f9; color: #0b2545; }
+            </style>
+        </head>
+        <body>
+            <h1>🏛️ Sicily Palermo Tour - Registro Passeggeri Guida</h1>
+            <p>Data di Generazione: ${new Date().toLocaleString('it-IT')} | Documento Ufficiale d'Imbarco Tour</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>#</th>
+                        <th>Passeggero</th>
+                        <th>Tipo</th>
+                        <th>Data Nascita</th>
+                        <th>Provenienza</th>
+                        <th>Tour</th>
+                        <th>Data & Ora</th>
+                        <th>Telefono</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+            <script>window.onload = function() { window.print(); };</script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
 }
 
 function setFiltroPrenotazioni(stato) {
