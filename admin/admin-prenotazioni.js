@@ -28,35 +28,6 @@ function savePrenotazioniAdmin(list) {
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
 }
 
-// Genera una prenotazione di prova 1-click per testare il sistema
-function aggiungiPrenotazioneDemoProva() {
-    let list = getPrenotazioniAdmin();
-    const demoBooking = {
-        id: Date.now().toString(),
-        code: '#SPT-' + Math.floor(1000 + Math.random() * 9000),
-        tourTitle: 'Palermo Arabo-Normanna',
-        dateISO: new Date().toISOString().slice(0, 10),
-        dateReadable: new Date().toLocaleDateString('it-IT'),
-        slotTime: '09:30',
-        time: '09:30',
-        adults: 2,
-        children: 0,
-        customerName: 'Mario Rossi',
-        customerEmail: 'mario@example.com',
-        customerPhone: '+39 340 1234567',
-        notes: 'Prima volta a Palermo, desideriamo la guida in italiano.',
-        total: '50.00',
-        status: 'In attesa',
-        participantsList: [
-            { number: 1, name: 'Mario Rossi', dob: '12/04/1985', origin: 'Milano', notes: 'Capogruppo', type: 'Referente Principale' },
-            { number: 2, name: 'Laura Bianchi', dob: '05/08/1988', origin: 'Roma', notes: '', type: 'Adulto' }
-        ]
-    };
-    list.unshift(demoBooking);
-    savePrenotazioniAdmin(list);
-    caricaPrenotazioniAdmin();
-}
-
 // Apre la cartella prenotazioni di un determinato itinerario
 function apriCartellaTour(titoloTour) {
     tourSelezionatoCartella = titoloTour;
@@ -92,12 +63,9 @@ function caricaPrenotazioniAdmin() {
 
     if (bookings.length === 0) {
         listContainer.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna prenotazione ricevuta al momento</h3>
-                <p style="font-size: 0.9rem;">Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
-                <button type="button" class="btn-primary btn-small" style="background:#0b2545; margin-top:12px; padding: 10px 18px; font-weight: bold;" onclick="aggiungiPrenotazioneDemoProva()">
-                    🧪 Genera Prenotazione di Prova (1-Click Test)
-                </button>
+            <div style="text-align: center; padding: 40px; color: #64748b;">
+                <h3 style="color: #1b4f72;">📥 Nessuna prenotazione ricevuta al momento</h3>
+                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
             </div>
         `;
         return;
@@ -151,9 +119,6 @@ function renderGrigliaCartelleItinerari(allBookings) {
                 <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
                 <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista passeggeri e filtrare per orario prenotato.</p>
             </div>
-            <button type="button" class="btn-primary btn-small" style="background:#0b2545;" onclick="aggiungiPrenotazioneDemoProva()">
-                🧪 + Aggiungi Prenotazione di Prova
-            </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
@@ -482,7 +447,7 @@ function renderSchedePrenotazioni(bookingsList) {
                             <ol style="margin: 6px 0 0 18px; padding: 0; font-size: 0.88rem; color: #1e293b; line-height: 1.6;">
                                 ${b.participantsList.map(p => `
                                     <li style="margin-bottom: 4px;">
-                                        <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - da ' + p.origin : ''})
+                                        <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + escapeHtmlBooking(p.dob) : (p.age ? escapeHtmlBooking(p.age) + ' anni' : escapeHtmlBooking(p.type))}${p.origin ? ' - da ' + escapeHtmlBooking(p.origin) : ''})
                                         ${p.notes ? `<div style="font-size:0.82rem; color:#64748b; margin-top:2px;">📝 <em>Note: ${escapeHtmlBooking(p.notes)}</em></div>` : ''}
                                     </li>
                                 `).join('')}
