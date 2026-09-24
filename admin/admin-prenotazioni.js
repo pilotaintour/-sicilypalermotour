@@ -481,6 +481,9 @@ function scaricaSalvaDocumentoLista(titoloTour) {
     if (filtroDataSelezionata !== 'TUTTI') {
         list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
     }
+    if (filtroStatoPrenotazioni !== 'TUTTI') {
+        list = list.filter(b => b.status === filtroStatoPrenotazioni);
+    }
 
     if (list.length === 0) {
         alert("Nessun passeggero presente per l'orario e i filtri selezionati.");
