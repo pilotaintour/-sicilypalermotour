@@ -12,18 +12,17 @@
     <header class="admin-header">
         <div class="header-container">
             <h1>🏛️ Sicily Palermo Tour - Admin</h1>
-            <div id="user-controls" class="hidden">
-                <span id="welcome-msg">Benvenuto Admin</span>
+            <div id="user-controls">
+                <span id="welcome-msg">👤 Admin: pilotaintour13@gmail.com</span>
                 <a href="../index.html" class="btn-secondary" target="_blank">👁️ Vedi Sito</a>
-                <button id="logout-btn" class="btn-danger" onclick="logout()">Logout</button>
             </div>
         </div>
     </header>
 
     <main class="container">
 
-        <!-- Schermata di Login Amministratore -->
-        <section id="login-section" class="card login-card">
+        <!-- Schermata di Login Amministratore (Nascosta) -->
+        <section id="login-section" class="card login-card hidden">
             <h2>🔑 Accesso Riservato Amministratore</h2>
             <p>Inserisci la tua email autorizzata per accedere alla gestione del sito e delle prenotazioni.</p>
 
@@ -43,8 +42,8 @@
             </div>
         </section>
 
-        <!-- Pannello Dashboard Amministratore (Visibile solo se autenticato come Amministratore) -->
-        <section id="dashboard-section" class="hidden">
+        <!-- Pannello Dashboard Amministratore (Aperto di default) -->
+        <section id="dashboard-section">
 
             <!-- Navigazione a Schede Admin -->
             <div class="admin-tabs">

@@ -48,36 +48,24 @@ function logout() {
 }
 
 function verificaStatoAutenticazione() {
-    // Inizializza automaticamente l'accesso diretto per pilotaintour13@gmail.com
-    if (!localStorage.getItem('spt_admin_email')) {
-        localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
-    }
-    if (localStorage.getItem(AUTH_KEY_MAIN) !== 'true') {
-        localStorage.setItem(AUTH_KEY_MAIN, 'true');
-    }
-
-    const savedEmail = (localStorage.getItem('spt_admin_email') || AUTHORIZED_EMAIL_MAIN).toLowerCase();
-    const isLoggedIn = localStorage.getItem(AUTH_KEY_MAIN) === 'true';
+    // Registra sempre l'accesso diretto dell'amministratore pilotaintour13@gmail.com
+    localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
+    localStorage.setItem(AUTH_KEY_MAIN, 'true');
 
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const userControls = document.getElementById('user-controls');
     const welcomeMsg = document.getElementById('welcome-msg');
 
-    if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
-        if (loginSection) loginSection.classList.add('hidden');
-        if (dashboardSection) dashboardSection.classList.remove('hidden');
-        if (userControls) userControls.classList.remove('hidden');
-        if (welcomeMsg) {
-            welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL_MAIN}`;
-        }
-        if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
-        if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
-    } else {
-        if (loginSection) loginSection.classList.remove('hidden');
-        if (dashboardSection) dashboardSection.classList.add('hidden');
-        if (userControls) userControls.classList.add('hidden');
+    if (loginSection) loginSection.classList.add('hidden');
+    if (dashboardSection) dashboardSection.classList.remove('hidden');
+    if (userControls) userControls.classList.remove('hidden');
+    if (welcomeMsg) {
+        welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL_MAIN}`;
     }
+
+    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
+    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
 }
         if (userControls) userControls.classList.add('hidden');
     }
