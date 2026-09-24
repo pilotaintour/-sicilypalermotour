@@ -2,19 +2,31 @@
  * Logica Principale di Inizializzazione e Contatti - Sicily Palermo Tour
  */
 
-// Email Amministratore
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Imposta la sessione riconosciuta per l'amministratore
-    localStorage.setItem('spt_admin_logged_in', 'true');
-
-    // Carica gli itinerari all'avvio
+    // Carica gli itinerari nella Home
     if (typeof caricaItinerari === 'function') {
         caricaItinerari();
     }
 
-    // Sincronizzazione automatica quando l'admin aggiorna i dati in un'altra scheda
+    // Riconoscimento dinamico dell'amministratore: MOSTRA il tasto Admin SOLO sul browser dell'amministratore autenticato
+    const savedEmail = (localStorage.getItem('spt_admin_email') || '').toLowerCase();
+    const isLoggedIn = localStorage.getItem('spt_admin_logged_in') === 'true';
+
+    if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL.toLowerCase()) {
+        const navSlot = document.getElementById('nav-admin-slot');
+        const footerSlot = document.getElementById('footer-admin-slot');
+
+        if (navSlot) {
+            navSlot.innerHTML = `<a href="admin/index.html" target="_blank" class="nav-admin">⚙️ Area Gestione Admin</a>`;
+        }
+        if (footerSlot) {
+            footerSlot.innerHTML = `| <a href="admin/index.html" target="_blank" style="color: #e67e22; text-decoration: none; font-weight: bold;">⚙️ Area Gestione Admin</a>`;
+        }
+    }
+
+    // Sincronizzazione automatica se l'admin aggiorna gli itinerari in un'altra scheda
     window.addEventListener('storage', (e) => {
         if (e.key === 'spt_itineraries' && typeof caricaItinerari === 'function') {
             caricaItinerari(typeof categoriaSelezionata !== 'undefined' ? categoriaSelezionata : 'Tutti');
