@@ -161,16 +161,71 @@
                                 <button type="button" class="btn-secondary btn-small" onclick="aggiungiCampoTappa()" style="margin-top: 12px;">➕ Aggiungi una Tappa</button>
                             </div>
 
-                            <!-- Servizi Inclusi Checkboxes -->
-                            <div class="form-group">
-                                <label>✓ Servizi Inclusi</label>
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 6px;">
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Guida Locale Esperta" checked> Guida Locale</label>
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Degustazione Cibo"> Degustazione Cibo</label>
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Ingressi Monumenti"> Ingressi Monumenti</label>
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Adatto a Famiglie" checked> Adatto a Famiglie</label>
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Assistenza Personalizzata" checked> Assistenza Dedicata</label>
-                                    <label style="font-weight: normal; font-size: 0.88rem;"><input type="checkbox" name="servizio-check" value="Cancellazione Gratuita" checked> Cancellazione Gratuita</label>
+                            <!-- Servizi Inclusi Checkboxes (Allineamento Perfetto) -->
+                            <div class="form-group" style="background: #fafcfd; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                <label style="color: #1b4f72; font-weight: 800; font-size: 0.95rem; margin-bottom: 6px;">✓ Servizi Inclusi nel Prezzo del Tour</label>
+                                <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 12px;">Seleziona i servizi effettivi inclusi nella quota partecipante:</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Guida Turistica Autorizzata" checked style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🚩 Guida Turistica Autorizzata
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Degustazioni & Street Food" style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🥙 Degustazioni & Food
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Ingressi Monumenti e Musei" style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🎟️ Ingressi Monumenti
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Auricolari Radio Whisper" style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🎧 Auricolari Radio Whisper
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Trasporto / Transfer Incluso" style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🚌 Trasporto / Transfer
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Assicurazione Tour Inclusa" checked style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🛡️ Assicurazione Tour
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Assistenza Dedicata WhatsApp" checked style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        💬 Assistenza WhatsApp
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Cancellazione Gratuita" checked style="width: 16px; height: 16px; accent-color: #1b4f72; cursor: pointer;">
+                                        🔄 Cancellazione Gratuita
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Caratteristiche & Suggerimenti Tour -->
+                            <div class="form-group" style="background: #fffbf5; padding: 16px; border-radius: 10px; border: 1px solid #fed7aa; margin-bottom: 18px;">
+                                <label style="color: #c2410c; font-weight: 800; font-size: 0.95rem; margin-bottom: 6px;">🏷️ Caratteristiche & Suggerimenti Tour</label>
+                                <p style="font-size: 0.82rem; color: #9a3412; margin-bottom: 12px;">Tag e raccomandazioni utili per i turisti durante la prenotazione:</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #9a3412; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fed7aa; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Adatto a Famiglie & Bambini" checked style="width: 16px; height: 16px; accent-color: #c2410c; cursor: pointer;">
+                                        👨‍👩‍👧‍👦 Adatto a Famiglie
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #9a3412; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fed7aa; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Accessibile Sedia a Rotelle" style="width: 16px; height: 16px; accent-color: #c2410c; cursor: pointer;">
+                                        ♿ Accesso Disabili / Sedia a Rotelle
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #9a3412; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fed7aa; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Pet Friendly (Animali Ammessi)" style="width: 16px; height: 16px; accent-color: #c2410c; cursor: pointer;">
+                                        🐾 Pet Friendly (Animali)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #9a3412; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fed7aa; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Camminata Facile Pianeggiante" checked style="width: 16px; height: 16px; accent-color: #c2410c; cursor: pointer;">
+                                        🚶 Camminata Facile
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; color: #9a3412; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fed7aa; cursor: pointer;">
+                                        <input type="checkbox" name="servizio-check" value="Tour Multilingua (ITA/ENG)" checked style="width: 16px; height: 16px; accent-color: #c2410c; cursor: pointer;">
+                                        🌐 Tour Multilingua
+                                    </label>
                                 </div>
                             </div>
 
