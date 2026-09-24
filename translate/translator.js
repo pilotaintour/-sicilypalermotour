@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO TRADUTTORE MULTILINGUA GOOGLE
- * Sicily Palermo Tour - Selettore Lingua per Turisti
+ * Sicily Palermo Tour - Selettore Lingua con Supporto per Contenuti Dinamici
  */
 
 function googleTranslateElementInit() {
@@ -10,6 +10,17 @@ function googleTranslateElementInit() {
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
     }, 'google_translate_element');
+}
+
+// Notifica Google Translate quando gli itinerari o le tappe vengono inserite dinamicamente nel DOM
+function aggiornaTraduzioneDinamica() {
+    setTimeout(() => {
+        const selectEl = document.querySelector('.goog-te-combo');
+        if (selectEl && selectEl.value && selectEl.value !== 'it') {
+            const event = new Event('change', { bubbles: true });
+            selectEl.dispatchEvent(event);
+        }
+    }, 120);
 }
 
 // Carica lo script di Google Translate in modo asincrono

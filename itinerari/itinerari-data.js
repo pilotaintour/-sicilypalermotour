@@ -243,6 +243,10 @@ function caricaItinerari(categoria = 'Tutti') {
             </div>
         </div>
     `).join('');
+
+    if (typeof aggiornaTraduzioneDinamica === 'function') {
+        aggiornaTraduzioneDinamica();
+    }
 }
 
 // Gestione dei bottoni filtro categoria
@@ -370,6 +374,10 @@ function apriDettagliModal(id) {
             modalOverlay.classList.remove('hidden');
             modalOverlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+        }
+
+        if (typeof aggiornaTraduzioneDinamica === 'function') {
+            aggiornaTraduzioneDinamica();
         }
     } catch (err) {
         console.error("Errore nell'apertura della modale:", err);
