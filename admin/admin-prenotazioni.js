@@ -1,13 +1,13 @@
 /**
- * MODULO 2: Gestione Prenotazioni Ricevute e Registro Excel Passeggeri
+ * MODULO 2: Cartelle Itinerari & Gestione Prenotazioni
  * Sicily Palermo Tour - Admin
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
 
-let vistaAttualePrenotazioni = 'TABELLA_EXCEL'; // 'SCHEDE' oppure 'TABELLA_EXCEL'
+let tourSelezionatoCartella = null; // null = Mostra Griglia Cartelle Tour; string = Titolo Tour aperto
+let vistaAttualePrenotazioni = 'SCHEDE'; // 'SCHEDE' oppure 'EXCEL'
 let filtroStatoPrenotazioni = 'TUTTI';
-let filtroTourSelezionato = 'TUTTI';
 let filtroDataSelezionata = 'TUTTI';
 let ricercaPrenotazioniText = '';
 
@@ -27,13 +27,27 @@ function savePrenotazioniAdmin(list) {
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
 }
 
-// Cambia la modalità di visualizzazione tra Schede e Foglio Excel
+// Apre la cartella prenotazioni di un determinato itinerario
+function apriCartellaTour(titoloTour) {
+    tourSelezionatoCartella = titoloTour;
+    filtroDataSelezionata = 'TUTTI';
+    caricaPrenotazioniAdmin();
+}
+
+// Torna alla griglia generale di tutte le cartelle itinerari
+function chiudiCartellaTour() {
+    tourSelezionatoCartella = null;
+    filtroDataSelezionata = 'TUTTI';
+    caricaPrenotazioniAdmin();
+}
+
+// Cambia la modalità tra vista Schede e vista Excel all'interno del tour
 function impostaVistaPrenotazioni(modo) {
     vistaAttualePrenotazioni = modo;
     caricaPrenotazioniAdmin();
 }
 
-// Funzione principale di caricamento e rendering
+// Funzione principale di rendering
 function caricaPrenotazioniAdmin() {
     const listContainer = document.getElementById('admin-bookings-list');
     const badgeCount = document.getElementById('cnt-prenotazioni-badge');
@@ -48,61 +62,147 @@ function caricaPrenotazioniAdmin() {
         listContainer.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #64748b;">
                 <h3 style="color: #1b4f72;">📥 Nessuna prenotazione ricevuta al momento</h3>
-                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui in tempo reale.</p>
+                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario.</p>
             </div>
         `;
         return;
     }
 
-    // Estrai la lista unica dei Tour e delle Date per i filtri a tendina
-    const titoliTourUnici = [...new Set(bookings.map(b => b.tourTitle).filter(Boolean))];
-    const dateUniche = [...new Set(bookings.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
+    // SCENARIO A: Nessun Tour Selezionato -> Mostra la Griglia delle Cartelle Itinerari
+    if (!tourSelezionatoCartella) {
+        listContainer.innerHTML = renderGrigliaCartelleItinerari(bookings);
+        return;
+    }
 
-    // Barra Navigazione e Comandi Superiori
-    let htmlBarraComandi = `
-        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-                <!-- Selettore Modalità Vista -->
-                <div style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-primary btn-small" style="${vistaAttualePrenotazioni === 'TABELLA_EXCEL' ? 'background:#0b2545; color:#ffffff;' : 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;'}" onclick="impostaVistaPrenotazioni('TABELLA_EXCEL')">
-                        📊 Registro Excel Passeggeri
-                    </button>
-                    <button type="button" class="btn-primary btn-small" style="${vistaAttualePrenotazioni === 'SCHEDE' ? 'background:#0b2545; color:#ffffff;' : 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">
-                        📋 Schede Singole
-                    </button>
+    // SCENARIO B: Tour Selezionato -> Mostra la Vista Dettagliata per quell'Itinerario
+    const bookingsDelTour = bookings.filter(b => b.tourTitle === tourSelezionatoCartella);
+    listContainer.innerHTML = renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
+}
+
+// Renderizza la Griglia di Cartelle degli Itinerari
+function renderGrigliaCartelleItinerari(allBookings) {
+    // Recupera la lista degli itinerari dal localStorage per mostrare anche foto e categorie
+    let itinerariConfig = [];
+    try {
+        itinerariConfig = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
+    } catch (e) {
+        itinerariConfig = [];
+    }
+
+    // Raggruppa le prenotazioni per titolo del Tour
+    const tourMappa = {};
+
+    allBookings.forEach(b => {
+        const title = b.tourTitle || 'Tour Palermo';
+        if (!tourMappa[title]) {
+            tourMappa[title] = {
+                title: title,
+                countBookings: 0,
+                totalPassengers: 0,
+                bookings: []
+            };
+        }
+        tourMappa[title].countBookings++;
+        const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+        tourMappa[title].totalPassengers += numPasseggeri;
+        tourMappa[title].bookings.push(b);
+    });
+
+    const titoliMappa = Object.keys(tourMappa);
+
+    let html = `
+        <div style="margin-bottom: 22px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
+                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista dei passeggeri ed ai dettagli delle prenotazioni.</p>
+            </div>
+            <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#fff;" onclick="esportaRegistroExcelCSVAll()">
+                📥 Esporta CSV di Tutti i Tour
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+    `;
+
+    titoliMappa.forEach(title => {
+        const itemTour = tourMappa[title];
+        const config = itinerariConfig.find(i => i.title === title) || {};
+        const coverImg = (config.images && config.images.length > 0) ? config.images[0] : (config.imageUrl || 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=600');
+
+        html += `
+            <div onclick="apriCartellaTour('${escapeHtmlBooking(title)}')" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.25s ease; position: relative;" onmouseover="this.style.borderColor='#0b2545'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='none';">
+                <div style="height: 130px; overflow: hidden; position: relative;">
+                    <img src="${coverImg}" alt="${escapeHtmlBooking(title)}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span style="position: absolute; top: 10px; right: 10px; background: rgba(11, 37, 69, 0.88); backdrop-filter: blur(4px); color: #ffffff; padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: bold;">
+                        ${itemTour.countBookings} Prenotazioni
+                    </span>
                 </div>
 
-                <!-- Pulsanti di Esportazione ed Azioni Excel -->
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSV()">
-                        📥 Esporta in Excel (.CSV)
+                <div style="padding: 18px;">
+                    <h4 style="color: #0b2545; margin: 0 0 8px 0; font-size: 1.15rem; font-weight: 800;">
+                        🏛️ ${escapeHtmlBooking(title)}
+                    </h4>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                        <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: bold;">
+                            👥 ${itemTour.totalPassengers} Passeggeri Totali
+                        </span>
+                    </div>
+
+                    <button type="button" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #0b2545, #134074); padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        📂 Apri Prenotazioni Tour →
                     </button>
-                    <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff;" onclick="stampaFoglioPresenzeGuida()">
-                        🖨️ Stampa Registro Guida
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
+// Renderizza il Dettaglio della Cartella di un Singolo Tour
+function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
+    const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
+
+    let html = `
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button type="button" class="btn-secondary btn-small" onclick="chiudiCartellaTour()" style="background: #f1f5f9; color: #0b2545; border: 1.5px solid #cbd5e1; font-weight: bold;">
+                        ← Torna a Tutti gli Itinerari
+                    </button>
+                    <h3 style="color: #0b2545; margin: 0; font-size: 1.3rem; font-weight: 800;">
+                        🏛️ Tour: ${escapeHtmlBooking(titoloTour)}
+                    </h3>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'SCHEDE' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">
+                        📋 Vista Schede
+                    </button>
+                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'EXCEL' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('EXCEL')">
+                        📊 Vista Excel
+                    </button>
+                    <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSVParticolare('${escapeHtmlBooking(titoloTour)}')">
+                        📥 Esporta CSV Tour
+                    </button>
+                    <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
+                        🖨️ Stampa Registro Tour
                     </button>
                 </div>
             </div>
 
-            <!-- Filtri Aggiuntivi: Tour, Data, Stato e Ricerca -->
+            <!-- Filtri Data, Stato e Ricerca dentro il Tour -->
             <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                    <!-- Filtro Itinerario -->
-                    <div>
-                        <select onchange="filtroTourSelezionato = this.value; caricaPrenotazioniAdmin();" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
-                            <option value="TUTTI">🏛️ Tutti gli Itinerari (${titoliTourUnici.length})</option>
-                            ${titoliTourUnici.map(t => `<option value="${escapeHtmlBooking(t)}" ${filtroTourSelezionato === t ? 'selected' : ''}>${escapeHtmlBooking(t)}</option>`).join('')}
-                        </select>
-                    </div>
-
-                    <!-- Filtro Data -->
                     <div>
                         <select onchange="filtroDataSelezionata = this.value; caricaPrenotazioniAdmin();" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
-                            <option value="TUTTI">📅 Tutte le Date</option>
+                            <option value="TUTTI">📅 Tutte le Date di questo Tour (${dateUniche.length})</option>
                             ${dateUniche.map(d => `<option value="${escapeHtmlBooking(d)}" ${filtroDataSelezionata === d ? 'selected' : ''}>${escapeHtmlBooking(d)}</option>`).join('')}
                         </select>
                     </div>
 
-                    <!-- Filtro Stato -->
                     <div>
                         <select onchange="setFiltroPrenotazioni(this.value);" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
                             <option value="TUTTI" ${filtroStatoPrenotazioni === 'TUTTI' ? 'selected' : ''}>🏷️ Tutti gli Stati</option>
@@ -114,16 +214,14 @@ function caricaPrenotazioniAdmin() {
                 </div>
 
                 <div>
-                    <input type="text" id="admin-search-booking" placeholder="🔎 Cerca Nome, Email, Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 220px;">
+                    <input type="text" id="admin-search-booking" placeholder="🔎 Cerca Nome o Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 200px;">
                 </div>
             </div>
         </div>
     `;
 
-    // Filtra le prenotazioni in base ai selettori impostati
-    let prenotazioniFiltrate = bookings.filter(b => {
-        if (filtroTourSelezionato !== 'TUTTI' && b.tourTitle !== filtroTourSelezionato) return false;
-
+    // Filtra ulteriormente per Data e Stato
+    let filtrate = bookingsOfTour.filter(b => {
         const dateStr = b.dateReadable || b.dateISO;
         if (filtroDataSelezionata !== 'TUTTI' && dateStr !== filtroDataSelezionata) return false;
 
@@ -134,21 +232,20 @@ function caricaPrenotazioniAdmin() {
             const matchCode = (b.code || '').toLowerCase().includes(term);
             const matchName = (b.customerName || '').toLowerCase().includes(term);
             const matchEmail = (b.customerEmail || '').toLowerCase().includes(term);
-            const matchTour = (b.tourTitle || '').toLowerCase().includes(term);
 
-            // Cerca anche all'interno dei nomi dei passeggeri
-            const matchPasseggero = b.participantsList && b.participantsList.some(p => (p.name || '').toLowerCase().includes(term) || (p.origin || '').toLowerCase().includes(term));
-
-            return matchCode || matchName || matchEmail || matchTour || matchPasseggero;
+            const matchPasseggero = b.participantsList && b.participantsList.some(p => (p.name || '').toLowerCase().includes(term));
+            return matchCode || matchName || matchEmail || matchPasseggero;
         }
         return true;
     });
 
-    if (vistaAttualePrenotazioni === 'TABELLA_EXCEL') {
-        listContainer.innerHTML = htmlBarraComandi + renderRegistroExcelPasseggeri(prenotazioniFiltrate);
+    if (vistaAttualePrenotazioni === 'EXCEL') {
+        html += renderRegistroExcelPasseggeri(filtrate);
     } else {
-        listContainer.innerHTML = htmlBarraComandi + renderSchedePrenotazioni(prenotazioniFiltrate);
+        html += renderSchedePrenotazioni(filtrate);
     }
+
+    return html;
 }
 
 // Genera la vista Tabella stile Foglio Excel
@@ -156,12 +253,11 @@ function renderRegistroExcelPasseggeri(bookingsList) {
     if (bookingsList.length === 0) {
         return `
             <div style="text-align: center; padding: 30px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <p>Nessun passeggero trovato per i filtri correnti.</p>
+                <p>Nessun passeggero trovato per i filtri selezionati.</p>
             </div>
         `;
     }
 
-    // Ricostruiamo la lista piatta di CIASCUN passeggero con i suoi dati associati
     const righePasseggeri = [];
     let counter = 1;
 
@@ -186,7 +282,6 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                 });
             });
         } else {
-            // Fallback se la prenotazione non ha lista di passeggeri
             righePasseggeri.push({
                 rowNum: counter++,
                 bookingId: b.id,
@@ -212,7 +307,7 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                 <span style="font-weight: 800; font-size: 0.98rem; letter-spacing: 0.3px;">
                     📊 Registro Passeggeri Ufficiale - Totale ${righePasseggeri.length} Presenze
                 </span>
-                <span style="font-size: 0.82rem; opacity: 0.9;">Ordinati per Itinerario, Data ed Ora</span>
+                <span style="font-size: 0.82rem; opacity: 0.9;">Ordinati per Data ed Ora</span>
             </div>
 
             <div style="max-height: 520px; overflow-x: auto; overflow-y: auto;">
@@ -221,13 +316,12 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                         <tr style="background: #f1f5f9; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; text-align: center; width: 40px;">#</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Codice</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Itinerario Tour</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data & Ora</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; background: #e0f2fe;">Passeggero (Nome e Cognome)</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ruolo</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data Nascita</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Provenienza</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Contatti (Email / Tel)</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Contatti Referente</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Note Passeggero</th>
                             <th style="padding: 12px 10px; text-align: center;">Stato</th>
                         </tr>
@@ -240,10 +334,9 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                             const rowBg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
 
                             return `
-                                <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0; transition: background 0.15s ease;">
+                                <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #64748b;">${r.rowNum}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 700; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 600; color: #334155;">${escapeHtmlBooking(r.dateStr)} - ⏰ ${escapeHtmlBooking(r.timeStr)}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; background: rgba(224, 242, 254, 0.25);">${escapeHtmlBooking(r.passengerName)}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0;">
@@ -276,7 +369,7 @@ function renderRegistroExcelPasseggeri(bookingsList) {
 function renderSchedePrenotazioni(bookingsList) {
     if (bookingsList.length === 0) {
         return `
-            <div style="text-align: center; padding: 30px; color: #64748b;">
+            <div style="text-align: center; padding: 30px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
                 <p>Nessuna prenotazione corrisponde ai filtri selezionati.</p>
             </div>
         `;
@@ -340,15 +433,26 @@ function renderSchedePrenotazioni(bookingsList) {
     }).join('');
 }
 
-// Genera e scarica un vero file CSV apribile direttamente su Microsoft Excel
-function esportaRegistroExcelCSV() {
-    const bookingsList = getPrenotazioniAdmin();
+// Esporta CSV di un singolo Tour
+function esportaRegistroExcelCSVParticolare(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) {
+        list = list.filter(b => b.tourTitle === titoloTour);
+    }
+    esportaListaCSV(list, `Manifest_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tutti_Tour'}`);
+}
+
+function esportaRegistroExcelCSVAll() {
+    esportaListaCSV(getPrenotazioniAdmin(), "Manifest_Tutti_I_Tour_Palermo");
+}
+
+function esportaListaCSV(bookingsList, filenamePrefix) {
     if (bookingsList.length === 0) {
         alert("Nessuna prenotazione presente da esportare.");
         return;
     }
 
-    let csvContent = "\uFEFF"; // UTF-8 BOM per garantire accenti corretti in Excel
+    let csvContent = "\uFEFF";
     csvContent += "N;Codice;Tour;Data;Orario;Nome Passeggero;Tipo;Data Nascita;Provenienza;Email Referente;Telefono Referente;Note Passeggero;Stato\n";
 
     let counter = 1;
@@ -379,16 +483,20 @@ function esportaRegistroExcelCSV() {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `Manifest_Passeggeri_SicilyPalermoTour_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute("download", `${filenamePrefix}_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-// Genera una finestra di stampa pulita pronta per la guida turistica
-function stampaFoglioPresenzeGuida() {
-    const bookingsList = getPrenotazioniAdmin();
-    if (bookingsList.length === 0) {
+// Stampa Registro Guida di un Tour
+function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
+    let list = getPrenotazioniAdmin();
+    if (titoloTour) {
+        list = list.filter(b => b.tourTitle === titoloTour);
+    }
+
+    if (list.length === 0) {
         alert("Nessuna prenotazione presente da stampare.");
         return;
     }
@@ -397,7 +505,7 @@ function stampaFoglioPresenzeGuida() {
     let rowsHtml = '';
     let counter = 1;
 
-    bookingsList.forEach(b => {
+    list.forEach(b => {
         if (b.participantsList && b.participantsList.length > 0) {
             b.participantsList.forEach(p => {
                 rowsHtml += `
@@ -434,7 +542,7 @@ function stampaFoglioPresenzeGuida() {
         </head>
         <body>
             <h1>🏛️ Sicily Palermo Tour - Registro Passeggeri Guida</h1>
-            <p>Data di Generazione: ${new Date().toLocaleString('it-IT')} | Documento Ufficiale d'Imbarco Tour</p>
+            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> | Generato il: ${new Date().toLocaleString('it-IT')}</p>
             <table>
                 <thead>
                     <tr>
