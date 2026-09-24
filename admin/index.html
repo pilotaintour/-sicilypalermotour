@@ -22,20 +22,20 @@
 
     <main class="container">
 
-        <!-- Schermata di Login (Nascosta di default per l'Amministratore) -->
-        <section id="login-section" class="card login-card hidden">
+        <!-- Schermata di Login Amministratore -->
+        <section id="login-section" class="card login-card">
             <h2>🔑 Accesso Riservato Amministratore</h2>
-            <p>Inserisci la tua email autorizzata per accedere alla gestione degli itinerari di Palermo.</p>
+            <p>Inserisci la tua email autorizzata per accedere alla gestione del sito e delle prenotazioni.</p>
 
             <form id="loginForm" onsubmit="effettuaLogin(event)">
                 <div class="form-group">
-                    <label for="admin-email">Email Amministratore</label>
-                    <input type="email" id="admin-email" required placeholder="Inserisci la tua email">
+                    <label for="admin-email">Email Amministratore *</label>
+                    <input type="email" id="admin-email" required placeholder="Es. pilotaintour13@gmail.com">
                 </div>
-                <div id="login-error" class="alert-error hidden">
+                <div id="login-error" class="alert-error hidden" style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:8px; margin-bottom:12px; font-weight:bold; font-size:0.88rem;">
                     Accesso negato: questa email non è autorizzata come Amministratore.
                 </div>
-                <button type="submit" class="btn-primary full-width">Accedi al Pannello Admin</button>
+                <button type="submit" class="btn-primary full-width" style="background:#0b2545;">Accedi al Pannello Admin</button>
             </form>
 
             <div class="login-footer">
@@ -43,8 +43,8 @@
             </div>
         </section>
 
-        <!-- Pannello Dashboard Amministratore (Aperto di default) -->
-        <section id="dashboard-section">
+        <!-- Pannello Dashboard Amministratore (Visibile solo se autenticato come Amministratore) -->
+        <section id="dashboard-section" class="hidden">
 
             <!-- Navigazione a Schede Admin -->
             <div class="admin-tabs">

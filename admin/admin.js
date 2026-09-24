@@ -11,25 +11,22 @@ const AUTHORIZED_EMAIL_MAIN = 'pilotaintour13@gmail.com';
 
 // INIZIALIZZAZIONE ALL'AVVIO
 document.addEventListener('DOMContentLoaded', () => {
-    localStorage.setItem(AUTH_KEY_MAIN, 'true');
-    localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
-
     verificaStatoAutenticazione();
 
     if (typeof caricaNumeroWhatsApp === 'function') caricaNumeroWhatsApp();
     if (typeof renderCampiTappe === 'function') renderCampiTappe();
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
-    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
-    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
 });
 
-// LOGIN E AUTENTICAZIONE DIRECT ACCESS
+// LOGIN E AUTENTICAZIONE RISERVATA A PILOTAINTOR13@GMAIL.COM
 function effettuaLogin(event) {
     if (event) event.preventDefault();
     const emailInput = document.getElementById('admin-email');
     const loginError = document.getElementById('login-error');
 
-    const email = emailInput ? emailInput.value.trim().toLowerCase() : AUTHORIZED_EMAIL_MAIN.toLowerCase();
+    if (!emailInput) return;
+
+    const email = emailInput.value.trim().toLowerCase();
 
     if (email === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
         localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
@@ -39,7 +36,7 @@ function effettuaLogin(event) {
     } else {
         if (loginError) {
             loginError.classList.remove('hidden');
-            loginError.textContent = `Accesso negato: l'email ${email} non è autorizzata come Amministratore.`;
+            loginError.textContent = `Accesso negato: L'email "${email}" non è autorizzata come Amministratore.`;
         }
     }
 }
@@ -51,14 +48,7 @@ function logout() {
 }
 
 function verificaStatoAutenticazione() {
-    if (!localStorage.getItem('spt_admin_email')) {
-        localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
-    }
-    if (localStorage.getItem(AUTH_KEY_MAIN) !== 'true') {
-        localStorage.setItem(AUTH_KEY_MAIN, 'true');
-    }
-
-    const savedEmail = localStorage.getItem('spt_admin_email') || AUTHORIZED_EMAIL_MAIN;
+    const savedEmail = (localStorage.getItem('spt_admin_email') || '').toLowerCase();
     const isLoggedIn = localStorage.getItem(AUTH_KEY_MAIN) === 'true';
 
     const loginSection = document.getElementById('login-section');
@@ -66,7 +56,7 @@ function verificaStatoAutenticazione() {
     const userControls = document.getElementById('user-controls');
     const welcomeMsg = document.getElementById('welcome-msg');
 
-    if (isLoggedIn && savedEmail.toLowerCase() === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
+    if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
         if (loginSection) loginSection.classList.add('hidden');
         if (dashboardSection) dashboardSection.classList.remove('hidden');
         if (userControls) userControls.classList.remove('hidden');
@@ -78,6 +68,9 @@ function verificaStatoAutenticazione() {
     } else {
         if (loginSection) loginSection.classList.remove('hidden');
         if (dashboardSection) dashboardSection.classList.add('hidden');
+        if (userControls) userControls.classList.add('hidden');
+    }
+}
         if (userControls) userControls.classList.add('hidden');
     }
 }
