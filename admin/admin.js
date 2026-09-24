@@ -723,7 +723,7 @@ function caricaPrenotazioniAdmin() {
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; color: #334155; margin-bottom: 12px; background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
                         <div>📅 <strong>Data:</strong> ${escapeHtml(b.dateReadable || b.dateISO)}</div>
                         <div>⏰ <strong>Orario:</strong> ${escapeHtml(b.time || '09:30')}</div>
-                        <div>👥 <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
+                        <div>🎟️ <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
                         <div>💰 <strong>Totale:</strong> €${escapeHtml(b.total || '0.00')}</div>
                     </div>
 
@@ -731,7 +731,7 @@ function caricaPrenotazioniAdmin() {
                         👤 <strong>Referente:</strong> ${escapeHtml(b.customerName)} | 📧 ${escapeHtml(b.customerEmail)} | 📞 ${escapeHtml(b.customerPhone)}
                         ${b.participantsList && b.participantsList.length > 0 ? `
                             <div style="margin-top: 8px; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                                <strong>👥 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
+                                <strong>🧳 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
                                 <ol style="margin: 4px 0 0 18px; padding: 0; font-size: 0.85rem; color: #1e293b; line-height: 1.6;">
                                     ${b.participantsList.map(p => `
                                         <li style="margin-bottom: 4px;">

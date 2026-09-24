@@ -26,7 +26,7 @@ class Step2Partecipanti {
 
             <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 14px 18px; border-radius: 14px; border: 1px solid #bae6fd; margin-bottom: 22px; font-size: 0.9rem; color: #0369a1; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <div>⏰ Orario Selezionato: <strong><span id="step2-slot-display">09:30</span></strong></div>
-                <div>👥 Capienza Max Slot: <strong><span id="step2-cap-display">15</span> persone</strong></div>
+                <div>🎯 Capienza Max Slot: <strong><span id="step2-cap-display">15</span> persone</strong></div>
             </div>
 
             <!-- CARD ADULTI -->
