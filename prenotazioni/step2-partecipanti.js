@@ -52,7 +52,7 @@ class Step2Partecipanti {
                     <span style="font-size: 2.2rem; background: #ffedd5; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">🧒</span>
                     <div>
                         <strong style="color: #c2410c; display: block; font-size: 1.15rem; font-weight: 800;">Bambini</strong>
-                        <span style="font-size: 0.88rem; color: #d97706; font-weight: 600;">Età 4-12 anni <span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem;">Sconto -50%</span></span>
+                        <span style="font-size: 0.88rem; color: #d97706; font-weight: 600;">Età 4-12 anni</span>
                     </div>
                 </div>
 
