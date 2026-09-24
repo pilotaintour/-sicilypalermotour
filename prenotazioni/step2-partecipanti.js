@@ -1,5 +1,5 @@
 /**
- * STEP 2: Selezione Partecipanti
+ * STEP 2: Selezione Partecipanti con Design Premium & Emojis
  */
 
 class Step2Partecipanti {
@@ -21,34 +21,45 @@ class Step2Partecipanti {
 
         this.container.innerHTML = `
             <div class="step-card-header">
-                🎟️ Step 2: Seleziona Numero di Partecipanti
+                ✨ Step 2: Seleziona Partecipanti per il Tour
             </div>
 
-            <div style="background: #f8fafc; padding: 12px 16px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 0.9rem; color: #1b4f72; font-weight: 600;">
-                ⏰ Orario Selezionato: <span id="step2-slot-display">09:30</span> | Capienza Massima: <span id="step2-cap-display">15</span> persone
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 14px 18px; border-radius: 14px; border: 1px solid #bae6fd; margin-bottom: 22px; font-size: 0.9rem; color: #0369a1; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div>⏰ Orario Selezionato: <strong><span id="step2-slot-display">09:30</span></strong></div>
+                <div>👥 Capienza Max Slot: <strong><span id="step2-cap-display">15</span> persone</strong></div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #f1f5f9;">
-                <div>
-                    <strong style="color: #334155; display: block; font-size: 1.05rem;">Adulti</strong>
-                    <span style="font-size: 0.85rem; color: #64748b;">Età 13+ anni</span>
+            <!-- CARD ADULTI -->
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span style="font-size: 2.2rem; background: #f1f5f9; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">🧑</span>
+                    <div>
+                        <strong style="color: #0b2545; display: block; font-size: 1.15rem; font-weight: 800;">Adulti</strong>
+                        <span style="font-size: 0.88rem; color: #64748b; font-weight: 600;">Età 13+ anni</span>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button type="button" class="btn-nav-prev" style="padding: 6px 14px; min-width: 38px;" id="btn-adulti-minus">-</button>
-                    <span id="step2-cnt-adulti" style="font-weight: 800; font-size: 1.2rem; width: 26px; text-align: center;">2</span>
-                    <button type="button" class="btn-nav-prev" style="padding: 6px 14px; min-width: 38px;" id="btn-adulti-plus">+</button>
+
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center;" id="btn-adulti-minus">-</button>
+                    <span id="step2-cnt-adulti" style="font-weight: 800; font-size: 1.4rem; color: #0b2545; width: 32px; text-align: center;">2</span>
+                    <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center;" id="btn-adulti-plus">+</button>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px;">
-                <div>
-                    <strong style="color: #334155; display: block; font-size: 1.05rem;">Bambini</strong>
-                    <span style="font-size: 0.85rem; color: #64748b;">Età 4-12 anni (Sconto -50%)</span>
+            <!-- CARD BAMBINI -->
+            <div style="background: #fffbf5; border: 1.5px solid #fed7aa; border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span style="font-size: 2.2rem; background: #ffedd5; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">🧒</span>
+                    <div>
+                        <strong style="color: #c2410c; display: block; font-size: 1.15rem; font-weight: 800;">Bambini</strong>
+                        <span style="font-size: 0.88rem; color: #d97706; font-weight: 600;">Età 4-12 anni <span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem;">Sconto -50%</span></span>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button type="button" class="btn-nav-prev" style="padding: 6px 14px; min-width: 38px;" id="btn-bambini-minus">-</button>
-                    <span id="step2-cnt-bambini" style="font-weight: 800; font-size: 1.2rem; width: 26px; text-align: center;">0</span>
-                    <button type="button" class="btn-nav-prev" style="padding: 6px 14px; min-width: 38px;" id="btn-bambini-plus">+</button>
+
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #fed7aa;" id="btn-bambini-minus">-</button>
+                    <span id="step2-cnt-bambini" style="font-weight: 800; font-size: 1.4rem; color: #c2410c; width: 32px; text-align: center;">0</span>
+                    <button type="button" class="btn-nav-prev" style="width: 42px; height: 42px; border-radius: 12px; font-size: 1.3rem; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #fed7aa;" id="btn-bambini-plus">+</button>
                 </div>
             </div>
 
