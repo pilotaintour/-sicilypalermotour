@@ -21,7 +21,7 @@ class Step2Partecipanti {
 
         this.container.innerHTML = `
             <div class="step-card-header">
-                👥 Step 2: Seleziona Numero di Partecipanti
+                🎟️ Step 2: Seleziona Numero di Partecipanti
             </div>
 
             <div style="background: #f8fafc; padding: 12px 16px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 0.9rem; color: #1b4f72; font-weight: 600;">
