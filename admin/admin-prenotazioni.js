@@ -6,7 +6,7 @@
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
 
 let tourSelezionatoCartella = null; // null = Mostra Griglia Cartelle Tour; string = Titolo Tour aperto
-let vistaAttualePrenotazioni = 'SCHEDE'; // 'SCHEDE' oppure 'EXCEL'
+let vistaAttualePrenotazioni = 'EXCEL'; // 'SCHEDE' oppure 'EXCEL'
 let filtroStatoPrenotazioni = 'TUTTI';
 let filtroDataSelezionata = 'TUTTI';
 let filtroOrarioSelezionato = 'TUTTI';
@@ -117,7 +117,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
         <div style="margin-bottom: 22px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
                 <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
-                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per filtrare le prenotazioni e vedere la suddivisione per orari.</p>
+                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista passeggeri e filtrare per orario prenotato.</p>
             </div>
             <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#fff;" onclick="esportaRegistroExcelCSVAll()">
                 📥 Esporta CSV di Tutti i Tour
@@ -166,7 +166,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
     return html;
 }
 
-// Calcola il conteggio dei passeggeri per un orario
+// Calcola il conteggio dei passeggeri per un determinato orario
 function getConteggioPasseggeriOrario(bookingsList, timeStr) {
     let cnt = 0;
     bookingsList.forEach(b => {
@@ -177,7 +177,7 @@ function getConteggioPasseggeriOrario(bookingsList, timeStr) {
     return cnt;
 }
 
-// Renderizza il Dettaglio della Cartella di un Singolo Tour
+// Renderizza la vista Dettaglio Cartella di un Singolo Tour
 function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
     const orariUnici = [...new Set(bookingsOfTour.map(b => b.time).filter(Boolean))].sort();
@@ -195,18 +195,35 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'EXCEL' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('EXCEL')">
+                        📊 Lista Unica Excel
+                    </button>
                     <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'SCHEDE' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('SCHEDE')">
                         📋 Vista Schede
                     </button>
-                    <button type="button" class="btn-secondary btn-small" style="background:${vistaAttualePrenotazioni === 'EXCEL' ? '#0b2545; color:#fff;' : '#f1f5f9; color:#334155;'}" onclick="impostaVistaPrenotazioni('EXCEL')">
-                        📊 Vista Excel
-                    </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#ffffff;" onclick="esportaRegistroExcelCSVParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        📥 Esporta CSV Tour
+                        📥 Esporta CSV (${filtroOrarioSelezionato})
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        🖨️ Stampa Registro Tour
+                        🖨️ Stampa Foglio Guida
                     </button>
+                </div>
+            </div>
+
+            <!-- PULSANTI INTERATTIVI DI SELEZIONE ORARIO PRENOTATO -->
+            <div style="margin-bottom: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 14px; border-radius: 12px; border: 1px solid #bae6fd;">
+                <div style="font-size: 0.9rem; font-weight: 800; color: #0369a1; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                    ⏰ Clicca un Orario per generare la Lista Unica dei Partecipanti:
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === 'TUTTI' ? 'background:#0b2545; color:#ffffff; font-weight:bold; box-shadow:0 3px 10px rgba(11,37,69,0.25);' : 'background:#ffffff; color:#334155; border:1.5px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = 'TUTTI'; caricaPrenotazioniAdmin();">
+                        Tutti gli Orari (${getConteggioPasseggeriOrario(bookingsOfTour, 'TUTTI')} pers)
+                    </button>
+                    ${orariUnici.map(timeStr => `
+                        <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === timeStr ? 'background:#0b2545; color:#ffffff; font-weight:bold; box-shadow:0 3px 10px rgba(11,37,69,0.3); border-color:#0b2545;' : 'background:#ffffff; color:#0b2545; border:1.5px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = '${timeStr}'; caricaPrenotazioniAdmin();">
+                            ⏰ Ore ${timeStr} (${getConteggioPasseggeriOrario(bookingsOfTour, timeStr)} pers)
+                        </button>
+                    `).join('')}
                 </div>
             </div>
 
@@ -215,7 +232,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <div>
                         <select onchange="filtroDataSelezionata = this.value; caricaPrenotazioniAdmin();" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
-                            <option value="TUTTI">📅 Tutte le Date di questo Tour (${dateUniche.length})</option>
+                            <option value="TUTTI">📅 Tutte le Date (${dateUniche.length})</option>
                             ${dateUniche.map(d => `<option value="${escapeHtmlBooking(d)}" ${filtroDataSelezionata === d ? 'selected' : ''}>${escapeHtmlBooking(d)}</option>`).join('')}
                         </select>
                     </div>
@@ -234,23 +251,10 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                     <input type="text" id="admin-search-booking" placeholder="🔎 Cerca Nome o Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 200px;">
                 </div>
             </div>
-
-            <!-- PULSANTI SEPARAZIONE PER ORARIO PRENOTATO (INTERATTIVI) -->
-            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <span style="font-size: 0.88rem; font-weight: 800; color: #0b2545;">⏰ Filtra per Orario Tour:</span>
-                <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === 'TUTTI' ? 'background:#0b2545; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = 'TUTTI'; caricaPrenotazioniAdmin();">
-                    Tutti gli Orari (${getConteggioPasseggeriOrario(bookingsOfTour, 'TUTTI')} pers)
-                </button>
-                ${orariUnici.map(timeStr => `
-                    <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === timeStr ? 'background:#0b2545; color:#ffffff; font-weight:bold; box-shadow:0 2px 8px rgba(11,37,69,0.3);' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = '${timeStr}'; caricaPrenotazioniAdmin();">
-                        ⏰ Ore ${timeStr} (${getConteggioPasseggeriOrario(bookingsOfTour, timeStr)} pers)
-                    </button>
-                `).join('')}
-            </div>
         </div>
     `;
 
-    // Filtra per Data, Orario e Stato
+    // Filtra per Data, Orario Selezionato e Stato
     let filtrate = bookingsOfTour.filter(b => {
         const dateStr = b.dateReadable || b.dateISO;
         if (filtroDataSelezionata !== 'TUTTI' && dateStr !== filtroDataSelezionata) return false;
@@ -280,7 +284,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     return html;
 }
 
-// Genera la vista Tabella stile Foglio Excel
+// Genera la vista Tabella Lista Unica Passeggeri
 function renderRegistroExcelPasseggeri(bookingsList) {
     if (bookingsList.length === 0) {
         return `
@@ -333,13 +337,17 @@ function renderRegistroExcelPasseggeri(bookingsList) {
         }
     });
 
+    const infoOrarioTitolo = (filtroOrarioSelezionato !== 'TUTTI') ? ` - Ore ${filtroOrarioSelezionato}` : '';
+
     return `
         <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-            <div style="background: #0b2545; color: #ffffff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                <span style="font-weight: 800; font-size: 0.98rem; letter-spacing: 0.3px;">
-                    📊 Registro Passeggeri Ufficiale - Totale ${righePasseggeri.length} Presenze
+            <div style="background: linear-gradient(135deg, #0b2545, #134074); color: #ffffff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <span style="font-weight: 800; font-size: 1.02rem; letter-spacing: 0.3px;">
+                    📋 Lista Unica Partecipanti ${infoOrarioTitolo} (Totale ${righePasseggeri.length} Passeggeri)
                 </span>
-                <span style="font-size: 0.82rem; opacity: 0.9;">Ordinati per Data ed Ora</span>
+                <span style="font-size: 0.82rem; opacity: 0.9; background: rgba(255,255,255,0.18); padding: 3px 10px; border-radius: 10px;">
+                    Documento d'Imbarco Tour
+                </span>
             </div>
 
             <div style="max-height: 520px; overflow-x: auto; overflow-y: auto;">
@@ -347,14 +355,14 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                     <thead>
                         <tr style="background: #f1f5f9; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; text-align: center; width: 40px;">#</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Codice</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data & Ora</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; background: #e0f2fe;">Passeggero (Nome e Cognome)</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ruolo</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data Nascita</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Provenienza</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ora & Data</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Contatti Referente</th>
                             <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Note Passeggero</th>
+                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Codice</th>
                             <th style="padding: 12px 10px; text-align: center;">Stato</th>
                         </tr>
                     </thead>
@@ -368,20 +376,20 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                             return `
                                 <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #64748b;">${r.rowNum}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 600; color: #334155;">${escapeHtmlBooking(r.dateStr)} - ⏰ ${escapeHtmlBooking(r.timeStr)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; background: rgba(224, 242, 254, 0.25);">${escapeHtmlBooking(r.passengerName)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; background: rgba(224, 242, 254, 0.3);">${escapeHtmlBooking(r.passengerName)}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0;">
                                         <span style="font-size: 0.78rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: ${r.passengerType.includes('Referente') ? '#fef3c7; color:#92400e;' : (r.passengerType.includes('Bambino') ? '#ffedd5; color:#c2410c;' : '#f1f5f9; color:#334155;')};">
                                             ${escapeHtmlBooking(r.passengerType)}
                                         </span>
                                     </td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155;">${escapeHtmlBooking(r.passengerDob)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155; font-weight: 600;">${escapeHtmlBooking(r.passengerDob)}</td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155;">${escapeHtmlBooking(r.passengerOrigin)}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 700; color: #0b2545;">⏰ ${escapeHtmlBooking(r.timeStr)}<br><small style="font-weight:normal; color:#64748b;">${escapeHtmlBooking(r.dateStr)}</small></td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #475569;">
                                         📧 ${escapeHtmlBooking(r.leadEmail)}<br>📞 ${escapeHtmlBooking(r.leadPhone)}
                                     </td>
                                     <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
+                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
                                     <td style="padding: 10px; text-align: center;">
                                         <span style="font-weight: bold; font-size: 0.78rem; padding: 3px 8px; border-radius: 10px; background: ${statusBg}; cursor: pointer;" onclick="cambiaStatoPrenotazione('${r.bookingId}', '${r.status === 'Confermata' ? 'In attesa' : 'Confermata'}')" title="Clicca per cambiare stato">
                                             ${escapeHtmlBooking(r.status)}
@@ -465,13 +473,17 @@ function renderSchedePrenotazioni(bookingsList) {
     }).join('');
 }
 
-// Esporta CSV di un singolo Tour
+// Esporta CSV di un singolo Tour ed eventualmente singolo Orario
 function esportaRegistroExcelCSVParticolare(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) {
         list = list.filter(b => b.tourTitle === titoloTour);
     }
-    esportaListaCSV(list, `Manifest_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tutti_Tour'}`);
+    if (filtroOrarioSelezionato !== 'TUTTI') {
+        list = list.filter(b => b.time === filtroOrarioSelezionato);
+    }
+    const suffix = filtroOrarioSelezionato !== 'TUTTI' ? `_Ore_${filtroOrarioSelezionato.replace(':', '_')}` : '';
+    esportaListaCSV(list, `Manifest_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tutti_Tour'}${suffix}`);
 }
 
 function esportaRegistroExcelCSVAll() {
@@ -485,7 +497,7 @@ function esportaListaCSV(bookingsList, filenamePrefix) {
     }
 
     let csvContent = "\uFEFF";
-    csvContent += "N;Codice;Tour;Data;Orario;Nome Passeggero;Tipo;Data Nascita;Provenienza;Email Referente;Telefono Referente;Note Passeggero;Stato\n";
+    csvContent += "N;Nome Passeggero;Ruolo;Data Nascita;Provenienza;Tour;Data;Orario;Email Referente;Telefono Referente;Note Passeggero;Codice;Stato\n";
 
     let counter = 1;
     bookingsList.forEach(b => {
@@ -493,17 +505,17 @@ function esportaListaCSV(bookingsList, filenamePrefix) {
             b.participantsList.forEach(p => {
                 const row = [
                     counter++,
-                    `"${(b.code || '').replace(/"/g, '""')}"`,
-                    `"${(b.tourTitle || '').replace(/"/g, '""')}"`,
-                    `"${(b.dateReadable || b.dateISO || '').replace(/"/g, '""')}"`,
-                    `"${(b.time || '').replace(/"/g, '""')}"`,
                     `"${(p.name || '').replace(/"/g, '""')}"`,
                     `"${(p.type || '').replace(/"/g, '""')}"`,
                     `"${(p.dob || '').replace(/"/g, '""')}"`,
                     `"${(p.origin || '').replace(/"/g, '""')}"`,
+                    `"${(b.tourTitle || '').replace(/"/g, '""')}"`,
+                    `"${(b.dateReadable || b.dateISO || '').replace(/"/g, '""')}"`,
+                    `"${(b.time || '').replace(/"/g, '""')}"`,
                     `"${(b.customerEmail || '').replace(/"/g, '""')}"`,
                     `"${(b.customerPhone || '').replace(/"/g, '""')}"`,
                     `"${(p.notes || '').replace(/"/g, '""')}"`,
+                    `"${(b.code || '').replace(/"/g, '""')}"`,
                     `"${(b.status || 'In attesa').replace(/"/g, '""')}"`
                 ];
                 csvContent += row.join(";") + "\n";
@@ -521,15 +533,18 @@ function esportaListaCSV(bookingsList, filenamePrefix) {
     document.body.removeChild(link);
 }
 
-// Stampa Registro Guida di un Tour
+// Stampa Registro Guida di un Tour per Orario
 function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) {
         list = list.filter(b => b.tourTitle === titoloTour);
     }
+    if (filtroOrarioSelezionato !== 'TUTTI') {
+        list = list.filter(b => b.time === filtroOrarioSelezionato);
+    }
 
     if (list.length === 0) {
-        alert("Nessuna prenotazione presente da stampare.");
+        alert("Nessuna prenotazione presente da stampare per questo orario.");
         return;
     }
 
@@ -549,7 +564,7 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
                         <td>${p.dob || '-'}</td>
                         <td>${p.origin || '-'}</td>
                         <td>${b.tourTitle || 'Tour Palermo'}</td>
-                        <td>${b.dateReadable || b.dateISO} - ${b.time || '09:30'}</td>
+                        <td>${b.dateReadable || b.dateISO} - Ore ${b.time || '09:30'}</td>
                         <td>${b.customerPhone || '-'}</td>
                         <td>${p.notes || '-'}</td>
                     </tr>
@@ -558,11 +573,13 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
         }
     });
 
+    const infoOrario = filtroOrarioSelezionato !== 'TUTTI' ? ` - Ore ${filtroOrarioSelezionato}` : '';
+
     printWin.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Registro Presenze Guida - Sicily Palermo Tour</title>
+            <title>Lista Passeggeri Guida - Sicily Palermo Tour</title>
             <style>
                 body { font-family: sans-serif; padding: 20px; color: #1e293b; }
                 h1 { color: #0b2545; font-size: 1.5rem; margin-bottom: 5px; }
@@ -573,8 +590,8 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
             </style>
         </head>
         <body>
-            <h1>🏛️ Sicily Palermo Tour - Registro Passeggeri Guida</h1>
-            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> | Generato il: ${new Date().toLocaleString('it-IT')}</p>
+            <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
+            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> ${infoOrario} | Documento Guida del ${new Date().toLocaleString('it-IT')}</p>
             <table>
                 <thead>
                     <tr>
