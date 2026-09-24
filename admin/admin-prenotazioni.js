@@ -179,8 +179,25 @@ function getConteggioPasseggeriOrario(bookingsList, timeStr) {
 
 // Renderizza la vista Dettaglio Cartella di un Singolo Tour
 function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
+    // Recupera la configurazione dell'itinerario per estrarre tutti gli orari attivi
+    let itinerariConfig = [];
+    try {
+        itinerariConfig = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
+    } catch (e) {
+        itinerariConfig = [];
+    }
+    const tourConfig = itinerariConfig.find(i => i.title === titoloTour) || {};
+
+    // Estrai tutti gli orari attivi configurati per questo itinerario
+    let configTimeSlots = [];
+    if (tourConfig.timeSlots && Array.isArray(tourConfig.timeSlots)) {
+        configTimeSlots = tourConfig.timeSlots.map(t => typeof t === 'string' ? t : (t && t.time)).filter(Boolean);
+    }
+    const bookingTimeSlots = bookingsOfTour.map(b => b.time).filter(Boolean);
+
+    // Unisci, deduplica e ordina tutti gli orari dell'itinerario
+    const orariUnici = [...new Set([...configTimeSlots, ...bookingTimeSlots])].sort();
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
-    const orariUnici = [...new Set(bookingsOfTour.map(b => b.time).filter(Boolean))].sort();
 
     let html = `
         <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
