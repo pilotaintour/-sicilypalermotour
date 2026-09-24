@@ -78,7 +78,7 @@ class Step3Dati {
 
         let html = `
             <div class="step-card-header">
-                🧑 Step 3: Dati Personali dei Partecipanti (${totalePartecipanti} Persone Obbligatorie)
+                🛡️ Step 3: Dati Personali dei Partecipanti (${totalePartecipanti} Persone Obbligatorie)
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
