@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="booking-wizard.css">
     <script src="https://js.stripe.com/v3/"></script>
     <script src="stripe-payment.js"></script>
+    <script src="email-service.js"></script>
 </head>
 <body>
 
@@ -275,11 +276,12 @@
                 }
             }
 
-            confermaDefinitiva() {
+            async confermaDefinitiva() {
                 // Salva nel localStorage delle prenotazioni per l'Admin
+                let record = null;
                 try {
                     const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
-                    const record = {
+                    record = {
                         ...this.bookingData,
                         id: Date.now().toString(),
                         createdAt: new Date().toLocaleString(),
@@ -291,7 +293,15 @@
                     console.error("Errore salvataggio booking:", e);
                 }
 
-                alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${this.bookingData.code}\nTour: ${this.bookingData.tourTitle}\nData: ${this.bookingData.dateReadable} - Orario: ${this.bookingData.slotTime}\nOspiti: ${this.bookingData.adults} Adulti${this.bookingData.children > 0 ? `, ${this.bookingData.children} Bambini` : ''}\nTotale: €${this.bookingData.total}\n\nGrazie ${this.bookingData.customerName}, la tua prenotazione è stata ricevuta. Ti risponderemo a breve!`);
+                if (window.brevoEmailService && record) {
+                    try {
+                        await window.brevoEmailService.inviaEmailPrenotazione(record);
+                    } catch (err) {
+                        console.error("Errore invio email Brevo:", err);
+                    }
+                }
+
+                alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${this.bookingData.code}\nTour: ${this.bookingData.tourTitle}\nData: ${this.bookingData.dateReadable} - Orario: ${this.bookingData.slotTime}\nOspiti: ${this.bookingData.adults} Adulti${this.bookingData.children > 0 ? `, ${this.bookingData.children} Bambini` : ''}\nTotale: €${this.bookingData.total}\n\nGrazie ${this.bookingData.customerName}, la tua prenotazione è stata ricevuta e ti abbiamo inviato un'email di conferma!`);
 
                 window.location.href = '../index.html';
             }

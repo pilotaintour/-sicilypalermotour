@@ -52,6 +52,27 @@ function salvaChiaviStripe() {
     }
 }
 
+function caricaChiaveBrevo() {
+    const input = document.getElementById('brevo-key-input');
+    if (input) input.value = localStorage.getItem('spt_brevo_api_key') || '';
+}
+
+function salvaChiaveBrevo() {
+    const input = document.getElementById('brevo-key-input');
+    if (!input) return;
+
+    const key = input.value.trim();
+    if (key) {
+        localStorage.setItem('spt_brevo_api_key', key);
+        if (window.brevoEmailService) {
+            window.brevoEmailService.saveApiKey(key);
+        }
+        alert('✅ API Key Brevo Email salvata con successo!');
+    } else {
+        alert('Per favore inserisci la tua API Key di Brevo.');
+    }
+}
+
 function toggleSettingBox(boxId) {
     const box = document.getElementById(boxId);
     const arrow = document.getElementById('arrow-' + boxId);
@@ -61,6 +82,7 @@ function toggleSettingBox(boxId) {
             box.classList.remove('hidden');
             if (arrow) arrow.textContent = '▲';
             if (boxId === 'box-stripe') caricaChiaviStripe();
+            if (boxId === 'box-brevo') caricaChiaveBrevo();
         } else {
             box.classList.add('hidden');
             if (arrow) arrow.textContent = '▼';

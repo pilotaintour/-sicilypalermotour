@@ -329,6 +329,29 @@
                         </div>
                     </div>
 
+                    <!-- Voce Lista 3: Brevo Email Key -->
+                    <div class="settings-item" style="margin-top: 15px;">
+                        <div class="settings-item-header" onclick="toggleSettingBox('box-brevo')">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">📬</span>
+                                <strong style="color: #1b4f72; font-size: 1.05rem;">Configurazione Email Automatiche Brevo</strong>
+                            </div>
+                            <span id="arrow-box-brevo" class="settings-arrow">▼</span>
+                        </div>
+                        <div id="box-brevo" class="settings-item-body hidden">
+                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">Incolla la tua API Key di Brevo per inviare le email automatiche di conferma ai turisti ed a te stesso:</p>
+                            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px;">
+                                <div>
+                                    <label style="display: block; font-weight: bold; font-size: 0.85rem; color: #0b2545; margin-bottom: 4px;">Brevo API Key (xkeysib-...):</label>
+                                    <input type="text" id="brevo-key-input" placeholder="xkeysib-..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace;">
+                                </div>
+                                <div>
+                                    <button onclick="salvaChiaveBrevo()" class="btn-primary" style="background-color: #009255; padding: 10px 20px;">💾 Salva Chiave Brevo Email</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- In futuro potremo aggiungere altre opzioni qui nella lista -->
                 </div>
             </div>
