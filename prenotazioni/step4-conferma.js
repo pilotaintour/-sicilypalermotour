@@ -1,5 +1,5 @@
 /**
- * STEP 4: Riepilogo & Conferma Finale
+ * STEP 4: Riepilogo & Pre-Autorizzazione Pagamento Carta di Credito / Stripe
  */
 
 class Step4Conferma {
@@ -7,6 +7,7 @@ class Step4Conferma {
         this.container = document.getElementById(containerId);
         this.onConfirm = options.onConfirm || null;
         this.onPrev = options.onPrev || null;
+        this.lastData = null;
 
         this.init();
     }
@@ -16,24 +17,22 @@ class Step4Conferma {
 
         this.container.innerHTML = `
             <div class="step-card-header">
-                📋 Step 4: Riepilogo & Conferma Finale
+                📋 Step 4: Riepilogo & Pre-Autorizzazione Pagamento
             </div>
 
             <div id="step4-summary-box" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 22px; margin-bottom: 20px;">
                 <!-- Popolato via JS -->
             </div>
 
-            <div style="background: #f0fdf4; border-radius: 10px; padding: 14px; border: 1px solid #bbf7d0; text-align: center; font-size: 0.85rem; color: #15803d; line-height: 1.5; margin-bottom: 20px;">
-                🔒 <strong>Nessun Pagamento Anticipato Richiesto</strong><br>
-                Pagamento direttamente sul posto prima della partenza del tour. Cancellazione gratuita fino a 24h prima.
-            </div>
+            <!-- Contenitore Form Carta Stripe Montato dal modulo autonomo stripe-payment.js -->
+            <div id="stripe-card-slot"></div>
 
             <div class="step-nav-bar">
                 <button type="button" class="btn-nav-prev" id="btn-step4-prev">
                     ← Indietro
                 </button>
                 <button type="button" class="btn-nav-confirm" id="btn-step4-confirm">
-                    ✅ Conferma e Invia Prenotazione
+                    💳 Pre-Autorizza & Invia Prenotazione
                 </button>
             </div>
         `;
@@ -42,12 +41,38 @@ class Step4Conferma {
             if (typeof this.onPrev === 'function') this.onPrev();
         };
 
-        this.container.querySelector('#btn-step4-confirm').onclick = () => {
-            if (typeof this.onConfirm === 'function') this.onConfirm();
+        this.container.querySelector('#btn-step4-confirm').onclick = async () => {
+            if (window.stripePayment) {
+                const btnConfirm = this.container.querySelector('#btn-step4-confirm');
+                if (btnConfirm) {
+                    btnConfirm.disabled = true;
+                    btnConfirm.textContent = "⏳ Elaborazione Carta...";
+                }
+
+                const res = await window.stripePayment.processaPreAutorizzazione(
+                    this.lastData ? this.lastData.total : '25.00',
+                    this.lastData ? this.lastData.customerName : 'Cliente',
+                    this.lastData ? this.lastData.customerEmail : ''
+                );
+
+                if (btnConfirm) {
+                    btnConfirm.disabled = false;
+                    btnConfirm.textContent = "💳 Pre-Autorizza & Invia Prenotazione";
+                }
+
+                if (res.success) {
+                    if (typeof this.onConfirm === 'function') {
+                        this.onConfirm(res);
+                    }
+                }
+            } else {
+                if (typeof this.onConfirm === 'function') this.onConfirm();
+            }
         };
     }
 
     renderSummary(data) {
+        this.lastData = data;
         const box = this.container.querySelector('#step4-summary-box');
         if (!box) return;
 
@@ -96,9 +121,13 @@ class Step4Conferma {
                 </div>
             ` : ''}
             <div style="border-top: 2px dashed #cbd5e1; padding-top: 14px; margin-top: 14px; display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800; color: #1b4f72;">
-                <span>Totale Stimato:</span>
+                <span>Totale in Pre-Autorizzazione:</span>
                 <span>€${data.total}</span>
             </div>
         `;
+
+        if (window.stripePayment) {
+            window.stripePayment.mountCardForm('stripe-card-slot');
+        }
     }
 }

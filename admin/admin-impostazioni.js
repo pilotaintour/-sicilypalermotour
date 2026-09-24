@@ -25,6 +25,33 @@ function salvaNumeroWhatsApp() {
     }
 }
 
+function caricaChiaviStripe() {
+    const pkInput = document.getElementById('stripe-pk-input');
+    const skInput = document.getElementById('stripe-sk-input');
+
+    if (pkInput) pkInput.value = localStorage.getItem('spt_stripe_pk') || '';
+    if (skInput) skInput.value = localStorage.getItem('spt_stripe_sk') || '';
+}
+
+function salvaChiaviStripe() {
+    const pkInput = document.getElementById('stripe-pk-input');
+    const skInput = document.getElementById('stripe-sk-input');
+
+    if (pkInput && skInput) {
+        const pk = pkInput.value.trim();
+        const sk = skInput.value.trim();
+
+        if (pk) localStorage.setItem('spt_stripe_pk', pk);
+        if (sk) localStorage.setItem('spt_stripe_sk', sk);
+
+        if (window.stripePayment) {
+            window.stripePayment.saveKeys(pk, sk);
+        }
+
+        alert('✅ Chiavi Stripe salvate con successo nel tuo browser!');
+    }
+}
+
 function toggleSettingBox(boxId) {
     const box = document.getElementById(boxId);
     const arrow = document.getElementById('arrow-' + boxId);
@@ -33,6 +60,7 @@ function toggleSettingBox(boxId) {
         if (box.classList.contains('hidden')) {
             box.classList.remove('hidden');
             if (arrow) arrow.textContent = '▲';
+            if (boxId === 'box-stripe') caricaChiaviStripe();
         } else {
             box.classList.add('hidden');
             if (arrow) arrow.textContent = '▼';
