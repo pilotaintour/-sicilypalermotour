@@ -1,5 +1,5 @@
 /**
- * MODULO 2: Cartelle Itinerari & Gestione Prenotazioni
+ * MODULO 2: Cartelle Itinerari, Orari Prenotati & Registro Excel Passeggeri
  * Sicily Palermo Tour - Admin
  */
 
@@ -9,6 +9,7 @@ let tourSelezionatoCartella = null; // null = Mostra Griglia Cartelle Tour; stri
 let vistaAttualePrenotazioni = 'SCHEDE'; // 'SCHEDE' oppure 'EXCEL'
 let filtroStatoPrenotazioni = 'TUTTI';
 let filtroDataSelezionata = 'TUTTI';
+let filtroOrarioSelezionato = 'TUTTI';
 let ricercaPrenotazioniText = '';
 
 // Recupera le prenotazioni dal localStorage
@@ -31,6 +32,7 @@ function savePrenotazioniAdmin(list) {
 function apriCartellaTour(titoloTour) {
     tourSelezionatoCartella = titoloTour;
     filtroDataSelezionata = 'TUTTI';
+    filtroOrarioSelezionato = 'TUTTI';
     caricaPrenotazioniAdmin();
 }
 
@@ -38,6 +40,7 @@ function apriCartellaTour(titoloTour) {
 function chiudiCartellaTour() {
     tourSelezionatoCartella = null;
     filtroDataSelezionata = 'TUTTI';
+    filtroOrarioSelezionato = 'TUTTI';
     caricaPrenotazioniAdmin();
 }
 
@@ -62,7 +65,7 @@ function caricaPrenotazioniAdmin() {
         listContainer.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #64748b;">
                 <h3 style="color: #1b4f72;">📥 Nessuna prenotazione ricevuta al momento</h3>
-                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario.</p>
+                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
             </div>
         `;
         return;
@@ -81,7 +84,6 @@ function caricaPrenotazioniAdmin() {
 
 // Renderizza la Griglia di Cartelle degli Itinerari
 function renderGrigliaCartelleItinerari(allBookings) {
-    // Recupera la lista degli itinerari dal localStorage per mostrare anche foto e categorie
     let itinerariConfig = [];
     try {
         itinerariConfig = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
@@ -89,7 +91,6 @@ function renderGrigliaCartelleItinerari(allBookings) {
         itinerariConfig = [];
     }
 
-    // Raggruppa le prenotazioni per titolo del Tour
     const tourMappa = {};
 
     allBookings.forEach(b => {
@@ -99,12 +100,14 @@ function renderGrigliaCartelleItinerari(allBookings) {
                 title: title,
                 countBookings: 0,
                 totalPassengers: 0,
+                timeSlotsSet: new Set(),
                 bookings: []
             };
         }
         tourMappa[title].countBookings++;
         const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
         tourMappa[title].totalPassengers += numPasseggeri;
+        if (b.time) tourMappa[title].timeSlotsSet.add(b.time);
         tourMappa[title].bookings.push(b);
     });
 
@@ -114,7 +117,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
         <div style="margin-bottom: 22px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
                 <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
-                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista dei passeggeri ed ai dettagli delle prenotazioni.</p>
+                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per filtrare le prenotazioni e vedere la suddivisione per orari.</p>
             </div>
             <button type="button" class="btn-secondary btn-small" style="background:#059669; color:#fff;" onclick="esportaRegistroExcelCSVAll()">
                 📥 Esporta CSV di Tutti i Tour
@@ -128,6 +131,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
         const itemTour = tourMappa[title];
         const config = itinerariConfig.find(i => i.title === title) || {};
         const coverImg = (config.images && config.images.length > 0) ? config.images[0] : (config.imageUrl || 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=600');
+        const orariArray = Array.from(itemTour.timeSlotsSet).sort();
 
         html += `
             <div onclick="apriCartellaTour('${escapeHtmlBooking(title)}')" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.25s ease; position: relative;" onmouseover="this.style.borderColor='#0b2545'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='none';">
@@ -143,10 +147,11 @@ function renderGrigliaCartelleItinerari(allBookings) {
                         🏛️ ${escapeHtmlBooking(title)}
                     </h4>
 
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
                         <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: bold;">
-                            👥 ${itemTour.totalPassengers} Passeggeri Totali
+                            👥 ${itemTour.totalPassengers} Passeggeri
                         </span>
+                        ${orariArray.map(o => `<span style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:8px; font-size:0.78rem; font-weight:bold;">⏰ ${o}</span>`).join('')}
                     </div>
 
                     <button type="button" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #0b2545, #134074); padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -161,9 +166,21 @@ function renderGrigliaCartelleItinerari(allBookings) {
     return html;
 }
 
+// Calcola il conteggio dei passeggeri per un orario
+function getConteggioPasseggeriOrario(bookingsList, timeStr) {
+    let cnt = 0;
+    bookingsList.forEach(b => {
+        if (timeStr === 'TUTTI' || b.time === timeStr) {
+            cnt += (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+        }
+    });
+    return cnt;
+}
+
 // Renderizza il Dettaglio della Cartella di un Singolo Tour
 function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
+    const orariUnici = [...new Set(bookingsOfTour.map(b => b.time).filter(Boolean))].sort();
 
     let html = `
         <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
@@ -217,13 +234,28 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                     <input type="text" id="admin-search-booking" placeholder="🔎 Cerca Nome o Codice..." value="${escapeHtmlBooking(ricercaPrenotazioniText)}" oninput="cercaPrenotazioniAdmin(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 200px;">
                 </div>
             </div>
+
+            <!-- PULSANTI SEPARAZIONE PER ORARIO PRENOTATO (INTERATTIVI) -->
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 0.88rem; font-weight: 800; color: #0b2545;">⏰ Filtra per Orario Tour:</span>
+                <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === 'TUTTI' ? 'background:#0b2545; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = 'TUTTI'; caricaPrenotazioniAdmin();">
+                    Tutti gli Orari (${getConteggioPasseggeriOrario(bookingsOfTour, 'TUTTI')} pers)
+                </button>
+                ${orariUnici.map(timeStr => `
+                    <button type="button" class="btn-secondary btn-small" style="${filtroOrarioSelezionato === timeStr ? 'background:#0b2545; color:#ffffff; font-weight:bold; box-shadow:0 2px 8px rgba(11,37,69,0.3);' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="filtroOrarioSelezionato = '${timeStr}'; caricaPrenotazioniAdmin();">
+                        ⏰ Ore ${timeStr} (${getConteggioPasseggeriOrario(bookingsOfTour, timeStr)} pers)
+                    </button>
+                `).join('')}
+            </div>
         </div>
     `;
 
-    // Filtra ulteriormente per Data e Stato
+    // Filtra per Data, Orario e Stato
     let filtrate = bookingsOfTour.filter(b => {
         const dateStr = b.dateReadable || b.dateISO;
         if (filtroDataSelezionata !== 'TUTTI' && dateStr !== filtroDataSelezionata) return false;
+
+        if (filtroOrarioSelezionato !== 'TUTTI' && b.time !== filtroOrarioSelezionato) return false;
 
         if (filtroStatoPrenotazioni !== 'TUTTI' && b.status !== filtroStatoPrenotazioni) return false;
 
@@ -253,7 +285,7 @@ function renderRegistroExcelPasseggeri(bookingsList) {
     if (bookingsList.length === 0) {
         return `
             <div style="text-align: center; padding: 30px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <p>Nessun passeggero trovato per i filtri selezionati.</p>
+                <p>Nessun passeggero trovato per l'orario e i filtri selezionati.</p>
             </div>
         `;
     }
