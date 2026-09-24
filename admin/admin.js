@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     caricaNumeroWhatsApp();
     renderCampiTappe();
     renderCampiOrari();
+    caricaElencoItinerari();
 });
 
 // Gestione Modale e Tabella Orari
@@ -482,7 +483,7 @@ function salvaNumeroWhatsApp() {
     }
 }
 
-// Recupera gli itinerari dal localStorage
+// Recupera gli itinerari dal localStorage con ripristino automatico se vuoto
 function getItinerari() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) {
@@ -490,8 +491,15 @@ function getItinerari() {
         return DEFAULT_ITINERARIES;
     }
     try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+        } else {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
+            return DEFAULT_ITINERARIES;
+        }
     } catch (e) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
         return DEFAULT_ITINERARIES;
     }
 }
@@ -507,39 +515,43 @@ function caricaElencoItinerari() {
     const container = document.getElementById('itineraries-list');
     const countBadge = document.getElementById('itinerary-count');
 
-    if (!container || !countBadge) return;
+    if (!container) return;
 
-    countBadge.textContent = itinerari.length;
+    if (countBadge) countBadge.textContent = itinerari.length;
 
-    if (itinerari.length === 0) {
+    if (!itinerari || itinerari.length === 0) {
         container.innerHTML = '<p class="text-muted" style="text-align:center; padding:20px;">Nessun itinerario presente. Aggiungine uno nuovo!</p>';
         return;
     }
 
-    container.innerHTML = itinerari.map(item => {
-        const coverImg = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || 'https://via.placeholder.com/90?text=Palermo');
-        const totalPhotos = (item.images && item.images.length > 0) ? item.images.length : (item.imageUrl ? 1 : 0);
-        const totalOrari = (item.timeSlots && item.timeSlots.length > 0) ? item.timeSlots.length : 0;
+    try {
+        container.innerHTML = itinerari.map(item => {
+            const coverImg = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || 'https://via.placeholder.com/90?text=Palermo');
+            const totalPhotos = (item.images && item.images.length > 0) ? item.images.length : (item.imageUrl ? 1 : 0);
+            const totalOrari = (item.timeSlots && item.timeSlots.length > 0) ? item.timeSlots.length : 0;
 
-        return `
-            <div class="itinerary-item">
-                <img class="item-thumb" src="${coverImg}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/90?text=Foto'">
-                <div class="item-content">
-                    <span class="item-badge">${item.category}</span>
-                    <span class="item-badge" style="background:#e0f2fe; color:#0369a1;">🖼️ ${totalPhotos} Foto</span>
-                    <span class="item-badge" style="background:#fef3c7; color:#92400e;">⏰ ${totalOrari} Orari Attivi</span>
-                    ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
-                    <div class="item-title">${escapeHtml(item.title)}</div>
-                    <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')}</div>
-                    <div class="item-desc">${escapeHtml(item.shortDesc)}</div>
+            return `
+                <div class="itinerary-item">
+                    <img class="item-thumb" src="${coverImg}" alt="${escapeHtml(item.title)}" onerror="this.src='https://via.placeholder.com/90?text=Foto'">
+                    <div class="item-content">
+                        <span class="item-badge">${escapeHtml(item.category)}</span>
+                        <span class="item-badge" style="background:#e0f2fe; color:#0369a1;">🖼️ ${totalPhotos} Foto</span>
+                        <span class="item-badge" style="background:#fef3c7; color:#92400e;">⏰ ${totalOrari} Orari Attivi</span>
+                        ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
+                        <div class="item-title">${escapeHtml(item.title)}</div>
+                        <div class="item-meta">⏱️ ${escapeHtml(item.duration || 'N/D')} | 💰 ${escapeHtml(item.price || 'N/D')}</div>
+                        <div class="item-desc">${escapeHtml(item.shortDesc)}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-secondary btn-small" onclick="preparaModifica('${item.id}')">✏️ Edit</button>
+                        <button class="btn-danger btn-small" onclick="eliminaItinerario('${item.id}')">🗑️</button>
+                    </div>
                 </div>
-                <div class="item-actions">
-                    <button class="btn-secondary btn-small" onclick="preparaModifica('${item.id}')">✏️ Edit</button>
-                    <button class="btn-danger btn-small" onclick="eliminaItinerario('${item.id}')">🗑️</button>
-                </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    } catch (err) {
+        console.error("Errore rendering itinerari:", err);
+    }
 }
 
 // Aggiunge o aggiorna un itinerario
