@@ -398,24 +398,23 @@ function renderGalleriaAnteprima() {
     `).join('');
 }
 
-// Login Amministratore (con riconocimento email autorizzata)
+// Login Amministratore (con riconoscimento email autorizzata pilotaintour13@gmail.com)
 function effettuaLogin(event) {
     if (event) event.preventDefault();
     const emailInput = document.getElementById('admin-email');
     const loginError = document.getElementById('login-error');
 
-    if (!emailInput) return;
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : AUTHORIZED_EMAIL.toLowerCase();
 
-    const email = emailInput.value.trim().toLowerCase();
-
-    if (email === AUTHORIZED_EMAIL.toLowerCase()) {
+    if (email === AUTHORIZED_EMAIL.toLowerCase() || email === 'pilotaintour13@gmail.com') {
+        localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL);
         localStorage.setItem(AUTH_KEY, 'true');
         if (loginError) loginError.classList.add('hidden');
         verificaStatoAutenticazione();
     } else {
         if (loginError) {
             loginError.classList.remove('hidden');
-            loginError.textContent = `Accesso negato: l'email ${email} non è autorizzata.`;
+            loginError.textContent = `Accesso negato: l'email ${email} non è autorizzata come Amministratore.`;
         }
     }
 }
@@ -423,23 +422,29 @@ function effettuaLogin(event) {
 // Logout Amministratore
 function logout() {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem('spt_admin_email');
     verificaStatoAutenticazione();
 }
 
-// Verifica e attiva la vista Dashboard (con accesso diretto per l'amministratore)
+// Riconoscimento automatico immediato per pilotaintour13@gmail.com
 function verificaStatoAutenticazione() {
-    // Imposta l'accesso diretto automatico per l'amministratore
-    if (localStorage.getItem(AUTH_KEY) === null) {
+    // Inserisce ed imposta l'email riconosciuta per l'accesso diretto
+    if (!localStorage.getItem('spt_admin_email')) {
+        localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL);
+    }
+    if (localStorage.getItem(AUTH_KEY) !== 'true') {
         localStorage.setItem(AUTH_KEY, 'true');
     }
 
+    const savedEmail = localStorage.getItem('spt_admin_email') || AUTHORIZED_EMAIL;
     const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
+
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const userControls = document.getElementById('user-controls');
     const welcomeMsg = document.getElementById('welcome-msg');
 
-    if (isLoggedIn) {
+    if (isLoggedIn && savedEmail.toLowerCase() === AUTHORIZED_EMAIL.toLowerCase()) {
         if (loginSection) loginSection.classList.add('hidden');
         if (dashboardSection) dashboardSection.classList.remove('hidden');
         if (userControls) userControls.classList.remove('hidden');
@@ -448,6 +453,12 @@ function verificaStatoAutenticazione() {
         }
         caricaElencoItinerari();
         caricaPrenotazioniAdmin();
+    } else {
+        if (loginSection) loginSection.classList.remove('hidden');
+        if (dashboardSection) dashboardSection.classList.add('hidden');
+        if (userControls) userControls.classList.add('hidden');
+    }
+}
     } else {
         if (loginSection) loginSection.classList.remove('hidden');
         if (dashboardSection) dashboardSection.classList.add('hidden');
