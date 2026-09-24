@@ -237,9 +237,8 @@ function caricaItinerari(categoria = 'Tutti') {
                     <span>💰 ${escapeHtml(tour.price || 'Su richiesta')}</span>
                 </div>
                 <div class="card-desc">${escapeHtml(tour.shortDesc)}</div>
-                <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                    <button type="button" class="btn-tour" style="flex: 1; min-width: 140px;" onclick="apriDettagliModal('${tour.id}')">Dettagli & Tappe →</button>
-                    <button type="button" class="btn-secondary" style="background: #1b4f72; color: #ffffff; border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="vaiAllaPaginaPrenotazione('${tour.id}')">📅 Prenota</button>
+                <div style="margin-top: 12px;">
+                    <button type="button" class="btn-tour" style="width: 100%; text-align: center; display: flex; align-items: center; justify-content: center;" onclick="apriDettagliModal('${tour.id}')">Dettagli & Tappe →</button>
                 </div>
             </div>
         </div>
