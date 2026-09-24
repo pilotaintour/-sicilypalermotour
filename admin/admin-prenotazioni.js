@@ -1,5 +1,5 @@
 /**
- * MODULO 2: Cartelle Itinerari, Orari Prenotati & Registro Excel Passeggeri
+ * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri
  * Sicily Palermo Tour - Admin
  */
 
@@ -217,7 +217,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
                         📲 Condividi File Excel / WhatsApp
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#0284c7; color:#ffffff; font-weight:bold;" onclick="stampaFoglioPresenzeGuidaParticolare('${escapeHtmlBooking(titoloTour)}')">
-                        📄 Salva PDF / Stampa
+                        📄 Salva PDF / Stampa Manifest
                     </button>
                     <button type="button" class="btn-secondary btn-small" style="background:#6366f1; color:#ffffff;" onclick="inviaListaEmailAgenzia('${escapeHtmlBooking(titoloTour)}')">
                         📧 Invia Email
@@ -296,7 +296,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     });
 
     if (vistaAttualePrenotazioni === 'EXCEL') {
-        html += renderRegistroExcelPasseggeri(filtrate);
+        html += renderRegistroExcelPasseggeri(filtrate, titoloTour);
     } else {
         html += renderSchedePrenotazioni(filtrate);
     }
@@ -304,8 +304,8 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     return html;
 }
 
-// Genera la vista Tabella Lista Unica Passeggeri
-function renderRegistroExcelPasseggeri(bookingsList) {
+// Genera la vista Tabella Lista Unica Passeggeri (Identica alla Stampa PDF / Guida)
+function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
     if (bookingsList.length === 0) {
         return `
             <div style="text-align: center; padding: 30px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -361,29 +361,35 @@ function renderRegistroExcelPasseggeri(bookingsList) {
 
     return `
         <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-            <div style="background: linear-gradient(135deg, #0b2545, #134074); color: #ffffff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                <span style="font-weight: 800; font-size: 1.02rem; letter-spacing: 0.3px;">
-                    📋 Lista Unica Partecipanti ${infoOrarioTitolo} (Totale ${righePasseggeri.length} Passeggeri)
-                </span>
-                <span style="font-size: 0.82rem; opacity: 0.9; background: rgba(255,255,255,0.18); padding: 3px 10px; border-radius: 10px;">
-                    Documento Ufficiale Tour
+            <div style="background: #ffffff; padding: 16px 20px; border-bottom: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem; font-weight: 800;">
+                        🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri
+                    </h3>
+                    <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">
+                        Tour: <strong>${escapeHtmlBooking(titoloTour || 'Palermo Tour')}</strong>${infoOrarioTitolo} | Documento Guida / PDF del ${new Date().toLocaleDateString('it-IT')}
+                    </p>
+                </div>
+                <span style="font-size: 0.85rem; font-weight: bold; background: #e0f2fe; color: #0369a1; padding: 6px 14px; border-radius: 20px;">
+                    Totale ${righePasseggeri.length} Passeggeri
                 </span>
             </div>
 
-            <div style="max-height: 520px; overflow-x: auto; overflow-y: auto;">
+            <div style="max-height: 540px; overflow-x: auto; overflow-y: auto;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
                     <thead>
-                        <tr style="background: #f1f5f9; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; text-align: center; width: 40px;">#</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1; background: #e0f2fe;">Passeggero (Nome e Cognome)</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ruolo</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Data Nascita</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Provenienza</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Ora & Data</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Contatti Referente</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Note Passeggero</th>
-                            <th style="padding: 12px 10px; border-right: 1px solid #cbd5e1;">Codice</th>
-                            <th style="padding: 12px 10px; text-align: center;">Stato</th>
+                        <tr style="background: #ffffff; color: #0b2545; font-weight: 800; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10;">
+                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; width: 50px;">Check</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; width: 35px;">#</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;">Passeggero</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Tipo</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Data Nascita</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Provenienza</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Tour</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Data & Ora</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Telefono / Email</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1;">Note</th>
+                            <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center;">Stato</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -391,26 +397,20 @@ function renderRegistroExcelPasseggeri(bookingsList) {
                             const isConfermata = r.status === 'Confermata';
                             const isCancellata = r.status === 'Cancellata';
                             const statusBg = isConfermata ? '#d1fae5; color:#065f46;' : (isCancellata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
-                            const rowBg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
 
                             return `
-                                <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; text-align: center; font-weight: bold; color: #64748b;">${r.rowNum}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; background: rgba(224, 242, 254, 0.3);">${escapeHtmlBooking(r.passengerName)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0;">
-                                        <span style="font-size: 0.78rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: ${r.passengerType.includes('Referente') ? '#fef3c7; color:#92400e;' : (r.passengerType.includes('Bambino') ? '#ffedd5; color:#c2410c;' : '#f1f5f9; color:#334155;')};">
-                                            ${escapeHtmlBooking(r.passengerType)}
-                                        </span>
-                                    </td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155; font-weight: 600;">${escapeHtmlBooking(r.passengerDob)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; color: #334155;">${escapeHtmlBooking(r.passengerOrigin)}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-weight: 700; color: #0b2545;">⏰ ${escapeHtmlBooking(r.timeStr)}<br><small style="font-weight:normal; color:#64748b;">${escapeHtmlBooking(r.dateStr)}</small></td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #475569;">
-                                        📧 ${escapeHtmlBooking(r.leadEmail)}<br>📞 ${escapeHtmlBooking(r.leadPhone)}
-                                    </td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-size: 0.82rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
-                                    <td style="padding: 10px; border-right: 1px solid #e2e8f0; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
-                                    <td style="padding: 10px; text-align: center;">
+                                <tr style="background: #ffffff; border-bottom: 1px solid #cbd5e1;">
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; color: #64748b; font-family: monospace;">[ &nbsp; ]</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: #1e293b;">${r.rowNum}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 800; color: #0f172a; background: #ffffff;">${escapeHtmlBooking(r.passengerName)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #475569;">${escapeHtmlBooking(r.passengerType)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; color: #1e293b; font-weight: 500;">${escapeHtmlBooking(r.passengerDob)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; color: #1e293b;">${escapeHtmlBooking(r.passengerOrigin)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; color: #334155; font-size: 0.82rem;">${escapeHtmlBooking(r.dateStr)}<br><strong>Ore ${escapeHtmlBooking(r.timeStr)}</strong></td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #475569;">📞 ${escapeHtmlBooking(r.leadPhone)}<br>📧 ${escapeHtmlBooking(r.leadEmail)}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; font-size: 0.82rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center;">
                                         <span style="font-weight: bold; font-size: 0.78rem; padding: 3px 8px; border-radius: 10px; background: ${statusBg}; cursor: pointer;" onclick="cambiaStatoPrenotazione('${r.bookingId}', '${r.status === 'Confermata' ? 'In attesa' : 'Confermata'}')" title="Clicca per cambiare stato">
                                             ${escapeHtmlBooking(r.status)}
                                         </span>
@@ -505,12 +505,10 @@ function condividiFileExcelWhatsApp(titoloTour) {
         return;
     }
 
-    // 1. Genera il file CSV Excel con formato professionale
     const csvContent = generaStringaCSVExcel(list);
     const fileName = `Manifest_Passeggeri_${titoloTour ? titoloTour.replace(/[^a-zA-Z0-9]/g, '_') : 'Tour'}.csv`;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 
-    // Se il browser supporta la condivisione diretta di File (es. Smartphone o Edge/Chrome)
     if (navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'text/csv' })] })) {
         const fileObj = new File([blob], fileName, { type: 'text/csv' });
         navigator.share({
@@ -518,10 +516,9 @@ function condividiFileExcelWhatsApp(titoloTour) {
             text: `Ecco il file Excel con la lista passeggeri per il tour ${titoloTour || ''} ${filtroOrarioSelezionato !== 'TUTTI' ? 'delle ore ' + filtroOrarioSelezionato : ''}`,
             files: [fileObj]
         }).catch(err => {
-            console.log("Condivisione annullata o non completata:", err);
+            console.log("Condivisione annullata:", err);
         });
     } else {
-        // Fallback: Scarica automaticamente il file CSV ed apre WhatsApp Web con il messaggio pronto
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
@@ -553,9 +550,9 @@ function condividiFileExcelWhatsApp(titoloTour) {
     }
 }
 
-// Genera la stringa CSV Excel formattata in modo pulito e professionale
+// Genera la stringa CSV Excel formattata in modo pulito
 function generaStringaCSVExcel(bookingsList) {
-    let csv = "\uFEFF"; // UTF-8 BOM per garantire che Microsoft Excel apra il file con accenti e colonne perfette
+    let csv = "\uFEFF";
     csv += "N°;PASSEGGERO (NOME E COGNOME);RUOLO / TIPO;DATA DI NASCITA;PROVENIENZA;ITINERARIO TOUR;DATA TOUR;ORARIO TOUR;NOTE PASSEGGERO;REFERENTE PRENOTAZIONE;TELEFONO REFERENTE;EMAIL REFERENTE;CODICE BOOKING;STATO PRENOTAZIONE\n";
 
     let counter = 1;
@@ -655,7 +652,7 @@ function inviaListaEmailAgenzia(titoloTour) {
     window.location.href = mailtoUrl;
 }
 
-// Stampa Registro Guida o Salva in PDF di un Tour per Orario
+// Stampa Registro Guida o Salva in PDF di un Tour per Orario (Format Esatto Immagine)
 function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) {
@@ -680,13 +677,13 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
                 rowsHtml += `
                     <tr>
                         <td style="text-align:center;">[ &nbsp; ]</td>
-                        <td>${counter++}</td>
+                        <td style="text-align:center;">${counter++}</td>
                         <td><strong>${p.name || 'N/D'}</strong></td>
                         <td>${p.type || 'Adulto'}</td>
                         <td>${p.dob || '-'}</td>
                         <td>${p.origin || '-'}</td>
                         <td>${b.tourTitle || 'Tour Palermo'}</td>
-                        <td>${b.dateReadable || b.dateISO} - Ore ${b.time || '09:30'}</td>
+                        <td>${b.dateReadable || b.dateISO}<br><strong>Ore ${b.time || '09:30'}</strong></td>
                         <td>${b.customerPhone || '-'}</td>
                         <td>${p.notes || '-'}</td>
                     </tr>
@@ -703,22 +700,27 @@ function stampaFoglioPresenzeGuidaParticolare(titoloTour) {
         <head>
             <title>Lista Passeggeri Guida - Sicily Palermo Tour</title>
             <style>
-                body { font-family: sans-serif; padding: 20px; color: #1e293b; }
-                h1 { color: #0b2545; font-size: 1.5rem; margin-bottom: 5px; }
-                p { color: #64748b; font-size: 0.9rem; margin-top: 0; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.88rem; }
-                th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
-                th { background: #f1f5f9; color: #0b2545; }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 25px; color: #1e293b; background: #ffffff; }
+                .header-box { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+                h1 { color: #0b2545; font-size: 1.4rem; margin: 0; font-weight: 800; }
+                p { color: #64748b; font-size: 0.88rem; margin-top: 4px; margin-bottom: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+                th, td { border: 1px solid #94a3b8; padding: 8px 10px; text-align: left; }
+                th { background: #ffffff; color: #0f172a; font-weight: 800; border-bottom: 2px solid #0f172a; }
+                tr:nth-child(even) { background: #f8fafc; }
             </style>
         </head>
         <body>
-            <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
-            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> ${infoOrario} | Documento Guida / PDF del ${new Date().toLocaleString('it-IT')}</p>
+            <div class="header-box">
+                <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
+            </div>
+            <p>Tour: <strong>${titoloTour || 'Tutti i Tour'}</strong> | Documento Guida / PDF del ${new Date().toLocaleString('it-IT')}</p>
+
             <table>
                 <thead>
                     <tr>
-                        <th>Check</th>
-                        <th>#</th>
+                        <th style="text-align:center; width: 45px;">Check</th>
+                        <th style="text-align:center; width: 30px;">#</th>
                         <th>Passeggero</th>
                         <th>Tipo</th>
                         <th>Data Nascita</th>
