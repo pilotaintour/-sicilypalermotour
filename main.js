@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Gestione Sfondo Copertina Hero (Foto Ufficiale unificata)
+// Gestione Sfondo Copertina Hero (Foto Ufficiale unificata e scorrevole)
 function avviaHeroBgSlider() {
     const sliderBox = document.getElementById('hero-bg-slider');
     if (!sliderBox) return;
@@ -47,19 +47,24 @@ function avviaHeroBgSlider() {
         savedPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]');
     } catch (e) {}
 
-    // Se l'Admin ha impostato foto personalizzate, le mostra; altrimenti mostra unnamed.webp
     if (savedPhotos && savedPhotos.length > 0) {
         sliderBox.innerHTML = savedPhotos.map((url, i) => `
-            <div class="hero-slide ${i === 0 ? 'active' : ''}" style="opacity: 1;">
+            <div class="hero-slide ${i === 0 ? 'active' : ''}">
                 <img src="${url}" alt="Copertina Tour" style="width:100%; height:100%; object-fit:cover;">
             </div>
         `).join('');
     } else {
-        sliderBox.innerHTML = `
-            <div class="hero-slide active" style="opacity: 1;">
-                <img src="unnamed.webp" alt="Sicily Palermo Tour" loading="eager" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;">
+        const defaultPhotos = [
+            'unnamed.webp',
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200',
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200',
+            'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=1200'
+        ];
+        sliderBox.innerHTML = defaultPhotos.map((url, i) => `
+            <div class="hero-slide ${i === 0 ? 'active' : ''}">
+                <img src="${url}" alt="Sicily Palermo Tour" style="width:100%; height:100%; object-fit:cover;">
             </div>
-        `;
+        `).join('');
     }
 
     const slides = document.querySelectorAll('.hero-slide');
