@@ -18,7 +18,7 @@ class CloudDatabaseManager {
             return this.binId;
         }
 
-        // 1. Cerca l'ultimo Bin creato con questa Master Key
+        // 1. Cerca se esiste già un Bin creato su JSONBin per questo account
         try {
             const res = await fetch('https://api.jsonbin.io/v3/c/uncategorized/bins', {
                 method: 'GET',
@@ -29,13 +29,14 @@ class CloudDatabaseManager {
 
             if (res.ok) {
                 const listData = await res.json();
-                if (Array.isArray(listData) && listData.length > 0) {
-                    // Prendi il primo/ultimo bin esistente
-                    const foundId = listData[0].record || (listData[0].snippet && listData[0].snippet.id);
+                const binsArray = Array.isArray(listData) ? listData : (listData.records || listData.bins || []);
+
+                if (binsArray.length > 0) {
+                    const foundId = binsArray[0].id || binsArray[0].record || (binsArray[0].metadata && binsArray[0].metadata.id);
                     if (foundId) {
                         this.binId = foundId;
                         localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                        console.log("☁️ Database Cloud Sincronizzato! Bin ID:", this.binId);
+                        console.log("☁️ Database Cloud Sincronizzato! Bin ID condiviso:", this.binId);
                         return this.binId;
                     }
                 }
