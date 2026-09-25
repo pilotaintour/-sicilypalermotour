@@ -16,7 +16,7 @@ body {
     display: none !important;
 }
 
-/* Header Hero con Carosello Foto Sfondo Scorrevoli */
+/* Header Hero con Carosello Foto Sfondo Scorrevoli e Caricamento Istantaneo */
 header#home {
     position: relative;
     height: 60vh;
@@ -29,6 +29,7 @@ header#home {
     text-align: center;
     padding: 0 20px;
     overflow: hidden;
+    background: linear-gradient(135deg, rgba(11, 37, 69, 0.7) 0%, rgba(0, 0, 0, 0.6) 100%), url('https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1200') no-repeat center center / cover;
 }
 
 .hero-bg-slider {

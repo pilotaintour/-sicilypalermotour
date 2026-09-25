@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sicily Palermo Tour - Esplora Palermo</title>
     <!-- Fogli di stile CSS Separati -->
+    <!-- Pre-Caricamento Prioritario Immagine Copertina per Velocità Istantanea -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1200">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="itinerari/itinerari.css">
     <link rel="stylesheet" href="whatsapp/whatsapp.css">
@@ -14,10 +16,10 @@
     <!-- Copertina Principale (Hero Section) con Carosello Foto Sfondo Scorrevoli -->
     <header id="home">
         <div class="hero-bg-slider" id="hero-bg-slider">
-            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1600');"></div>
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600');"></div>
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1600');"></div>
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=1600');"></div>
+            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1200'); opacity: 1;"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200');"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200');"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=1200');"></div>
         </div>
         <div class="hero-overlay"></div>
 
