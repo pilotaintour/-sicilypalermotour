@@ -368,16 +368,77 @@ function apriDettagliModal(id) {
             }
         }
 
-        // Renderizza Chips Servizi Inclusi
+        // Renderizza Servizi Inclusi e Caratteristiche Tour separati con Emoticon
         const servicesBox = document.getElementById('modal-services-box');
         if (servicesBox) {
-            const listaServizi = (tour.servizi && tour.servizi.length > 0)
+            const listaTutti = (tour.servizi && tour.servizi.length > 0)
                 ? tour.servizi
-                : ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Adatto a Famiglie', 'Cancellazione Gratuita'];
+                : ['Guida Turistica Autorizzata', 'Assicurazione Tour Inclusa', 'Assistenza Dedicata WhatsApp', 'Cancellazione Gratuita', 'Adatto a Famiglie & Bambini'];
 
-            servicesBox.innerHTML = listaServizi.map(s => `
-                <span class="service-chip">✓ ${escapeHtml(s)}</span>
-            `).join('');
+            const tagsCaratteristicheList = [
+                'Adatto a Famiglie', 'Adatto a Famiglie & Bambini',
+                'Accessibile Sedia a Rotelle', 'Pet Friendly (Animali Ammessi)',
+                'Camminata Facile Pianeggiante', 'Tour Multilingua (ITA/ENG)'
+            ];
+
+            const serviziEffettivi = [];
+            const caratteristicheEffettive = [];
+
+            listaTutti.forEach(s => {
+                if (tagsCaratteristicheList.some(tag => s.includes(tag) || tag.includes(s))) {
+                    caratteristicheEffettive.push(s);
+                } else {
+                    serviziEffettivi.push(s);
+                }
+            });
+
+            function aggiungiEmoticonServizio(testo) {
+                if (testo.includes('Guida')) return '🚩 ' + testo;
+                if (testo.includes('Accompagnatore')) return '🧳 ' + testo;
+                if (testo.includes('Degustazion') || testo.includes('Food') || testo.includes('Cibo')) return '🥙 ' + testo;
+                if (testo.includes('Ingressi') || testo.includes('Monumenti')) return '🎟️ ' + testo;
+                if (testo.includes('Auricolari') || testo.includes('Whisper')) return '🎧 ' + testo;
+                if (testo.includes('Trasporto') || testo.includes('Transfer')) return '🚌 ' + testo;
+                if (testo.includes('Assicurazione')) return '🛡️ ' + testo;
+                if (testo.includes('WhatsApp') || testo.includes('Assistenza')) return '💬 ' + testo;
+                if (testo.includes('Cancellazione')) return '🔄 ' + testo;
+                return '✓ ' + testo;
+            }
+
+            function aggiungiEmoticonCaratteristica(testo) {
+                if (testo.includes('Famigli') || testo.includes('Bambini')) return '👨‍👩‍👧‍👦 ' + testo;
+                if (testo.includes('Rotelle') || testo.includes('Disabili')) return '♿ ' + testo;
+                if (testo.includes('Pet') || testo.includes('Animali')) return '🐾 ' + testo;
+                if (testo.includes('Camminata') || testo.includes('Facile')) return '🚶 ' + testo;
+                if (testo.includes('Multilingua') || testo.includes('ITA')) return '🌐 ' + testo;
+                return '🏷️ ' + testo;
+            }
+
+            let htmlServiziBox = '';
+
+            if (serviziEffettivi.length > 0) {
+                htmlServiziBox += `
+                    <div style="margin-bottom: 14px;">
+                        <strong style="color: #0b2545; display: block; margin-bottom: 8px; font-size: 0.95rem;">✓ Servizi Inclusi nel Prezzo:</strong>
+                        <div class="services-chips" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${serviziEffettivi.map(s => `<span class="service-chip" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:600;">${escapeHtml(aggiungiEmoticonServizio(s))}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (caratteristicheEffettive.length > 0) {
+                htmlServiziBox += `
+                    <div>
+                        <strong style="color: #c2410c; display: block; margin-bottom: 8px; font-size: 0.95rem;">🏷️ Caratteristiche & Suggerimenti Tour:</strong>
+                        <div class="services-chips" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${caratteristicheEffettive.map(c => `<span class="service-chip" style="background:#fffbf5; color:#c2410c; border:1px solid #fed7aa; font-weight:600;">${escapeHtml(aggiungiEmoticonCaratteristica(c))}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            servicesBox.innerHTML = htmlServiziBox;
         }
 
         const modalOverlay = document.getElementById('modal-dettaglio');
