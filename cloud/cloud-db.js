@@ -83,10 +83,13 @@ class CloudDatabaseManager {
         if (!binId) return null;
 
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+            const timestamp = Date.now();
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest?nocache=${timestamp}`, {
                 method: 'GET',
                 headers: {
-                    'X-Master-Key': this.masterKey
+                    'X-Master-Key': this.masterKey,
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
                 }
             });
 
