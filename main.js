@@ -37,8 +37,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Carosello Sfondo Scorrevoli della Copertina (Hero Slider)
+// Carosello Sfondo Scorrevoli della Copertina (Hero Slider con foto personalizzabili)
 function avviaHeroBgSlider() {
+    const sliderBox = document.getElementById('hero-bg-slider');
+    if (sliderBox) {
+        let savedPhotos = [];
+        try {
+            savedPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]');
+        } catch (e) {}
+
+        if (savedPhotos && savedPhotos.length > 0) {
+            sliderBox.innerHTML = savedPhotos.map((url, i) => `
+                <div class="hero-slide ${i === 0 ? 'active' : ''}" style="background-image: url('${url}');"></div>
+            `).join('');
+        }
+    }
+
     const slides = document.querySelectorAll('.hero-slide');
     if (!slides || slides.length <= 1) return;
 

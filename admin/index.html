@@ -355,6 +355,37 @@
                         </div>
                     </div>
 
+                    <!-- Voce Lista 4: Foto Sfondo Copertina Homepage -->
+                    <div class="settings-item" style="margin-top: 15px;">
+                        <div class="settings-item-header" onclick="toggleSettingBox('box-hero-photos')">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">🖼️</span>
+                                <strong style="color: #1b4f72; font-size: 1.05rem;">Foto Sfondo Copertina Homepage (Hero Slider)</strong>
+                            </div>
+                            <span id="arrow-box-hero-photos" class="settings-arrow">▼</span>
+                        </div>
+                        <div id="box-hero-photos" class="settings-item-body hidden">
+                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">Scegli e gestisci le foto che scorrono sullo sfondo della copertina principale del sito:</p>
+                            <div style="display: flex; flex-direction: column; gap: 14px; max-width: 650px;">
+                                <div>
+                                    <button type="button" class="btn-primary" style="background:#1b4f72;" onclick="document.getElementById('hero-file-input').click()">📸 Carica Foto dal Telefono / PC (Multiplo)</button>
+                                    <input type="file" id="hero-file-input" accept="image/*" multiple onchange="gestisciCaricamentoFotoHero(event)" style="display:none;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.85rem; color: #64748b;">🔗 Oppure incolla un Link URL Foto:</label>
+                                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                        <input type="url" id="hero-photo-url-input" placeholder="https://images.unsplash.com/..." style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                        <button type="button" class="btn-secondary btn-small" onclick="aggiungiUrlFotoHero()">+ Aggiungi</button>
+                                    </div>
+                                </div>
+                                <div id="hero-gallery-preview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                                <div>
+                                    <button type="button" onclick="salvaFotoHero()" class="btn-primary" style="background-color: #0b2545; padding: 10px 20px;">💾 Salva & Pubblica Foto Sfondo Copertina</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Voce Lista 4: Personalizzazione Template Email -->
                     <div class="settings-item" style="margin-top: 15px;">
                         <div class="settings-item-header" onclick="toggleSettingBox('box-email-template')">
