@@ -18,11 +18,9 @@ const DEFAULT_ITINERARIES = [
         meetingPoint: 'Piazza Bellini / Cattedrale',
         timeSlots: ['09:30', '11:30', '15:30', '18:00'],
         featured: 'true',
-        imageUrl: 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
+        imageUrl: 'unnamed.webp',
         images: [
-            'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=800',
-            'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=800',
-            'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800'
+            'unnamed.webp'
         ],
         tappe: [
             'Cattedrale di Palermo',
@@ -43,10 +41,9 @@ const DEFAULT_ITINERARIES = [
         meetingPoint: 'Mercato di Ballarò',
         timeSlots: ['10:30', '12:30', '17:30', '19:30'],
         featured: 'true',
-        imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
+        imageUrl: 'unnamed.webp',
         images: [
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800',
-            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800'
+            'unnamed.webp'
         ],
         tappe: [
             'Panelle e Crocchè calde',
@@ -67,9 +64,9 @@ const DEFAULT_ITINERARIES = [
         meetingPoint: 'Piazza Politeama',
         timeSlots: ['09:00', '15:00'],
         featured: 'false',
-        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
+        imageUrl: 'unnamed.webp',
         images: [
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800'
+            'unnamed.webp'
         ],
         tappe: [
             'Passeggiata sul lungomare di Mondello',

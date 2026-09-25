@@ -82,12 +82,7 @@ function caricaFotoHeroConfig() {
         fotoHeroCorrenti = [];
     }
     if (!fotoHeroCorrenti || fotoHeroCorrenti.length === 0) {
-        fotoHeroCorrenti = [
-            'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1600',
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600',
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1600',
-            'https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=1600'
-        ];
+        fotoHeroCorrenti = ['../unnamed.webp'];
     }
     renderGalleriaHeroAdmin();
 }
