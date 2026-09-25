@@ -5,6 +5,7 @@
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
 
+let selettoreVistaPrenotazioniArchivio = 'ATTIVE'; // 'ATTIVE' oppure 'ARCHIVIO'
 let tourSelezionatoCartella = null; // null = Mostra Griglia Cartelle Tour; string = Titolo Tour aperto
 let vistaAttualePrenotazioni = 'EXCEL'; // 'SCHEDE' oppure 'EXCEL'
 let filtroStatoPrenotazioni = 'TUTTI';
@@ -26,6 +27,35 @@ function getPrenotazioniAdmin() {
 // Salva le prenotazioni nel localStorage
 function savePrenotazioniAdmin(list) {
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
+}
+
+// Genera una prenotazione di prova 1-click per testare il sistema
+function aggiungiPrenotazioneDemoProva() {
+    let list = getPrenotazioniAdmin();
+    const demoBooking = {
+        id: Date.now().toString(),
+        code: '#SPT-' + Math.floor(1000 + Math.random() * 9000),
+        tourTitle: 'Palermo Arabo-Normanna',
+        dateISO: new Date().toISOString().slice(0, 10),
+        dateReadable: new Date().toLocaleDateString('it-IT'),
+        slotTime: '09:30',
+        time: '09:30',
+        adults: 2,
+        children: 0,
+        customerName: 'Mario Rossi',
+        customerEmail: 'mario@example.com',
+        customerPhone: '+39 340 1234567',
+        notes: 'Prima volta a Palermo, desideriamo la guida in italiano.',
+        total: '50.00',
+        status: 'In attesa',
+        participantsList: [
+            { number: 1, name: 'Mario Rossi', dob: '12/04/1985', origin: 'Milano', notes: 'Capogruppo', type: 'Referente Principale' },
+            { number: 2, name: 'Laura Bianchi', dob: '05/08/1988', origin: 'Roma', notes: '', type: 'Adulto' }
+        ]
+    };
+    list.unshift(demoBooking);
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
 }
 
 // Apre la cartella prenotazioni di un determinato itinerario
@@ -59,27 +89,53 @@ function caricaPrenotazioniAdmin() {
 
     let bookings = getPrenotazioniAdmin();
 
-    if (badgeCount) badgeCount.textContent = bookings.length;
+    // Separa le prenotazioni in Attive (prossime) ed Archiviate (passate)
+    const { attive, passate } = (window.adminArchivio && typeof window.adminArchivio.separaPrenotazioni === 'function')
+        ? window.adminArchivio.separaPrenotazioni(bookings)
+        : { attive: bookings, passate: [] };
 
-    if (bookings.length === 0) {
-        listContainer.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #64748b;">
-                <h3 style="color: #1b4f72;">📥 Nessuna prenotazione ricevuta al momento</h3>
-                <p>Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
+    if (badgeCount) badgeCount.textContent = attive.length;
+
+    // Barra selettore tra Prenotazioni Attive ed Archivio Storico
+    const htmlBarraArchivioToggle = `
+        <div style="margin-bottom: 18px; display: flex; gap: 10px; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; padding: 10px 14px; border-radius: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ATTIVE' ? 'background:#0b2545; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ATTIVE'; caricaPrenotazioniAdmin();">
+                📥 Prenotazioni Attive (${attive.length})
+            </button>
+            <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ARCHIVIO' ? 'background:#64748b; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ARCHIVIO'; caricaPrenotazioniAdmin();">
+                🗄️ Archivio Tour Passati (${passate.length})
+            </button>
+        </div>
+    `;
+
+    // Se l'admin seleziona la vista Archivio Storico
+    if (selettoreVistaPrenotazioniArchivio === 'ARCHIVIO') {
+        listContainer.innerHTML = htmlBarraArchivioToggle + (window.adminArchivio ? window.adminArchivio.renderSezioneArchivio(passate) : '<p>Archivio non disponibile</p>');
+        return;
+    }
+
+    if (attive.length === 0) {
+        listContainer.innerHTML = htmlBarraArchivioToggle + `
+            <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna prenotazione attiva al momento</h3>
+                <p style="font-size: 0.9rem;">Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
+                <button type="button" class="btn-primary btn-small" style="background:#0b2545; margin-top:12px; padding: 10px 18px; font-weight: bold;" onclick="aggiungiPrenotazioneDemoProva()">
+                    🧪 Genera Prenotazione di Prova (1-Click Test)
+                </button>
             </div>
         `;
         return;
     }
 
-    // SCENARIO A: Nessun Tour Selezionato -> Mostra la Griglia delle Cartelle Itinerari
+    // SCENARIO A: Nessun Tour Selezionato -> Mostra la Griglia delle Cartelle Itinerari Attive
     if (!tourSelezionatoCartella) {
-        listContainer.innerHTML = renderGrigliaCartelleItinerari(bookings);
+        listContainer.innerHTML = htmlBarraArchivioToggle + renderGrigliaCartelleItinerari(attive);
         return;
     }
 
     // SCENARIO B: Tour Selezionato -> Mostra la Vista Dettagliata per quell'Itinerario
-    const bookingsDelTour = bookings.filter(b => b.tourTitle === tourSelezionatoCartella);
-    listContainer.innerHTML = renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
+    const bookingsDelTour = attive.filter(b => b.tourTitle === tourSelezionatoCartella);
+    listContainer.innerHTML = htmlBarraArchivioToggle + renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
 }
 
 // Renderizza la Griglia di Cartelle degli Itinerari
@@ -119,6 +175,9 @@ function renderGrigliaCartelleItinerari(allBookings) {
                 <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
                 <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista passeggeri e filtrare per orario prenotato.</p>
             </div>
+            <button type="button" class="btn-primary btn-small" style="background:#0b2545;" onclick="aggiungiPrenotazioneDemoProva()">
+                🧪 + Aggiungi Prenotazione di Prova
+            </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
@@ -447,7 +506,7 @@ function renderSchedePrenotazioni(bookingsList) {
                             <ol style="margin: 6px 0 0 18px; padding: 0; font-size: 0.88rem; color: #1e293b; line-height: 1.6;">
                                 ${b.participantsList.map(p => `
                                     <li style="margin-bottom: 4px;">
-                                        <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + escapeHtmlBooking(p.dob) : (p.age ? escapeHtmlBooking(p.age) + ' anni' : escapeHtmlBooking(p.type))}${p.origin ? ' - da ' + escapeHtmlBooking(p.origin) : ''})
+                                        <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - da ' + p.origin : ''})
                                         ${p.notes ? `<div style="font-size:0.82rem; color:#64748b; margin-top:2px;">📝 <em>Note: ${escapeHtmlBooking(p.notes)}</em></div>` : ''}
                                     </li>
                                 `).join('')}
