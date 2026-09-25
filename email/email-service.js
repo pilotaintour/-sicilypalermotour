@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO INVIO EMAIL AUTOMATICHE BREVO (ex Sendinblue)
- * Sicily Palermo Tour - Conferma Prenotazioni e Avviso Admin
+ * Sicily Palermo Tour - Conferma Prenotazioni e Avviso Admin con Testi Personalizzati
  */
 
 const BREVO_KEY_STORAGE = 'spt_brevo_api_key';
@@ -39,7 +39,19 @@ class BrevoEmailService {
         const total = bookingData.total || '0.00';
         const phone = bookingData.customerPhone || 'N/D';
 
-        // 1. Email di Conferma per il Turista
+        // Recupera le impostazioni dei testi personalizzati dall'Admin
+        const tConf = (window.emailTemplateEditor && typeof window.emailTemplateEditor.getConfig === 'function')
+            ? window.emailTemplateEditor.getConfig()
+            : {
+                subject: '[Conferma Prenotazione] Il tuo Tour a Palermo è Confermato!',
+                welcomeMessage: 'Grazie per aver scelto Sicily Palermo Tour! La tua prenotazione è stata ricevuta ed è confermata.',
+                instructions: '📍 Vi preghiamo di arrivare 10 minuti prima dell\'orario previsto al punto d\'incontro. Consigliamo scarpe comode e macchina fotografica.',
+                footerText: 'Siamo a tua completa disposizione per qualsiasi informazione o esigenza particolare. A presto a Palermo!'
+            };
+
+        const subjectDyn = tConf.subject.replace('{NOME_TOUR}', tourTitle).replace('{CODICE_PRENOTAZIONE}', code);
+
+        // 1. Email di Conferma Personalizzata per il Turista
         const htmlTurista = `
             <!DOCTYPE html>
             <html>
@@ -52,9 +64,9 @@ class BrevoEmailService {
                     </div>
 
                     <div style="padding:28px;">
-                        <h2 style="color:#0b2545; margin-top:0;">Grazie ${customerName}!</h2>
+                        <h2 style="color:#0b2545; margin-top:0;">Ciao ${customerName}!</h2>
                         <p style="font-size:0.95rem; color:#475569; line-height:1.6;">
-                            La tua richiesta di prenotazione è stata ricevuta con successo. Di seguito trovi il riepilogo del tuo itinerario a Palermo:
+                            ${tConf.welcomeMessage}
                         </p>
 
                         <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:20px; margin:20px 0;">
@@ -71,8 +83,13 @@ class BrevoEmailService {
                             </div>
                         </div>
 
+                        <div style="background:#fffbf5; border:1.5px solid #fed7aa; border-radius:12px; padding:16px; margin-bottom:20px; font-size:0.9rem; color:#9a3412; line-height:1.5;">
+                            <strong>🎒 Istruzioni & Raccomandazioni:</strong><br>
+                            ${tConf.instructions}
+                        </div>
+
                         <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
-                            In caso di domande o modifiche, puoi contattarci direttamente via WhatsApp al nostro numero ufficiale o rispondere a questa email.
+                            ${tConf.footerText}
                         </p>
 
                         <div style="margin-top:25px; text-align:center;">
@@ -88,27 +105,7 @@ class BrevoEmailService {
             </html>
         `;
 
-        // 2. Email di Notifica per l'Amministratore
-        const htmlAdmin = `
-            <!DOCTYPE html>
-            <html>
-            <head><meta charset="UTF-8"></head>
-            <body style="font-family:sans-serif; padding:20px; color:#1e293b;">
-                <h2>🚨 Nuova Prenotazione Ricevuta!</h2>
-                <p><strong>Codice:</strong> ${code}</p>
-                <p><strong>Tour:</strong> ${tourTitle}</p>
-                <p><strong>Data & Ora:</strong> ${dateStr} - Ore ${timeStr}</p>
-                <p><strong>Cliente:</strong> ${customerName} (Email: ${customerEmail} | Tel: ${phone})</p>
-                <p><strong>Ospiti:</strong> ${bookingData.adults} Adulti, ${bookingData.children || 0} Bambini</p>
-                <p><strong>Totale:</strong> €${total}</p>
-                <hr>
-                <p><a href="https://pilotaintour.github.io/-sicilypalermotour/admin/index.html">Accedi al Pannello Admin per gestire la prenotazione →</a></p>
-            </body>
-            </html>
-        `;
-
         try {
-            // Chiamata API Brevo v3
             const response = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
@@ -122,7 +119,7 @@ class BrevoEmailService {
                         { email: customerEmail, name: customerName },
                         { email: ADMIN_NOTIFICATION_EMAIL, name: "Admin Palermo Tour" }
                     ],
-                    subject: `[Conferma Prenotazione] ${tourTitle} - Codice ${code}`,
+                    subject: subjectDyn,
                     htmlContent: htmlTurista
                 })
             });

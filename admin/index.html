@@ -352,6 +352,42 @@
                         </div>
                     </div>
 
+                    <!-- Voce Lista 4: Personalizzazione Template Email -->
+                    <div class="settings-item" style="margin-top: 15px;">
+                        <div class="settings-item-header" onclick="toggleSettingBox('box-email-template')">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">📩</span>
+                                <strong style="color: #1b4f72; font-size: 1.05rem;">Personalizza Testi Email di Conferma Turisti</strong>
+                            </div>
+                            <span id="arrow-box-email-template" class="settings-arrow">▼</span>
+                        </div>
+                        <div id="box-email-template" class="settings-item-body hidden">
+                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">Modifica liberamente i testi, i saluti e le istruzioni che verranno inviate via email ai turisti quando prenotano:</p>
+                            <div style="display: flex; flex-direction: column; gap: 14px; max-width: 650px;">
+                                <div>
+                                    <label style="display: block; font-weight: bold; font-size: 0.88rem; color: #0b2545; margin-bottom: 4px;">Oggetto dell'Email:</label>
+                                    <input type="text" id="email-template-subject" placeholder="Oggetto dell'email..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: bold; font-size: 0.88rem; color: #0b2545; margin-bottom: 4px;">Messaggio di Benvenuto (Iniziale):</label>
+                                    <textarea id="email-template-welcome" rows="2" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: bold; font-size: 0.88rem; color: #0b2545; margin-bottom: 4px;">🎒 Istruzioni & Avvisi per il Tour (Punto di Ritrovo, Scarpe, ecc.):</label>
+                                    <textarea id="email-template-instructions" rows="3" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: bold; font-size: 0.88rem; color: #0b2545; margin-bottom: 4px;">Messaggio di Chiusura / Saluto Finale:</label>
+                                    <textarea id="email-template-footer" rows="2" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;">
+                                    <button onclick="salvaTemplateEmailDaAdmin()" class="btn-primary" style="background-color: #0b2545; padding: 10px 20px;">💾 Salva Testi Email</button>
+                                    <button onclick="ripristinaTemplateEmailDefault()" class="btn-secondary" style="padding: 10px 16px;">🔄 Ripristina Default</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- In futuro potremo aggiungere altre opzioni qui nella lista -->
                 </div>
             </div>
@@ -406,6 +442,7 @@
         </div>
     </div>
 
+    <script src="../email/emailedit.js"></script>
     <script src="admin-itinerari.js"></script>
     <script src="admin-prenotazioni.js"></script>
     <script src="admin-impostazioni.js"></script>
