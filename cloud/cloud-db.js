@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DATABASE CLOUD - JSONBin.io
- * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Itinerari e Prenotazioni
+ * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Itinerari e Prenotazioni per Ospiti e Admin
  */
 
 const JSONBIN_MASTER_KEY = '$2a$10$Owm0ELeIld8ZySHzLaBKzOPUfHMcdB.4b1WoCRGHc35w3AG3c/qfK';
@@ -12,11 +12,44 @@ class CloudDatabaseManager {
         this.binId = localStorage.getItem(BIN_ID_STORAGE_KEY) || '';
     }
 
-    // Inizializza o crea il Bin Cloud se non ancora esistente
-    async initBin(initialData) {
-        if (this.binId) return this.binId;
+    // Ottiene il Bin ID del Database Cloud (con recupero automatico se il browser è un Ospite nuovo)
+    async getOrCreateBinId() {
+        if (this.binId && this.binId.length >= 15) {
+            return this.binId;
+        }
 
+        // 1. Cerca se esiste già un Bin creato su JSONBin per questo account
         try {
+            const res = await fetch('https://api.jsonbin.io/v3/c/uncategorized/bins', {
+                method: 'GET',
+                headers: {
+                    'X-Master-Key': this.masterKey
+                }
+            });
+
+            if (res.ok) {
+                const listData = await res.json();
+                if (Array.isArray(listData) && listData.length > 0) {
+                    const foundId = listData[0].record;
+                    if (foundId) {
+                        this.binId = foundId;
+                        localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
+                        console.log("☁️ Bin ID Cloud trovato e sincronizzato per l'Ospite:", this.binId);
+                        return this.binId;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Errore ricerca Bin Cloud:", e);
+        }
+
+        // 2. Se non esiste ancora alcun Bin, lo crea per la prima volta
+        try {
+            let defaultItinerari = [];
+            try {
+                defaultItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
+            } catch (e) {}
+
             const res = await fetch('https://api.jsonbin.io/v3/b', {
                 method: 'POST',
                 headers: {
@@ -25,28 +58,30 @@ class CloudDatabaseManager {
                     'X-Bin-Private': 'false',
                     'X-Bin-Name': 'SicilyPalermoTour_Database'
                 },
-                body: JSON.stringify(initialData || {})
+                body: JSON.stringify({ itinerari: defaultItinerari, bookings: [] })
             });
 
             if (res.ok) {
                 const data = await res.json();
                 this.binId = data.metadata.id;
                 localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                console.log("☁️ Nuovo Database Cloud Creato con Successo! Bin ID:", this.binId);
+                console.log("☁️ Nuovo Database Cloud Inizializzato! Bin ID:", this.binId);
                 return this.binId;
             }
         } catch (e) {
             console.error("Errore creazione Bin Cloud:", e);
         }
+
         return null;
     }
 
-    // Scarica gli itinerari pubblicati dal Cloud
+    // Scarica gli itinerari pubblicati dal Cloud per qualsiasi Ospite o Turista
     async fetchItinerariCloud() {
-        if (!this.binId) return null;
+        const binId = await this.getOrCreateBinId();
+        if (!binId) return null;
 
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}/latest`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
                 method: 'GET',
                 headers: {
                     'X-Master-Key': this.masterKey
@@ -55,8 +90,7 @@ class CloudDatabaseManager {
 
             if (res.ok) {
                 const data = await res.json();
-                if (data.record && data.record.itinerari && Array.isArray(data.record.itinerari)) {
-                    // Aggiorna anche il localStorage per velocizzare i caricamenti futuri
+                if (data.record && data.record.itinerari && Array.isArray(data.record.itinerari) && data.record.itinerari.length > 0) {
                     localStorage.setItem('spt_itineraries', JSON.stringify(data.record.itinerari));
                     return data.record.itinerari;
                 }
@@ -69,18 +103,16 @@ class CloudDatabaseManager {
 
     // Salva e pubblica i nuovi itinerari nel Cloud per tutti i turisti del mondo
     async salvaItinerariCloud(itinerariList) {
-        if (!this.binId) {
-            await this.initBin({ itinerari: itinerariList, bookings: [] });
-        }
+        const binId = await this.getOrCreateBinId();
+        if (!binId) return false;
 
         try {
-            // Leggi il record attuale per non sovrascrivere le prenotazioni
             let currentBookings = [];
             try {
                 currentBookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
             } catch (e) {}
 
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,7 +138,8 @@ class CloudDatabaseManager {
 
     // Salva le prenotazioni nel Cloud
     async salvaPrenotazioniCloud(bookingsList) {
-        if (!this.binId) return;
+        const binId = await this.getOrCreateBinId();
+        if (!binId) return;
 
         try {
             let currentItinerari = [];
@@ -114,7 +147,7 @@ class CloudDatabaseManager {
                 currentItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
             } catch (e) {}
 
-            await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
+            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
