@@ -200,17 +200,28 @@ function aggiornaVistaCarosello(tourId, prefissoId, fotoList, newIndex) {
     }
 }
 
-// Carica e renderizza la griglia degli itinerari
+// Carica e renderizza la griglia degli itinerari con sincronizzazione Cloud
 function caricaItinerari(categoria = 'Tutti') {
     categoriaSelezionata = categoria;
     const itinerari = getItinerari();
-    const grid = document.getElementById('itinerari-grid');
+    renderItinerariGrid(itinerari, categoria);
 
+    if (window.cloudDB) {
+        window.cloudDB.fetchItinerariCloud().then(cloudList => {
+            if (cloudList && Array.isArray(cloudList) && cloudList.length > 0) {
+                renderItinerariGrid(cloudList, categoria);
+            }
+        });
+    }
+}
+
+function renderItinerariGrid(itinerariList, categoria) {
+    const grid = document.getElementById('itinerari-grid');
     if (!grid) return;
 
     const filtrati = categoria === 'Tutti'
-        ? itinerari
-        : itinerari.filter(i => i.category === categoria);
+        ? itinerariList
+        : itinerariList.filter(i => i.category === categoria);
 
     if (filtrati.length === 0) {
         grid.innerHTML = `

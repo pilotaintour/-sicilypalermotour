@@ -124,6 +124,9 @@ function getItinerari() {
 
 function saveItinerari(itinerari) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(itinerari));
+    if (window.cloudDB) {
+        window.cloudDB.salvaItinerariCloud(itinerari);
+    }
 }
 
 function caricaElencoItinerari() {
