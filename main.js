@@ -64,16 +64,23 @@ function avviaHeroBgSlider() {
     }, 5000);
 }
 
-// Gestione Form Contatti
-function inviaMessaggio(event) {
+// Gestione Form Contatti (Invio Reale via Brevo all'Email Amministratore)
+async function inviaMessaggio(event) {
     event.preventDefault();
 
-    const nome = document.getElementById('nome').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const messaggio = document.getElementById('messaggio').value.trim();
+    const nomeInput = document.getElementById('nome');
+    const emailInput = document.getElementById('email');
+    const messaggioInput = document.getElementById('messaggio');
+
+    const nome = nomeInput ? nomeInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const messaggio = messaggioInput ? messaggioInput.value.trim() : '';
 
     if (nome && email && messaggio) {
-        alert(`Grazie ${nome}! Il tuo messaggio è stato inviato con successo. Ti risponderemo presto all'indirizzo ${email}.`);
+        if (window.brevoEmailService) {
+            await window.brevoEmailService.inviaEmailMessaggioContatto(nome, email, messaggio);
+        }
+        alert(`🎉 Grazie ${nome}! Il tuo messaggio è stato spedito all'amministratore.\n\nTi risponderemo al più presto all'indirizzo ${email}.`);
         document.getElementById('contactForm').reset();
     } else {
         alert('Per favore, compila tutti i campi obbligatori.');

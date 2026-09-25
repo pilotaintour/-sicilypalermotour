@@ -22,6 +22,61 @@ class BrevoEmailService {
         }
     }
 
+    // Invia un messaggio dal Form Contatti direttamente alla casella dell'amministratore
+    async inviaEmailMessaggioContatto(nome, emailCliente, messaggio) {
+        const apiKey = this.getApiKey();
+        if (!apiKey) {
+            console.log("Nessuna API Key Brevo configurata.");
+            return { success: false, reason: "API Key mancante" };
+        }
+
+        const htmlContatto = `
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"></head>
+            <body style="font-family:sans-serif; padding:20px; color:#1e293b; background:#f8fafc;">
+                <div style="max-width:550px; margin:0 auto; background:#ffffff; border-radius:12px; padding:25px; border:1px solid #cbd5e1;">
+                    <h2 style="color:#0b2545; margin-top:0;">📩 Nuovo Messaggio dal Form Contatti</h2>
+                    <p><strong>Nome Mittente:</strong> ${nome}</p>
+                    <p><strong>Email Cliente:</strong> ${emailCliente}</p>
+                    <hr style="border:none; border-top:1px solid #cbd5e1; margin:15px 0;">
+                    <p><strong>Messaggio:</strong></p>
+                    <blockquote style="background:#f1f5f9; padding:12px 16px; border-left:4px solid #0b2545; margin:0; font-style:italic;">
+                        "${messaggio}"
+                    </blockquote>
+                    <hr style="border:none; border-top:1px solid #cbd5e1; margin:20px 0 15px 0;">
+                    <p style="font-size:0.85rem; color:#64748b;">Puoi rispondere direttamente al cliente a questa email: ${emailCliente}</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        try {
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': apiKey,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: nome, email: ADMIN_NOTIFICATION_EMAIL },
+                    to: [{ email: ADMIN_NOTIFICATION_EMAIL, name: "Admin Palermo Tour" }],
+                    replyTo: { email: emailCliente, name: nome },
+                    subject: `[Messaggio Contatti] Da ${nome} (${emailCliente})`,
+                    htmlContent: htmlContatto
+                })
+            });
+
+            if (response.ok) {
+                return { success: true };
+            }
+        } catch (e) {
+            console.error("Errore invio messaggio contatti Brevo:", e);
+        }
+        return { success: false };
+    }
+
     // Invia contemporaneamente l'email di conferma al turista e la notifica all'amministratore
     async inviaEmailPrenotazione(bookingData) {
         const apiKey = this.getApiKey();
