@@ -251,9 +251,12 @@
 
                     <!-- Colonna Elenco Itinerari -->
                     <div class="card list-card">
-                        <div class="list-header">
+                        <div class="list-header" style="flex-wrap: wrap; gap: 8px;">
                             <h2>📋 Itinerari Caricati (<span id="itinerary-count">0</span>)</h2>
-                            <button class="btn-small btn-secondary" onclick="resetDemoData()">🔄 Ripristina Dati Demo</button>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button class="btn-small btn-primary" style="background-color: #0b2545; font-weight: bold;" onclick="pubblicaItinerariNelCloudManuale()">☁️ Pubblica per Tutti i Turisti</button>
+                                <button class="btn-small btn-secondary" onclick="resetDemoData()">🔄 Ripristina Demo</button>
+                            </div>
                         </div>
 
                         <div id="itineraries-list" class="itineraries-list">

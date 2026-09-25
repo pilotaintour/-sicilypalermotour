@@ -326,6 +326,24 @@ function resetDemoData() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
         resetForm();
         caricaElencoItinerari();
+        if (window.cloudDB) window.cloudDB.salvaItinerariCloud(DEFAULT_ITINERARIES);
+    }
+}
+
+async function pubblicaItinerariNelCloudManuale() {
+    const itinerari = getItinerari();
+    if (!itinerari || itinerari.length === 0) {
+        alert("Nessun itinerario presente da pubblicare.");
+        return;
+    }
+
+    if (window.cloudDB) {
+        const ok = await window.cloudDB.salvaItinerariCloud(itinerari);
+        if (ok) {
+            alert(`☁️ TUTTI I ${itinerari.length} ITINERARI SONO STATI PUBBLICATI NEL CLOUD CON SUCCESSO!\n\nOra qualsiasi turista da qualsiasi cellulare, tablet o computer nel mondo vedrà i tuoi itinerari aggiornati.`);
+        } else {
+            alert("⚠️ Si è verificato un problema nella pubblicazione Cloud. Verifica la tua connessione internet.");
+        }
     }
 }
 
