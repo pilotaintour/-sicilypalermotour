@@ -54,7 +54,7 @@ function avviaHeroBgSlider() {
             </div>
         `).join('');
     } else {
-        const defaultPhotos = ['unnamed.webp'];
+        const defaultPhotos = ['cattedrale.jpg', 'palermo2.jpg'];
         sliderBox.innerHTML = defaultPhotos.map((url, i) => `
             <div class="hero-slide ${i === 0 ? 'active' : ''}">
                 <img src="${url}" alt="Sicily Palermo Tour" style="width:100%; height:100%; object-fit:cover;">

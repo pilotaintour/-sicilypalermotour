@@ -82,7 +82,7 @@ function caricaFotoHeroConfig() {
         fotoHeroCorrenti = [];
     }
     if (!fotoHeroCorrenti || fotoHeroCorrenti.length === 0) {
-        fotoHeroCorrenti = ['../unnamed.webp'];
+        fotoHeroCorrenti = ['../cattedrale.jpg', '../palermo2.jpg'];
     }
     renderGalleriaHeroAdmin();
 }

@@ -16,7 +16,7 @@ body {
     display: none !important;
 }
 
-/* Header Hero con Foto Standard Istantanea Locale */
+/* Header Hero con Foto Standard Istantanea Cattedrale */
 header#home {
     position: relative;
     height: 60vh;
@@ -29,7 +29,7 @@ header#home {
     text-align: center;
     padding: 0 20px;
     overflow: hidden;
-    background: url('unnamed.webp') no-repeat center center / cover;
+    background: url('cattedrale.jpg') no-repeat center center / cover;
 }
 
 .hero-bg-slider {
