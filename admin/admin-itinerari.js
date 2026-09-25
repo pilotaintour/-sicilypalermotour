@@ -173,7 +173,7 @@ function caricaElencoItinerari() {
     }
 }
 
-function salvaItinerario(event) {
+async function salvaItinerario(event) {
     event.preventDefault();
 
     const id = document.getElementById('itinerary-id').value;
@@ -210,17 +210,21 @@ function salvaItinerario(event) {
             }
             return item;
         });
-        alert('Itinerario aggiornato con successo!');
     } else {
         const nuovoItinerario = {
             id: Date.now().toString(),
             title, category, duration, price, meetingPoint, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
-        alert('Nuovo itinerario pubblicato con successo!');
     }
 
     saveItinerari(itinerari);
+
+    if (window.cloudDB) {
+        await window.cloudDB.salvaItinerariCloud(itinerari);
+    }
+
+    alert('☁️ Itinerario salvato e pubblicato sul Cloud per tutti i turisti!');
     resetForm();
     caricaElencoItinerari();
 }

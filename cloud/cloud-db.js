@@ -93,7 +93,15 @@ class CloudDatabaseManager {
             if (res.ok) {
                 const data = await res.json();
                 if (data.record && data.record.itinerari && Array.isArray(data.record.itinerari) && data.record.itinerari.length > 0) {
-                    localStorage.setItem('spt_itineraries', JSON.stringify(data.record.itinerari));
+                    let localCount = 0;
+                    try {
+                        localCount = JSON.parse(localStorage.getItem('spt_itineraries') || '[]').length;
+                    } catch (e) {}
+
+                    // Non sovrascrivere la memoria locale se locale ha più itinerari
+                    if (data.record.itinerari.length >= localCount) {
+                        localStorage.setItem('spt_itineraries', JSON.stringify(data.record.itinerari));
+                    }
                     return data.record.itinerari;
                 }
             }
