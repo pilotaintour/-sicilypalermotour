@@ -2,7 +2,7 @@
  * MODULO AUTONOMO ARCHIVIO STORICO PER CARTELLE ITINERARIO
  * Sicily Palermo Tour - Admin
  * Organizza i tour passati in Cartelle per Itinerario (es. Itinerario Mare, Itinerario Rossano).
- * Cliccando su un itinerario si vedono unicamente le date e gli orari passati di quel tour.
+ * Cliccando su un itinerario si vedono unicamente le date, gli orari ed I NOMI COMPLETI dei passeggeri passati.
  */
 
 class AdminArchivioManager {
@@ -75,7 +75,7 @@ class AdminArchivioManager {
             return this.renderGrigliaCartelleArchivio(passateList);
         }
 
-        // SCENARIO 2: Cartella Archivio aperta -> Mostra solo i tour passati di quell'Itinerario
+        // SCENARIO 2: Cartella Archivio aperta -> Mostra solo i tour passati con LA LISTA NOMI COMPLETA di quell'Itinerario
         const passateDelTour = passateList.filter(b => b.tourTitle === this.tourSelezionatoArchivio);
         return this.renderDettaglioCartellaArchivio(this.tourSelezionatoArchivio, passateDelTour);
     }
@@ -111,7 +111,7 @@ class AdminArchivioManager {
             <div style="margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">🗄️ Cartelle Archivio Storico per Itinerario</h3>
-                    <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario (es. <em>Itinerario Mare</em> o <em>Itinerario Rossano</em>) per accedere al suo storico passati.</p>
+                    <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista completa dei nomi dei passeggeri passati.</p>
                 </div>
                 <button type="button" class="btn-danger btn-small" onclick="adminArchivio.svuotaTuttoArchivio()">
                     🗑️ Svuota Tutto l'Archivio
@@ -158,9 +158,8 @@ class AdminArchivioManager {
         return html;
     }
 
-    // Renderizza lo Storico delle Date e degli Orari Passati di un singolo Itinerario
+    // Renderizza lo Storico con la LISTA PASSEGGERI COMPLETA di un singolo Itinerario
     renderDettaglioCartellaArchivio(titoloTour, passateDelTour) {
-        // Raggruppa per Data ed Orario
         const mappaDataOrario = {};
 
         passateDelTour.forEach(b => {
@@ -193,25 +192,51 @@ class AdminArchivioManager {
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
         `;
 
         if (gruppiSvolti.length === 0) {
             html += `<p style="color:#64748b; text-align:center; padding:20px;">Nessun tour passato per questo itinerario.</p>`;
         } else {
             gruppiSvolti.forEach(g => {
-                let totPasseggeri = 0;
+                const righePasseggeri = [];
+                let counter = 1;
+
                 g.bookings.forEach(b => {
-                    totPasseggeri += (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+                    if (b.participantsList && b.participantsList.length > 0) {
+                        b.participantsList.forEach((p, idxP) => {
+                            righePasseggeri.push({
+                                rowNum: counter++,
+                                code: b.code || '#SPT-BOOK',
+                                passengerName: p.name || 'N/D',
+                                passengerType: p.type || (idxP === 0 ? 'Referente' : 'Adulto'),
+                                passengerDob: p.dob || 'N/D',
+                                passengerOrigin: p.origin || 'N/D',
+                                passengerNotes: p.notes || '',
+                                leadPhone: b.customerPhone || 'N/D'
+                            });
+                        });
+                    } else {
+                        righePasseggeri.push({
+                            rowNum: counter++,
+                            code: b.code || '#SPT-BOOK',
+                            passengerName: b.customerName || 'N/D',
+                            passengerType: 'Referente',
+                            passengerDob: 'N/D',
+                            passengerOrigin: 'N/D',
+                            passengerNotes: b.notes || '',
+                            leadPhone: b.customerPhone || 'N/D'
+                        });
+                    }
                 });
 
                 html += `
-                    <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 5px solid #475569; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div style="background: #ffffff; border: 1.5px solid #000000; border-radius: 10px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; border-bottom: 2px solid #000000; padding-bottom: 8px;">
                             <div>
-                                <strong style="color: #0b2545; font-size: 1.05rem;">📅 ${escapeHtmlBooking(g.dateStr)} - ⏰ Ore ${escapeHtmlBooking(g.timeStr)}</strong>
-                                <span style="background: #e2e8f0; color: #334155; padding: 3px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;">
-                                    👥 ${totPasseggeri} Passeggeri Svolti
+                                <strong style="color: #0b2545; font-size: 1.1rem;">📅 Data: ${escapeHtmlBooking(g.dateStr)} - ⏰ Ore ${escapeHtmlBooking(g.timeStr)}</strong>
+                                <span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: bold; margin-left: 10px; border: 1px solid #cbd5e1;">
+                                    👥 Totale ${righePasseggeri.length} Passeggeri Svolti
                                 </span>
                             </div>
 
@@ -223,6 +248,40 @@ class AdminArchivioManager {
                                     🗑️ Elimina Questa Lista
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- TABELLA NOMI COMPLETA E DETTAGLIATA -->
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; background: #ffffff;">
+                                <thead>
+                                    <tr style="background: #ffffff; color: #000000; font-weight: 800; border-bottom: 2px solid #000000;">
+                                        <th style="padding: 8px; border: 1px solid #000000; text-align: center; width: 45px;">Check</th>
+                                        <th style="padding: 8px; border: 1px solid #000000; text-align: center; width: 30px;">#</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Passeggero (Nome e Cognome)</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Ruolo</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Data Nascita</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Provenienza</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Telefono Referente</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Note Passeggero</th>
+                                        <th style="padding: 8px; border: 1px solid #000000;">Codice</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${righePasseggeri.map(r => `
+                                        <tr style="background: #ffffff; border-bottom: 1px solid #cbd5e1;">
+                                            <td style="padding: 8px; border: 1px solid #000000; text-align: center; color: #64748b; font-family: monospace;">[ &nbsp; ]</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; text-align: center; font-weight: bold;">${r.rowNum}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; font-weight: 800; color: #0f172a;">${escapeHtmlBooking(r.passengerName)}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; font-size: 0.83rem; color: #475569;">${escapeHtmlBooking(r.passengerType)}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; color: #1e293b;">${escapeHtmlBooking(r.passengerDob)}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; color: #1e293b;">${escapeHtmlBooking(r.passengerOrigin)}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; font-size: 0.83rem;">${escapeHtmlBooking(r.leadPhone)}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; font-size: 0.83rem; color: #64748b;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
+                                            <td style="padding: 8px; border: 1px solid #000000; font-family: monospace; font-weight: bold; color: #0369a1;">${escapeHtmlBooking(r.code)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 `;
