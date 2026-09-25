@@ -50,14 +50,14 @@ function avviaHeroBgSlider() {
     if (savedPhotos && savedPhotos.length > 0) {
         sliderBox.innerHTML = savedPhotos.map((url, i) => `
             <div class="hero-slide ${i === 0 ? 'active' : ''}">
-                <img src="${url}" alt="Copertina Tour" style="width:100%; height:100%; object-fit:cover;">
+                <img src="${url}" alt="Copertina Tour" onerror="this.src='copertina.jpg';" style="width:100%; height:100%; object-fit:cover;">
             </div>
         `).join('');
     } else {
         const defaultPhotos = ['copertina.jpg'];
         sliderBox.innerHTML = defaultPhotos.map((url, i) => `
             <div class="hero-slide ${i === 0 ? 'active' : ''}">
-                <img src="${url}" alt="Sicily Palermo Tour" style="width:100%; height:100%; object-fit:cover;">
+                <img src="${url}" alt="Sicily Palermo Tour" onerror="this.src='copertina.jpg';" style="width:100%; height:100%; object-fit:cover;">
             </div>
         `).join('');
     }
