@@ -37,20 +37,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Carosello Sfondo Scorrevoli della Copertina (Hero Slider con foto personalizzabili)
+// Gestione Sfondo Copertina Hero (Foto Ufficiale unificata)
 function avviaHeroBgSlider() {
     const sliderBox = document.getElementById('hero-bg-slider');
-    if (sliderBox) {
-        let savedPhotos = [];
-        try {
-            savedPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]');
-        } catch (e) {}
+    if (!sliderBox) return;
 
-        if (savedPhotos && savedPhotos.length > 0) {
-            sliderBox.innerHTML = savedPhotos.map((url, i) => `
-                <div class="hero-slide ${i === 0 ? 'active' : ''}" style="background-image: url('${url}');"></div>
-            `).join('');
-        }
+    let savedPhotos = [];
+    try {
+        savedPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]');
+    } catch (e) {}
+
+    // Se l'Admin ha impostato foto personalizzate, le mostra; altrimenti mostra unnamed.webp
+    if (savedPhotos && savedPhotos.length > 0) {
+        sliderBox.innerHTML = savedPhotos.map((url, i) => `
+            <div class="hero-slide ${i === 0 ? 'active' : ''}" style="opacity: 1;">
+                <img src="${url}" alt="Copertina Tour" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+        `).join('');
+    } else {
+        sliderBox.innerHTML = `
+            <div class="hero-slide active" style="opacity: 1;">
+                <img src="unnamed.webp" alt="Sicily Palermo Tour" loading="eager" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        `;
     }
 
     const slides = document.querySelectorAll('.hero-slide');
