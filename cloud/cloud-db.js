@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DATABASE CLOUD - JSONBin.io
- * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Itinerari tra Admin e Tutti gli Ospiti
+ * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Itinerari, Foto Copertina e Prenotazioni
  */
 
 const JSONBIN_MASTER_KEY = '$2a$10$Owm0ELeIld8ZySHzLaBKzOPUfHMcdB.4b1WoCRGHc35w3AG3c/qfK';
@@ -60,7 +60,7 @@ class CloudDatabaseManager {
                     'X-Bin-Private': 'false',
                     'X-Bin-Name': 'SicilyPalermoTour_Database'
                 },
-                body: JSON.stringify({ itinerari: defaultItinerari, bookings: [] })
+                body: JSON.stringify({ itinerari: defaultItinerari, heroPhotos: [], bookings: [] })
             });
 
             if (res.ok) {
@@ -77,7 +77,7 @@ class CloudDatabaseManager {
         return null;
     }
 
-    // Scarica gli itinerari pubblicati nel Cloud per qualsiasi Ospite o Turista
+    // Scarica gli itinerari e le foto della copertina pubblicati nel Cloud per qualsiasi Ospite o Turista
     async fetchItinerariCloud() {
         const binId = await this.getOrCreateBinId();
         if (!binId) return null;
@@ -99,13 +99,21 @@ class CloudDatabaseManager {
                     cloudList = data.record.itinerari;
                 }
 
+                // Sincronizza anche le foto della copertina Hero se presenti nel Cloud per tutti gli Ospiti
+                if (data.record && data.record.heroPhotos && Array.isArray(data.record.heroPhotos) && data.record.heroPhotos.length > 0) {
+                    localStorage.setItem('spt_hero_photos', JSON.stringify(data.record.heroPhotos));
+                    if (typeof avviaHeroBgSlider === 'function') {
+                        avviaHeroBgSlider();
+                    }
+                }
+
                 if (cloudList && cloudList.length > 0) {
                     localStorage.setItem('spt_itineraries', JSON.stringify(cloudList));
                     return cloudList;
                 }
             }
         } catch (e) {
-            console.error("Errore lettura itinerari da Cloud:", e);
+            console.error("Errore lettura dati da Cloud:", e);
         }
         return null;
     }
@@ -117,8 +125,12 @@ class CloudDatabaseManager {
 
         try {
             let currentBookings = [];
+            let currentHeroPhotos = [];
             try {
                 currentBookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+            } catch (e) {}
+            try {
+                currentHeroPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]');
             } catch (e) {}
 
             const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
@@ -129,6 +141,7 @@ class CloudDatabaseManager {
                 },
                 body: JSON.stringify({
                     itinerari: itinerariList,
+                    heroPhotos: currentHeroPhotos,
                     bookings: currentBookings,
                     updatedAt: new Date().toISOString()
                 })
@@ -141,6 +154,46 @@ class CloudDatabaseManager {
             }
         } catch (e) {
             console.error("Errore salvataggio itinerari nel Cloud:", e);
+        }
+        return false;
+    }
+
+    // Salva e pubblica le foto della copertina Hero nel Cloud per tutti i turisti
+    async salvaFotoHeroCloud(heroPhotosList) {
+        const binId = await this.getOrCreateBinId();
+        if (!binId) return false;
+
+        try {
+            let currentItinerari = [];
+            let currentBookings = [];
+            try {
+                currentItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
+            } catch (e) {}
+            try {
+                currentBookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+            } catch (e) {}
+
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': this.masterKey
+                },
+                body: JSON.stringify({
+                    itinerari: currentItinerari,
+                    heroPhotos: heroPhotosList,
+                    bookings: currentBookings,
+                    updatedAt: new Date().toISOString()
+                })
+            });
+
+            if (res.ok) {
+                console.log("☁️ Foto Copertina Pubblicate ed Aggiornate con successo nel Cloud!");
+                localStorage.setItem('spt_hero_photos', JSON.stringify(heroPhotosList));
+                return true;
+            }
+        } catch (e) {
+            console.error("Errore salvataggio foto copertina nel Cloud:", e);
         }
         return false;
     }

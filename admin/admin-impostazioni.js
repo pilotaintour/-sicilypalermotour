@@ -145,13 +145,16 @@ function renderGalleriaHeroAdmin() {
     `).join('');
 }
 
-function salvaFotoHero() {
+async function salvaFotoHero() {
     if (fotoHeroCorrenti.length === 0) {
         alert("Inserisci almeno una foto per lo sfondo della copertina.");
         return;
     }
     localStorage.setItem('spt_hero_photos', JSON.stringify(fotoHeroCorrenti));
-    alert(`✅ ${fotoHeroCorrenti.length} foto sfondo della copertina salvate e pubblicate per tutti i turisti!`);
+    if (window.cloudDB) {
+        await window.cloudDB.salvaFotoHeroCloud(fotoHeroCorrenti);
+    }
+    alert(`☁️ ${fotoHeroCorrenti.length} foto della copertina pubblicate nel Cloud con successo! Ora qualsiasi utente Ospite o turista vedrà le tue foto aggiornate.`);
 }
 
 function toggleSettingBox(boxId) {
