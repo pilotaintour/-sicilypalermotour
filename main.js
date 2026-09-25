@@ -5,6 +5,9 @@
 const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Avvia il carosello sfondi della copertina Hero
+    avviaHeroBgSlider();
+
     // Carica gli itinerari nella Home
     if (typeof caricaItinerari === 'function') {
         caricaItinerari();
@@ -33,6 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Carosello Sfondo Scorrevoli della Copertina (Hero Slider)
+function avviaHeroBgSlider() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (!slides || slides.length <= 1) return;
+
+    let currentSlide = 0;
+    setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }, 5000);
+}
 
 // Gestione Form Contatti
 function inviaMessaggio(event) {

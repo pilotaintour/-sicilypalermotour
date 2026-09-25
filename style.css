@@ -16,9 +16,11 @@ body {
     display: none !important;
 }
 
-header {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1200') no-repeat center center/cover;
+/* Header Hero con Carosello Foto Sfondo Scorrevoli */
+header#home {
+    position: relative;
     height: 60vh;
+    min-height: 420px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -26,6 +28,50 @@ header {
     align-items: center;
     text-align: center;
     padding: 0 20px;
+    overflow: hidden;
+}
+
+.hero-bg-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out, transform 8s ease-out;
+    transform: scale(1.06);
+}
+
+.hero-slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(11, 37, 69, 0.7) 0%, rgba(0, 0, 0, 0.6) 100%);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
 }
 
 header h1 {

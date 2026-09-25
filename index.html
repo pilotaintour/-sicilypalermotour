@@ -11,15 +11,25 @@
 </head>
 <body>
 
-    <!-- Copertina Principale (Hero Section) con ID Home -->
+    <!-- Copertina Principale (Hero Section) con Carosello Foto Sfondo Scorrevoli -->
     <header id="home">
-        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 0 15px; flex-wrap: wrap; gap: 10px;">
-            <div style="text-align: left;">
-                <h1 style="margin: 0;">Sicily Palermo Tour</h1>
-                <p style="margin: 6px 0 0 0;">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
-            </div>
-            <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">
-                <div id="google_translate_element"></div>
+        <div class="hero-bg-slider" id="hero-bg-slider">
+            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1600');"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600');"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1600');"></div>
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=1600');"></div>
+        </div>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 0 15px; flex-wrap: wrap; gap: 10px;">
+                <div style="text-align: left;">
+                    <h1 style="margin: 0; text-shadow: 2px 2px 6px rgba(0,0,0,0.8);">Sicily Palermo Tour</h1>
+                    <p style="margin: 6px 0 0 0; text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.18); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(6px);">
+                    <div id="google_translate_element"></div>
+                </div>
             </div>
         </div>
     </header>
