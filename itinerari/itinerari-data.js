@@ -17,12 +17,9 @@ function pulisciVecchiItinerariDemo(lista) {
     if (!Array.isArray(lista)) return [];
     return lista.filter(item => {
         if (!item) return false;
-        const title = (item.title || '').trim().toLowerCase();
         const id = String(item.id || '');
-        const isOld1 = (id === '1' || title.includes('arabo-normanna'));
-        const isOld2 = (id === '2' || title.includes('tour del gusto') || title.includes('street food'));
-        const isOld3 = (id === '3' || title.includes('mondello e il barocco'));
-        return !(isOld1 || isOld2 || isOld3);
+        // Rimuove solo i vecchi ID '1', '2', '3' dei tour predefiniti hardcoded
+        return !(id === '1' || id === '2' || id === '3');
     });
 }
 
