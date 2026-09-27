@@ -3,8 +3,9 @@
  * Sicily Palermo Tour - Sincronizzazione AUTOMATICA E CONTINUA IN BACKGROUND (Real-Time Auto-Sync)
  */
 
-const JSONBIN_MASTER_KEY = '$2a$10$Owm0ELeIld8ZySHzLaBKzOPUfHMcdB.4b1WoCRGHc35w3AG3c/qfK';
+const JSONBIN_MASTER_KEY = '$2a$10$t1PzsRamZS7b4O1oQc70a.HnjyJH4THbu.yRHU7MlW79xJqi/NuJ6';
 const BIN_ID_STORAGE_KEY = 'spt_jsonbin_id';
+const SHARED_BIN_ID = '6ab99856ac6210605afc0c9d';
 
 function pulisciVecchiItinerariDemo(lista) {
     if (!Array.isArray(lista)) return [];
@@ -22,11 +23,13 @@ function pulisciVecchiItinerariDemo(lista) {
 class CloudDatabaseManager {
     constructor() {
         this.masterKey = JSONBIN_MASTER_KEY;
-        this.binId = localStorage.getItem(BIN_ID_STORAGE_KEY) || '';
-        this.syncInterval = null;
-        this.isSaving = false; // Flag per impedire il ripristino di dati vecchi durante un salvataggio/eliminazione
+        this.binId = SHARED_BIN_ID;
+        localStorage.setItem(BIN_ID_STORAGE_KEY, SHARED_BIN_ID);
 
-        // Inizia la sincronizzazione automatica continua a ciclo in background
+        this.syncInterval = null;
+        this.isSaving = false;
+
+        // Inizia la sincronizzazione automatica continua in background
         this.initAutoSync();
     }
 
@@ -34,72 +37,20 @@ class CloudDatabaseManager {
         // 1. Sync immediato all'avvio
         setTimeout(() => this.fetchTuttiDatiCloud(), 300);
 
-        // 2. Poll automatico in background ogni 10 secondi per aggiornare tutti i browser collegati
+        // 2. Poll automatico in background ogni 10 secondi per tutti i visitatori
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
             }, 10000);
         }
 
-        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
+        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser
         window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
         window.addEventListener('online', () => this.fetchTuttiDatiCloud());
     }
 
-    // Ottiene o recupera automaticamente l'ID del Database Cloud condiviso
     async getOrCreateBinId() {
-        if (this.binId && this.binId.length >= 15) {
-            return this.binId;
-        }
-
-        try {
-            const res = await fetch('https://api.jsonbin.io/v3/c/uncategorized/bins', {
-                method: 'GET',
-                headers: {
-                    'X-Master-Key': this.masterKey
-                }
-            });
-
-            if (res.ok) {
-                const listData = await res.json();
-                const binsArray = Array.isArray(listData) ? listData : (listData.records || listData.bins || []);
-
-                if (binsArray.length > 0) {
-                    const foundId = binsArray[0].id || binsArray[0].record || (binsArray[0].metadata && binsArray[0].metadata.id);
-                    if (foundId) {
-                        this.binId = foundId;
-                        localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                        return this.binId;
-                    }
-                }
-            }
-        } catch (e) {}
-
-        try {
-            let defaultItinerari = [];
-            try { defaultItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]'); } catch (e) {}
-            defaultItinerari = pulisciVecchiItinerariDemo(defaultItinerari);
-
-            const res = await fetch('https://api.jsonbin.io/v3/b', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': this.masterKey,
-                    'X-Bin-Private': 'false',
-                    'X-Bin-Name': 'SicilyPalermoTour_Database'
-                },
-                body: JSON.stringify({ itinerari: defaultItinerari, heroPhotos: [], bookings: [], reviews: [] })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                this.binId = data.metadata.id;
-                localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                return this.binId;
-            }
-        } catch (e) {}
-
-        return null;
+        return SHARED_BIN_ID;
     }
 
     _getCurrentLocalData() {
@@ -118,17 +69,11 @@ class CloudDatabaseManager {
 
     // Scarica e sincronizza in tempo reale in background TUTTI i dati (Itinerari, Foto, Prenotazioni, Recensioni)
     async fetchTuttiDatiCloud() {
-        // Se c'è un salvataggio o un'eliminazione in corso, sospende la lettura per evitare sovrascritture
-        if (this.isSaving) {
-            return null;
-        }
-
-        const binId = await this.getOrCreateBinId();
-        if (!binId) return null;
+        if (this.isSaving) return null;
 
         try {
             const timestamp = Date.now();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest?nocache=${timestamp}`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${SHARED_BIN_ID}/latest?nocache=${timestamp}`, {
                 method: 'GET',
                 headers: {
                     'X-Master-Key': this.masterKey,
@@ -182,17 +127,11 @@ class CloudDatabaseManager {
     async fetchItinerariCloud() { return this.fetchTuttiDatiCloud(); }
     async fetchRecensioniCloud() { return this.fetchTuttiDatiCloud(); }
 
-    // Salva automaticamente qualunque modifica nel Cloud bloccando i conflitti
+    // Salva automaticamente qualunque modifica nel Cloud
     async salvaTuttiDatiCloud(dataObj) {
         this.isSaving = true;
-        const binId = await this.getOrCreateBinId();
-        if (!binId) {
-            this.isSaving = false;
-            return false;
-        }
 
         try {
-            // Aggiorna prima la memoria locale in modo sincrono ed immediato
             if (typeof dataObj.itinerari !== 'undefined') {
                 const cleanItinerari = pulisciVecchiItinerariDemo(dataObj.itinerari);
                 localStorage.setItem('spt_itineraries', JSON.stringify(cleanItinerari));
@@ -216,7 +155,7 @@ class CloudDatabaseManager {
                 updatedAt: new Date().toISOString()
             };
 
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${SHARED_BIN_ID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
