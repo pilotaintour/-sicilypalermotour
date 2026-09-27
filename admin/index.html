@@ -50,6 +50,7 @@
                 <button class="tab-btn active" id="tab-itinerari-btn" onclick="mostraSezione('sezione-itinerari', this)">📋 Gestione Itinerari</button>
                 <button class="tab-btn" id="tab-prenotazioni-btn" onclick="mostraSezione('sezione-prenotazioni', this)">📥 Prenotazioni (<span id="cnt-prenotazioni-badge">0</span>)</button>
                 <button class="tab-btn" id="tab-impostazioni-btn" onclick="mostraSezione('sezione-impostazioni', this)">⚙️ Impostazioni Sito</button>
+                <button class="tab-btn" id="tab-recensioni-btn" onclick="mostraSezione('sezione-recensioni', this)">⭐ Gestione Recensioni</button>
             </div>
 
             <!-- SEZIONE 1: Gestione Itinerari -->
@@ -281,6 +282,21 @@
                 </div>
             </div>
 
+            <!-- SEZIONE 4: Gestione Recensioni -->
+            <div id="sezione-recensioni" class="card hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2 style="color: #1b4f72; margin: 0;">⭐ Gestione Recensioni Clienti</h2>
+                        <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">Visualizza e modera tutte le recensioni pubblicate nel Cloud per tutti i visitatori.</p>
+                    </div>
+                    <button class="btn-secondary btn-small" onclick="caricaRecensioniAdmin()">🔄 Aggiorna Recensioni</button>
+                </div>
+
+                <div id="admin-recensioni-list">
+                    <!-- Popolato via JS -->
+                </div>
+            </div>
+
             <!-- SEZIONE 3: Impostazioni Sito -->
             <div id="sezione-impostazioni" class="card hidden">
                 <h2 style="color: #1b4f72; font-size: 1.5rem; margin-bottom: 8px;">⚙️ Impostazioni del Sito</h2>
@@ -477,11 +493,13 @@
     </div>
 
     <script src="../cloud/cloud-db.js"></script>
+    <script src="../email/email-service.js"></script>
     <script src="../email/emailedit.js"></script>
     <script src="admin-itinerari.js"></script>
     <script src="admin-archivio.js"></script>
     <script src="admin-prenotazioni.js"></script>
     <script src="admin-impostazioni.js"></script>
+    <script src="admin-recensioni.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

@@ -1,9 +1,10 @@
 /**
  * MAIN ADMIN ENTRY POINT - Sicily Palermo Tour
- * Collega i 3 moduli delle Schede Admin:
+ * Collega i moduli delle Schede Admin:
  * 1) admin-itinerari.js    (Gestione Itinerari, Orari, Foto, Tappe)
  * 2) admin-prenotazioni.js (Gestione Lista Prenotazioni, Filtri, WhatsApp)
  * 3) admin-impostazioni.js  (Impostazioni Sito e Numero WhatsApp)
+ * 4) admin-recensioni.js   (Modifica e cancellazione recensioni)
  */
 
 const AUTH_KEY_MAIN = 'spt_admin_logged_in';
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+    if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
 });
 
 // LOGIN E AUTENTICAZIONE RISERVATA A PILOTAINTOR13@GMAIL.COM
@@ -68,6 +70,7 @@ function verificaStatoAutenticazione() {
 
     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+    if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
 }
 
 // PASSAGGIO TRA SCHEDE (TABS)
@@ -75,6 +78,7 @@ function mostraSezione(sezioneId, btnElement) {
     const sezioneItinerari = document.getElementById('sezione-itinerari');
     const sezionePrenotazioni = document.getElementById('sezione-prenotazioni');
     const sezioneImpostazioni = document.getElementById('sezione-impostazioni');
+    const sezioneRecensioni = document.getElementById('sezione-recensioni');
     const tabs = document.querySelectorAll('.tab-btn');
 
     tabs.forEach(t => t.classList.remove('active'));
@@ -86,6 +90,7 @@ function mostraSezione(sezioneId, btnElement) {
     if (sezioneItinerari) sezioneItinerari.classList.add('hidden');
     if (sezionePrenotazioni) sezionePrenotazioni.classList.add('hidden');
     if (sezioneImpostazioni) sezioneImpostazioni.classList.add('hidden');
+    if (sezioneRecensioni) sezioneRecensioni.classList.add('hidden');
 
     if (sezioneId === 'sezione-itinerari') {
         if (sezioneItinerari) sezioneItinerari.classList.remove('hidden');
@@ -95,5 +100,8 @@ function mostraSezione(sezioneId, btnElement) {
         if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
     } else if (sezioneId === 'sezione-impostazioni') {
         if (sezioneImpostazioni) sezioneImpostazioni.classList.remove('hidden');
+    } else if (sezioneId === 'sezione-recensioni') {
+        if (sezioneRecensioni) sezioneRecensioni.classList.remove('hidden');
+        if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
     }
 }

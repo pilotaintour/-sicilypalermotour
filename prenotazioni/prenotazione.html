@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="booking-wizard.css">
     <script src="https://js.stripe.com/v3/"></script>
     <script src="stripe-payment.js"></script>
+    <script src="../email/email-service.js"></script>
 </head>
 <body>
 
@@ -287,8 +288,13 @@
                     };
                     list.unshift(record);
                     localStorage.setItem('spt_bookings', JSON.stringify(list));
+
+                    // Invia email automatica via Brevo al cliente e all'amministratore
+                    if (window.brevoEmailService) {
+                        window.brevoEmailService.inviaEmailPrenotazione(record);
+                    }
                 } catch (e) {
-                    console.error("Errore salvataggio booking:", e);
+                    console.error("Errore salvataggio booking o invio email Brevo:", e);
                 }
 
                 alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${this.bookingData.code}\nTour: ${this.bookingData.tourTitle}\nData: ${this.bookingData.dateReadable} - Orario: ${this.bookingData.slotTime}\nOspiti: ${this.bookingData.adults} Adulti${this.bookingData.children > 0 ? `, ${this.bookingData.children} Bambini` : ''}\nTotale: €${this.bookingData.total}\n\nGrazie ${this.bookingData.customerName}, la tua prenotazione è stata ricevuta. Ti risponderemo a breve!`);

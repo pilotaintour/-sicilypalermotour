@@ -16,11 +16,11 @@ body {
     display: none !important;
 }
 
-/* Header Hero con Foto Copertina Ufficiale */
+/* Header Hero con Foto Standard Istantanea Cattedrale */
 header#home {
     position: relative;
-    height: 60vh;
-    min-height: 420px;
+    height: 85vh;
+    min-height: 580px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -29,7 +29,7 @@ header#home {
     text-align: center;
     padding: 0 20px;
     overflow: hidden;
-    background: url('copertina.jpg') no-repeat center center / cover;
+    background: url('cattedrale.jpg') no-repeat center center / cover;
 }
 
 .hero-bg-slider {
@@ -39,7 +39,7 @@ header#home {
     width: 100%;
     height: 100%;
     z-index: 1;
-    background-color: #f8fafc;
+    background-color: #0f172a;
 }
 
 .hero-slide {
@@ -48,10 +48,15 @@ header#home {
     left: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
     opacity: 0;
-    transition: opacity 1.2s ease-in-out;
+    transition: opacity 2.5s ease-in-out;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
 }
 
 .hero-slide.active {

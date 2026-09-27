@@ -50,14 +50,27 @@ function avviaHeroBgSlider() {
     if (savedPhotos && savedPhotos.length > 0) {
         sliderBox.innerHTML = savedPhotos.map((url, i) => `
             <div class="hero-slide ${i === 0 ? 'active' : ''}">
-                <img src="${url}" alt="Copertina Tour" onerror="this.src='copertina.jpg';" style="width:100%; height:100%; object-fit:cover;">
+                <img src="${url}" alt="Copertina Tour" style="width:100%; height:100%; object-fit:cover; object-position: center 35%;">
             </div>
         `).join('');
     } else {
-        const defaultPhotos = ['copertina.jpg'];
+        const defaultPhotos = [
+            // Foto 2 (Alta Risoluzione)
+            'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkPa80fb7bWzzi0MNJyxopYrebJqu3gP-LZCKNRZpABdTfSB88N6THhmQb0rt8dxBGARxBqdgpUBfcUhXhoSa2YQ3Ff4VbKIgMG3B4zlJ3t1Z9ca4fx-DpDYsTkt2fD2b4S5Yn9Xw=s1600-w1600-h1200-rw',
+            // Foto 3 (Alta Risoluzione)
+            'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkMGPV26BT3RCm8a24p-Lq3TQqh0q8vIFFbpm18Qu4aa8cf39Nh_jMCFnWLylGRUhHMb49rFd76ZI845PQ33RXIxBHK8WOQ6ghhCzQct9FViQEnJwbrRgsx36aa3qHueLj67lA95w=s1600-w1600-h1200-rw',
+            // Foto 5 (Alta Risoluzione)
+            'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkMEu9jf65pXTAwJzsiDkigvj1bC-BmDUox7HtegL_cET6H47xZ50quaBWPE57qGqtwizB4KAfpyfNbWSX8EKpqMnoUfvSUonWELfU7GV7h2bI2zb5lKyOBRRQTDqL0x2_Djk2Qdw=s1600-w1600-h1200-rw',
+            // Foto 7 (Scala dei Turchi)
+            'https://www.sicilia.info/wp-content/uploads/sites/91/scala-dei-turchi-hd.jpg',
+            // Foto 8 (Alta Risoluzione)
+            'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkd6Df7P4KVpNkdGj0jXxT2XAi45tU9zhkQ4JKIQNatgYnar92eCIShP7geZGsjhrKB8NAsb5NQj6edq3rPBLUrU_ipeSh_ncYcD_svY4uf0qo2nr7toOTiklPFuHnC5gwuxDB_=s1600-w1600-h1200-rw',
+            // Foto 9 (San Vito lo Capo)
+            'https://www.mooway.it/public/1621965619-vedere-sanvito-1.jpg'
+        ];
         sliderBox.innerHTML = defaultPhotos.map((url, i) => `
             <div class="hero-slide ${i === 0 ? 'active' : ''}">
-                <img src="${url}" alt="Sicily Palermo Tour" onerror="this.src='copertina.jpg';" style="width:100%; height:100%; object-fit:cover;">
+                <img src="${url}" alt="Sicily Palermo Tour Foto ${i + 1}" style="width:100%; height:100%; object-fit:cover; object-position: center 35%;">
             </div>
         `).join('');
     }

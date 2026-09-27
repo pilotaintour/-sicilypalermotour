@@ -7,42 +7,37 @@
     <!-- Fogli di stile CSS Separati -->
     <!-- Pre-Caricamento Prioritario Immagine Copertina per Velocità Istantanea -->
     <link rel="preload" as="image" href="unnamed.webp">
-    <!-- Pre-Caricamento Prioritario Immagine Copertina -->
-    <link rel="preload" as="image" href="copertina.jpg">
+    <!-- Pre-Caricamento Prioritario Immagine Copertina per Velocità Istantanea -->
+    <link rel="preload" as="image" href="cattedrale.jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="itinerari/itinerari.css">
     <link rel="stylesheet" href="whatsapp/whatsapp.css">
+    <link rel="stylesheet" href="recensioni/recensioni.css">
 </head>
 <body>
 
-    <!-- Copertina Principale (Hero Section) con Foto Ufficiale Copertina -->
+    <!-- Copertina Principale (Hero Section) con Foto Locali Ufficiali -->
     <header id="home">
         <div class="hero-bg-slider" id="hero-bg-slider">
             <div class="hero-slide active" style="opacity: 1;">
-                <img src="copertina.jpg" alt="Sicily Palermo Tour" loading="eager" fetchpriority="high" onerror="this.src='unnamed.webp';" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkmsIKYUioamrlg390A3Gj-aUsCySmftFx7gCf66dRp4TfotwnnydNCTttqjJxHDu6x4lBSgMrKpz4OxHQGcx-XGwZ5YzAKDgD9PhABgHe-68ifh3HAUGjxevVGYkSi-8vUhMxFvQ=w101-h72-n-k-no-nu" alt="Sicily Palermo Tour" loading="eager" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
         </div>
         <div class="hero-overlay"></div>
 
-        <div class="hero-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 0 15px; flex-wrap: wrap; gap: 10px;">
-                <div style="text-align: left;">
-                    <h1 style="margin: 0; text-shadow: 2px 2px 6px rgba(0,0,0,0.8);">Sicily Palermo Tour</h1>
-                    <p style="margin: 6px 0 0 0; text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
-                </div>
-                <div style="background: rgba(255,255,255,0.18); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(6px);">
-                    <div id="google_translate_element"></div>
-                </div>
-            </div>
+        <div class="hero-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; padding: 0 20px;">
+            <h1 style="margin: 0 0 10px 0; font-size: 3.2rem; font-weight: 700; color: #ffffff; text-shadow: 2px 3px 12px rgba(0,0,0,0.9); letter-spacing: 0.5px;">Sicily Palermo Tour</h1>
+            <p style="margin: 0; font-size: 1.35rem; color: #ffffff; text-shadow: 1px 2px 8px rgba(0,0,0,0.9); font-weight: 400; max-width: 750px; line-height: 1.5;">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
         </div>
     </header>
 
     <!-- Barra di Navigazione -->
     <nav>
         <ul>
-            <li><a href="#home">Home</a></li>
             <li><a href="#itinerari">Itinerari</a></li>
+            <li><a href="#recensioni">Recensioni</a></li>
             <li><a href="#contatti">Contatti</a></li>
+            <li><div id="google_translate_element" style="display:inline-block; vertical-align:middle;"></div></li>
             <li id="nav-admin-slot"></li>
         </ul>
     </nav>
@@ -148,6 +143,51 @@
         </div>
     </div>
 
+    <!-- Sezione Recensioni -->
+    <section id="recensioni" class="recensioni-section">
+        <div class="recensioni-container">
+            <div class="recensioni-header">
+                <h2>⭐ Cosa Dicono i Nostri Viaggiatori</h2>
+                <p>Leggi le recensioni autentiche di chi ha esplorato Palermo con noi o lascia la tua opinione.</p>
+            </div>
+
+            <!-- Griglia Recensioni -->
+            <div id="recensioni-grid" class="recensioni-grid">
+                <!-- Popolato da recensioni-data.js -->
+            </div>
+
+            <!-- Form Inserimento Recensione -->
+            <div class="recensione-form-box">
+                <h3>✍️ Lascia una Recensione</h3>
+                <form id="form-recensione" onsubmit="inviaNuovaRecensione(event)">
+                    <div class="form-control-recensione">
+                        <label for="recensione-nome">Il tuo Nome e Cognome:</label>
+                        <input type="text" id="recensione-nome" required placeholder="Es. Anna Rossi">
+                    </div>
+                    <div class="form-control-recensione">
+                        <label for="recensione-voto">Valutazione:</label>
+                        <select id="recensione-voto" required>
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5 - Eccellente)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5 - Ottimo)</option>
+                            <option value="3">⭐⭐⭐ (3/5 - Buono)</option>
+                            <option value="2">⭐⭐ (2/5 - Sufficiente)</option>
+                            <option value="1">⭐ (1/5 - Scarsa)</option>
+                        </select>
+                    </div>
+                    <div class="form-control-recensione">
+                        <label for="recensione-testo">La tua esperienza:</label>
+                        <textarea id="recensione-testo" rows="4" required placeholder="Racconta com'è stato il tour con Sicily Palermo Tour..."></textarea>
+                    </div>
+                    <div class="form-control-recensione">
+                        <label for="recensione-foto">📸 Aggiungi Foto (puoi selezionarne più di una dal cellulare):</label>
+                        <input type="file" id="recensione-foto" accept="image/*" multiple style="width: 100%; padding: 10px; border: 1.5px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.9rem; cursor: pointer;">
+                    </div>
+                    <button type="submit" class="btn-invia-recensione">Pubblica Recensione</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati. <span id="footer-admin-slot"></span></p>
@@ -159,6 +199,7 @@
     <script src="translate/translator.js"></script>
     <script src="whatsapp/whatsapp.js"></script>
     <script src="itinerari/itinerari-data.js"></script>
+    <script src="recensioni/recensioni-data.js"></script>
     <script src="main.js"></script>
 
 </body>
