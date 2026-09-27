@@ -1,10 +1,6 @@
 /**
  * MAIN ADMIN ENTRY POINT - Sicily Palermo Tour
- * Collega i moduli delle Schede Admin:
- * 1) admin-itinerari.js    (Gestione Itinerari, Orari, Foto, Tappe)
- * 2) admin-prenotazioni.js (Gestione Lista Prenotazioni, Filtri, WhatsApp)
- * 3) admin-impostazioni.js  (Impostazioni Sito e Numero WhatsApp)
- * 4) admin-recensioni.js   (Modifica e cancellazione recensioni)
+ * Controllo di Sicurezza Rigido: Riservato Esclusivamente a pilotaintour13@gmail.com
  */
 
 const AUTH_KEY_MAIN = 'spt_admin_logged_in';
@@ -17,12 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof caricaNumeroWhatsApp === 'function') caricaNumeroWhatsApp();
     if (typeof renderCampiTappe === 'function') renderCampiTappe();
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
-    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
-    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
-    if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
 });
 
-// LOGIN E AUTENTICAZIONE RISERVATA A PILOTAINTOR13@GMAIL.COM
+// LOGIN E AUTENTICAZIONE RISERVATA ESCLUSIVAMENTE A PILOTAINTOR13@GMAIL.COM
 function effettuaLogin(event) {
     if (event) event.preventDefault();
     const emailInput = document.getElementById('admin-email');
@@ -40,7 +33,7 @@ function effettuaLogin(event) {
     } else {
         if (loginError) {
             loginError.classList.remove('hidden');
-            loginError.textContent = `Accesso negato: L'email "${email}" non è autorizzata come Amministratore.`;
+            loginError.textContent = `⛔ Accesso Negato: L'indirizzo "${email}" non è autorizzato. L'area di gestione è riservata esclusivamente all'amministratore.`;
         }
     }
 }
@@ -52,25 +45,31 @@ function logout() {
 }
 
 function verificaStatoAutenticazione() {
-    // Registra sempre l'accesso diretto dell'amministratore pilotaintour13@gmail.com
-    localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
-    localStorage.setItem(AUTH_KEY_MAIN, 'true');
+    const savedEmail = (localStorage.getItem('spt_admin_email') || '').toLowerCase();
+    const isLoggedIn = localStorage.getItem(AUTH_KEY_MAIN) === 'true';
 
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const userControls = document.getElementById('user-controls');
     const welcomeMsg = document.getElementById('welcome-msg');
 
-    if (loginSection) loginSection.classList.add('hidden');
-    if (dashboardSection) dashboardSection.classList.remove('hidden');
-    if (userControls) userControls.classList.remove('hidden');
-    if (welcomeMsg) {
-        welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL_MAIN}`;
-    }
+    // Verifica la corrispondenza con l'email autorizzata pilotaintour13@gmail.com
+    if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
+        if (loginSection) loginSection.classList.add('hidden');
+        if (dashboardSection) dashboardSection.classList.remove('hidden');
+        if (userControls) userControls.classList.remove('hidden');
+        if (welcomeMsg) {
+            welcomeMsg.textContent = `👤 Admin: ${AUTHORIZED_EMAIL_MAIN}`;
+        }
 
-    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
-    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
-    if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
+        if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
+        if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+        if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
+    } else {
+        if (loginSection) loginSection.classList.remove('hidden');
+        if (dashboardSection) dashboardSection.classList.add('hidden');
+        if (userControls) userControls.classList.add('hidden');
+    }
 }
 
 // PASSAGGIO TRA SCHEDE (TABS)
