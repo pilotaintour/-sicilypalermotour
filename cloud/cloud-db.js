@@ -6,6 +6,19 @@
 const JSONBIN_MASTER_KEY = '$2a$10$Owm0ELeIld8ZySHzLaBKzOPUfHMcdB.4b1WoCRGHc35w3AG3c/qfK';
 const BIN_ID_STORAGE_KEY = 'spt_jsonbin_id';
 
+function pulisciVecchiItinerariDemo(lista) {
+    if (!Array.isArray(lista)) return [];
+    return lista.filter(item => {
+        if (!item) return false;
+        const title = (item.title || '').trim().toLowerCase();
+        const id = String(item.id || '');
+        const isOld1 = (id === '1' || title.includes('arabo-normanna'));
+        const isOld2 = (id === '2' || title.includes('tour del gusto') || title.includes('street food'));
+        const isOld3 = (id === '3' || title.includes('mondello e il barocco'));
+        return !(isOld1 || isOld2 || isOld3);
+    });
+}
+
 class CloudDatabaseManager {
     constructor() {
         this.masterKey = JSONBIN_MASTER_KEY;
@@ -64,6 +77,7 @@ class CloudDatabaseManager {
         try {
             let defaultItinerari = [];
             try { defaultItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]'); } catch (e) {}
+            defaultItinerari = pulisciVecchiItinerariDemo(defaultItinerari);
 
             const res = await fetch('https://api.jsonbin.io/v3/b', {
                 method: 'POST',
@@ -96,6 +110,8 @@ class CloudDatabaseManager {
         try { heroPhotos = JSON.parse(localStorage.getItem('spt_hero_photos') || '[]'); } catch (e) {}
         try { bookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]'); } catch (e) {}
         try { reviews = JSON.parse(localStorage.getItem('spt_recensioni') || '[]'); } catch (e) {}
+
+        itinerari = pulisciVecchiItinerariDemo(itinerari);
         return { itinerari, heroPhotos, bookings, reviews };
     }
 
@@ -119,12 +135,20 @@ class CloudDatabaseManager {
                 const data = await res.json();
                 const record = data.record || {};
 
-                // 1. Sincronizza e renderizza Itinerari
+                // 1. Sincronizza e renderizza Itinerari (ripuliti dai vecchi demo)
                 if (record.itinerari && Array.isArray(record.itinerari)) {
-                    localStorage.setItem('spt_itineraries', JSON.stringify(record.itinerari));
+                    const itinerariPuliti = pulisciVecchiItinerariDemo(record.itinerari);
+
+                    // Se nel Cloud c'erano i vecchi demo, sovrascrivi il Cloud con la lista pulita
+                    if (itinerariPuliti.length !== record.itinerari.length) {
+                        this.salvaItinerariCloud(itinerariPuliti);
+                    }
+
+                    localStorage.setItem('spt_itineraries', JSON.stringify(itinerariPuliti));
+
                     if (typeof renderItinerariGrid === 'function') {
                         const cat = typeof categoriaSelezionata !== 'undefined' ? categoriaSelezionata : 'Tutti';
-                        renderItinerariGrid(record.itinerari, cat);
+                        renderItinerariGrid(itinerariPuliti, cat);
                     }
                     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
                 }
@@ -165,8 +189,11 @@ class CloudDatabaseManager {
 
         try {
             const current = this._getCurrentLocalData();
+            let finalItinerari = typeof dataObj.itinerari !== 'undefined' ? dataObj.itinerari : current.itinerari;
+            finalItinerari = pulisciVecchiItinerariDemo(finalItinerari);
+
             const payload = {
-                itinerari: typeof dataObj.itinerari !== 'undefined' ? dataObj.itinerari : current.itinerari,
+                itinerari: finalItinerari,
                 heroPhotos: typeof dataObj.heroPhotos !== 'undefined' ? dataObj.heroPhotos : current.heroPhotos,
                 bookings: typeof dataObj.bookings !== 'undefined' ? dataObj.bookings : current.bookings,
                 reviews: typeof dataObj.reviews !== 'undefined' ? dataObj.reviews : current.reviews,
@@ -183,7 +210,7 @@ class CloudDatabaseManager {
             });
 
             if (res.ok) {
-                if (dataObj.itinerari) localStorage.setItem('spt_itineraries', JSON.stringify(dataObj.itinerari));
+                localStorage.setItem('spt_itineraries', JSON.stringify(finalItinerari));
                 if (dataObj.heroPhotos) localStorage.setItem('spt_hero_photos', JSON.stringify(dataObj.heroPhotos));
                 if (dataObj.bookings) localStorage.setItem('spt_bookings', JSON.stringify(dataObj.bookings));
                 if (dataObj.reviews) localStorage.setItem('spt_recensioni', JSON.stringify(dataObj.reviews));
