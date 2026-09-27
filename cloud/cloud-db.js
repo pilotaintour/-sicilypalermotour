@@ -24,6 +24,7 @@ class CloudDatabaseManager {
         this.masterKey = JSONBIN_MASTER_KEY;
         this.binId = localStorage.getItem(BIN_ID_STORAGE_KEY) || '';
         this.syncInterval = null;
+        this.isSaving = false; // Flag per impedire il ripristino di dati vecchi durante un salvataggio/eliminazione
 
         // Inizia la sincronizzazione automatica continua a ciclo in background
         this.initAutoSync();
@@ -117,6 +118,11 @@ class CloudDatabaseManager {
 
     // Scarica e sincronizza in tempo reale in background TUTTI i dati (Itinerari, Foto, Prenotazioni, Recensioni)
     async fetchTuttiDatiCloud() {
+        // Se c'è un salvataggio o un'eliminazione in corso, sospende la lettura per evitare sovrascritture
+        if (this.isSaving) {
+            return null;
+        }
+
         const binId = await this.getOrCreateBinId();
         if (!binId) return null;
 
@@ -131,19 +137,13 @@ class CloudDatabaseManager {
                 }
             });
 
-            if (res.ok) {
+            if (res.ok && !this.isSaving) {
                 const data = await res.json();
                 const record = data.record || {};
 
-                // 1. Sincronizza e renderizza Itinerari (ripuliti dai vecchi demo)
+                // 1. Sincronizza e renderizza Itinerari
                 if (record.itinerari && Array.isArray(record.itinerari)) {
                     const itinerariPuliti = pulisciVecchiItinerariDemo(record.itinerari);
-
-                    // Se nel Cloud c'erano i vecchi demo, sovrascrivi il Cloud con la lista pulita
-                    if (itinerariPuliti.length !== record.itinerari.length) {
-                        this.salvaItinerariCloud(itinerariPuliti);
-                    }
-
                     localStorage.setItem('spt_itineraries', JSON.stringify(itinerariPuliti));
 
                     if (typeof renderItinerariGrid === 'function') {
@@ -182,21 +182,37 @@ class CloudDatabaseManager {
     async fetchItinerariCloud() { return this.fetchTuttiDatiCloud(); }
     async fetchRecensioniCloud() { return this.fetchTuttiDatiCloud(); }
 
-    // Salva automaticamente qualunque modifica nel Cloud
+    // Salva automaticamente qualunque modifica nel Cloud bloccando i conflitti
     async salvaTuttiDatiCloud(dataObj) {
+        this.isSaving = true;
         const binId = await this.getOrCreateBinId();
-        if (!binId) return false;
+        if (!binId) {
+            this.isSaving = false;
+            return false;
+        }
 
         try {
-            const current = this._getCurrentLocalData();
-            let finalItinerari = typeof dataObj.itinerari !== 'undefined' ? dataObj.itinerari : current.itinerari;
-            finalItinerari = pulisciVecchiItinerariDemo(finalItinerari);
+            // Aggiorna prima la memoria locale in modo sincrono ed immediato
+            if (typeof dataObj.itinerari !== 'undefined') {
+                const cleanItinerari = pulisciVecchiItinerariDemo(dataObj.itinerari);
+                localStorage.setItem('spt_itineraries', JSON.stringify(cleanItinerari));
+            }
+            if (typeof dataObj.heroPhotos !== 'undefined') {
+                localStorage.setItem('spt_hero_photos', JSON.stringify(dataObj.heroPhotos));
+            }
+            if (typeof dataObj.bookings !== 'undefined') {
+                localStorage.setItem('spt_bookings', JSON.stringify(dataObj.bookings));
+            }
+            if (typeof dataObj.reviews !== 'undefined') {
+                localStorage.setItem('spt_recensioni', JSON.stringify(dataObj.reviews));
+            }
 
+            const current = this._getCurrentLocalData();
             const payload = {
-                itinerari: finalItinerari,
-                heroPhotos: typeof dataObj.heroPhotos !== 'undefined' ? dataObj.heroPhotos : current.heroPhotos,
-                bookings: typeof dataObj.bookings !== 'undefined' ? dataObj.bookings : current.bookings,
-                reviews: typeof dataObj.reviews !== 'undefined' ? dataObj.reviews : current.reviews,
+                itinerari: current.itinerari,
+                heroPhotos: current.heroPhotos,
+                bookings: current.bookings,
+                reviews: current.reviews,
                 updatedAt: new Date().toISOString()
             };
 
@@ -210,17 +226,14 @@ class CloudDatabaseManager {
             });
 
             if (res.ok) {
-                localStorage.setItem('spt_itineraries', JSON.stringify(finalItinerari));
-                if (dataObj.heroPhotos) localStorage.setItem('spt_hero_photos', JSON.stringify(dataObj.heroPhotos));
-                if (dataObj.bookings) localStorage.setItem('spt_bookings', JSON.stringify(dataObj.bookings));
-                if (dataObj.reviews) localStorage.setItem('spt_recensioni', JSON.stringify(dataObj.reviews));
-
-                // Notifica aggiornamento istantaneo
-                setTimeout(() => this.fetchTuttiDatiCloud(), 200);
+                console.log("☁️ Dati pubblicati con successo nel Cloud!");
+                this.isSaving = false;
                 return true;
             }
         } catch (e) {
             console.error("Errore salvataggio Cloud:", e);
+        } finally {
+            this.isSaving = false;
         }
         return false;
     }

@@ -45,10 +45,11 @@ function getItinerari() {
     return (list && Array.isArray(list)) ? pulisciVecchiItinerariDemo(list) : [];
 }
 
-function saveItinerari(itinerari) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(itinerari));
+async function saveItinerari(itinerari) {
+    const cleanList = pulisciVecchiItinerariDemo(itinerari);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanList));
     if (window.cloudDB) {
-        window.cloudDB.salvaItinerariCloud(itinerari);
+        await window.cloudDB.salvaItinerariCloud(cleanList);
     }
 }
 
@@ -234,12 +235,12 @@ function resetForm() {
     document.getElementById('cancel-edit-btn').classList.add('hidden');
 }
 
-function eliminaItinerario(id) {
+async function eliminaItinerario(id) {
     if (!confirm('Sei sicuro di voler eliminare questo itinerario?')) return;
 
     let itinerari = getItinerari();
     itinerari = itinerari.filter(i => String(i.id) !== String(id));
-    saveItinerari(itinerari);
+    await saveItinerari(itinerari);
 
     if (String(document.getElementById('itinerary-id').value) === String(id)) {
         resetForm();
@@ -248,12 +249,11 @@ function eliminaItinerario(id) {
     caricaElencoItinerari();
 }
 
-function resetDemoData() {
-    if (confirm('Vuoi ripristinare gli itinerari demo iniziali? Tutti i dati correnti verranno sovrascritti.')) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
+async function resetDemoData() {
+    if (confirm('Sei sicuro di voler SBUOTARE e cancellare tutti gli itinerari presente?')) {
+        await saveItinerari([]);
         resetForm();
         caricaElencoItinerari();
-        if (window.cloudDB) window.cloudDB.salvaItinerariCloud(DEFAULT_ITINERARIES);
     }
 }
 
