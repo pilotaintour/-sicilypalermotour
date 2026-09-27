@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DATABASE CLOUD - JSONBin.io
- * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Itinerari, Foto Copertina, Prenotazioni e Recensioni
+ * Sicily Palermo Tour - Sincronizzazione AUTOMATICA E CONTINUA IN BACKGROUND (Real-Time Auto-Sync)
  */
 
 const JSONBIN_MASTER_KEY = '$2a$10$Owm0ELeIld8ZySHzLaBKzOPUfHMcdB.4b1WoCRGHc35w3AG3c/qfK';
@@ -10,15 +10,34 @@ class CloudDatabaseManager {
     constructor() {
         this.masterKey = JSONBIN_MASTER_KEY;
         this.binId = localStorage.getItem(BIN_ID_STORAGE_KEY) || '';
+        this.syncInterval = null;
+
+        // Inizia la sincronizzazione automatica continua a ciclo in background
+        this.initAutoSync();
     }
 
-    // Ottiene o recupera automaticamente l'ID del Database Cloud per qualsiasi dispositivo/Ospite
+    initAutoSync() {
+        // 1. Sync immediato all'avvio
+        setTimeout(() => this.fetchTuttiDatiCloud(), 300);
+
+        // 2. Poll automatico in background ogni 10 secondi per aggiornare tutti i browser collegati
+        if (!this.syncInterval) {
+            this.syncInterval = setInterval(() => {
+                this.fetchTuttiDatiCloud();
+            }, 10000);
+        }
+
+        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
+        window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
+        window.addEventListener('online', () => this.fetchTuttiDatiCloud());
+    }
+
+    // Ottiene o recupera automaticamente l'ID del Database Cloud condiviso
     async getOrCreateBinId() {
         if (this.binId && this.binId.length >= 15) {
             return this.binId;
         }
 
-        // 1. Cerca se esiste già un Bin creato su JSONBin per questo account
         try {
             const res = await fetch('https://api.jsonbin.io/v3/c/uncategorized/bins', {
                 method: 'GET',
@@ -36,21 +55,15 @@ class CloudDatabaseManager {
                     if (foundId) {
                         this.binId = foundId;
                         localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                        console.log("☁️ Database Cloud Sincronizzato! Bin ID condiviso:", this.binId);
                         return this.binId;
                     }
                 }
             }
-        } catch (e) {
-            console.error("Errore recupero lista Bins:", e);
-        }
+        } catch (e) {}
 
-        // 2. Se non esiste ancora, crea un nuovo Bin Cloud iniziale
         try {
             let defaultItinerari = [];
-            try {
-                defaultItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]');
-            } catch (e) {}
+            try { defaultItinerari = JSON.parse(localStorage.getItem('spt_itineraries') || '[]'); } catch (e) {}
 
             const res = await fetch('https://api.jsonbin.io/v3/b', {
                 method: 'POST',
@@ -67,17 +80,13 @@ class CloudDatabaseManager {
                 const data = await res.json();
                 this.binId = data.metadata.id;
                 localStorage.setItem(BIN_ID_STORAGE_KEY, this.binId);
-                console.log("☁️ Nuovo Database Cloud Creato! Bin ID:", this.binId);
                 return this.binId;
             }
-        } catch (e) {
-            console.error("Errore creazione Bin Cloud:", e);
-        }
+        } catch (e) {}
 
         return null;
     }
 
-    // Helper per leggere tutti i dati locali correnti
     _getCurrentLocalData() {
         let itinerari = [];
         let heroPhotos = [];
@@ -90,8 +99,8 @@ class CloudDatabaseManager {
         return { itinerari, heroPhotos, bookings, reviews };
     }
 
-    // Scarica tutti i dati pubblicati nel Cloud per qualsiasi Ospite o Turista (Itinerari, Hero Photos, Bookings, Recensioni)
-    async fetchItinerariCloud() {
+    // Scarica e sincronizza in tempo reale in background TUTTI i dati (Itinerari, Foto, Prenotazioni, Recensioni)
+    async fetchTuttiDatiCloud() {
         const binId = await this.getOrCreateBinId();
         if (!binId) return null;
 
@@ -109,171 +118,102 @@ class CloudDatabaseManager {
             if (res.ok) {
                 const data = await res.json();
                 const record = data.record || {};
-                let cloudList = [];
-                if (Array.isArray(data.record)) {
-                    cloudList = data.record;
-                } else if (record && Array.isArray(record.itinerari)) {
-                    cloudList = record.itinerari;
-                }
 
-                // Sincronizza Hero Photos
-                if (record && record.heroPhotos && Array.isArray(record.heroPhotos) && record.heroPhotos.length > 0) {
-                    localStorage.setItem('spt_hero_photos', JSON.stringify(record.heroPhotos));
-                    if (typeof avviaHeroBgSlider === 'function') {
-                        avviaHeroBgSlider();
+                // 1. Sincronizza e renderizza Itinerari
+                if (record.itinerari && Array.isArray(record.itinerari)) {
+                    localStorage.setItem('spt_itineraries', JSON.stringify(record.itinerari));
+                    if (typeof renderItinerariGrid === 'function') {
+                        const cat = typeof categoriaSelezionata !== 'undefined' ? categoriaSelezionata : 'Tutti';
+                        renderItinerariGrid(record.itinerari, cat);
                     }
+                    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
                 }
 
-                // Sincronizza Recensioni
-                if (record && record.reviews && Array.isArray(record.reviews)) {
+                // 2. Sincronizza Hero Photos
+                if (record.heroPhotos && Array.isArray(record.heroPhotos)) {
+                    localStorage.setItem('spt_hero_photos', JSON.stringify(record.heroPhotos));
+                }
+
+                // 3. Sincronizza Prenotazioni
+                if (record.bookings && Array.isArray(record.bookings)) {
+                    localStorage.setItem('spt_bookings', JSON.stringify(record.bookings));
+                    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+                }
+
+                // 4. Sincronizza e renderizza Recensioni
+                if (record.reviews && Array.isArray(record.reviews)) {
                     localStorage.setItem('spt_recensioni', JSON.stringify(record.reviews));
                     if (typeof renderRecensioniGrid === 'function') renderRecensioniGrid();
                     if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
                 }
 
-                if (cloudList && cloudList.length > 0) {
-                    localStorage.setItem('spt_itineraries', JSON.stringify(cloudList));
-                    return cloudList;
-                }
+                return record;
             }
         } catch (e) {
-            console.error("Errore lettura dati da Cloud:", e);
+            // Silenzioso in background
         }
         return null;
     }
 
-    // Scarica specificamente le recensioni dal Cloud
-    async fetchRecensioniCloud() {
+    async fetchItinerariCloud() { return this.fetchTuttiDatiCloud(); }
+    async fetchRecensioniCloud() { return this.fetchTuttiDatiCloud(); }
+
+    // Salva automaticamente qualunque modifica nel Cloud
+    async salvaTuttiDatiCloud(dataObj) {
         const binId = await this.getOrCreateBinId();
-        if (!binId) return null;
+        if (!binId) return false;
 
         try {
-            const timestamp = Date.now();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest?nocache=${timestamp}`, {
-                method: 'GET',
+            const current = this._getCurrentLocalData();
+            const payload = {
+                itinerari: typeof dataObj.itinerari !== 'undefined' ? dataObj.itinerari : current.itinerari,
+                heroPhotos: typeof dataObj.heroPhotos !== 'undefined' ? dataObj.heroPhotos : current.heroPhotos,
+                bookings: typeof dataObj.bookings !== 'undefined' ? dataObj.bookings : current.bookings,
+                reviews: typeof dataObj.reviews !== 'undefined' ? dataObj.reviews : current.reviews,
+                updatedAt: new Date().toISOString()
+            };
+
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
                 headers: {
-                    'X-Master-Key': this.masterKey,
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
-                }
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': this.masterKey
+                },
+                body: JSON.stringify(payload)
             });
 
             if (res.ok) {
-                const data = await res.json();
-                const record = data.record || {};
-                const reviewsList = record.reviews || record.recensioni;
-                if (Array.isArray(reviewsList)) {
-                    localStorage.setItem('spt_recensioni', JSON.stringify(reviewsList));
-                    if (typeof renderRecensioniGrid === 'function') renderRecensioniGrid();
-                    if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
-                    return reviewsList;
-                }
+                if (dataObj.itinerari) localStorage.setItem('spt_itineraries', JSON.stringify(dataObj.itinerari));
+                if (dataObj.heroPhotos) localStorage.setItem('spt_hero_photos', JSON.stringify(dataObj.heroPhotos));
+                if (dataObj.bookings) localStorage.setItem('spt_bookings', JSON.stringify(dataObj.bookings));
+                if (dataObj.reviews) localStorage.setItem('spt_recensioni', JSON.stringify(dataObj.reviews));
+
+                // Notifica aggiornamento istantaneo
+                setTimeout(() => this.fetchTuttiDatiCloud(), 200);
+                return true;
             }
         } catch (e) {
-            console.error("Errore lettura recensioni da Cloud:", e);
+            console.error("Errore salvataggio Cloud:", e);
         }
-        return null;
+        return false;
     }
 
-    // Pubblica gli itinerari nel Cloud
     async salvaItinerariCloud(itinerariList) {
-        const binId = await this.getOrCreateBinId();
-        if (!binId) return false;
-
-        try {
-            const current = this._getCurrentLocalData();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': this.masterKey
-                },
-                body: JSON.stringify({
-                    itinerari: itinerariList,
-                    heroPhotos: current.heroPhotos,
-                    bookings: current.bookings,
-                    reviews: current.reviews,
-                    updatedAt: new Date().toISOString()
-                })
-            });
-
-            if (res.ok) {
-                console.log("☁️ Itinerari Pubblicati ed Aggiornati con successo nel Cloud!");
-                localStorage.setItem('spt_itineraries', JSON.stringify(itinerariList));
-                return true;
-            }
-        } catch (e) {
-            console.error("Errore salvataggio itinerari nel Cloud:", e);
-        }
-        return false;
+        return this.salvaTuttiDatiCloud({ itinerari: itinerariList });
     }
 
-    // Salva e pubblica le foto della copertina Hero nel Cloud
     async salvaFotoHeroCloud(heroPhotosList) {
-        const binId = await this.getOrCreateBinId();
-        if (!binId) return false;
-
-        try {
-            const current = this._getCurrentLocalData();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': this.masterKey
-                },
-                body: JSON.stringify({
-                    itinerari: current.itinerari,
-                    heroPhotos: heroPhotosList,
-                    bookings: current.bookings,
-                    reviews: current.reviews,
-                    updatedAt: new Date().toISOString()
-                })
-            });
-
-            if (res.ok) {
-                console.log("☁️ Foto Copertina Pubblicate ed Aggiornate con successo nel Cloud!");
-                localStorage.setItem('spt_hero_photos', JSON.stringify(heroPhotosList));
-                return true;
-            }
-        } catch (e) {
-            console.error("Errore salvataggio foto copertina nel Cloud:", e);
-        }
-        return false;
+        return this.salvaTuttiDatiCloud({ heroPhotos: heroPhotosList });
     }
 
-    // Salva e pubblica le recensioni nel Cloud in tempo reale per tutti i visitatori
     async salvaRecensioniCloud(recensioniList) {
-        const binId = await this.getOrCreateBinId();
-        if (!binId) return false;
+        return this.salvaTuttiDatiCloud({ reviews: recensioniList });
+    }
 
-        try {
-            const current = this._getCurrentLocalData();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': this.masterKey
-                },
-                body: JSON.stringify({
-                    itinerari: current.itinerari,
-                    heroPhotos: current.heroPhotos,
-                    bookings: current.bookings,
-                    reviews: recensioniList,
-                    updatedAt: new Date().toISOString()
-                })
-            });
-
-            if (res.ok) {
-                console.log("☁️ Recensioni Pubblicate ed Aggiornate con successo nel Cloud per tutti i turisti!");
-                localStorage.setItem('spt_recensioni', JSON.stringify(recensioniList));
-                return true;
-            }
-        } catch (e) {
-            console.error("Errore salvataggio recensioni nel Cloud:", e);
-        }
-        return false;
+    async salvaPrenotazioniCloud(bookingsList) {
+        return this.salvaTuttiDatiCloud({ bookings: bookingsList });
     }
 }
 
-// Istanza globale gestore Database Cloud
+// Istanza globale gestore Database Cloud con auto-sync avviato
 window.cloudDB = new CloudDatabaseManager();
