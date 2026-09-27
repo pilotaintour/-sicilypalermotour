@@ -21,24 +21,28 @@
 
     <main class="container">
 
-        <!-- Schermata di Login Amministratore (Nascosta) -->
+        <!-- Schermata di Login Amministratore -->
         <section id="login-section" class="card login-card hidden">
             <h2>🔑 Accesso Riservato Amministratore</h2>
-            <p>Inserisci la tua email autorizzata per accedere alla gestione del sito e delle prenotazioni.</p>
+            <p style="color: #64748b; font-size: 0.92rem; margin-bottom: 20px;">Inserisci la tua email e password di amministrazione per accedere al pannello di gestione.</p>
 
             <form id="loginForm" onsubmit="effettuaLogin(event)">
-                <div class="form-group">
-                    <label for="admin-email">Email Amministratore *</label>
-                    <input type="email" id="admin-email" required value="pilotaintour13@gmail.com" placeholder="pilotaintour13@gmail.com">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="admin-email" style="display: block; font-weight: bold; margin-bottom: 6px; color: #0b2545;">Email Amministratore *</label>
+                    <input type="email" id="admin-email" required value="pilotaintour13@gmail.com" placeholder="pilotaintour13@gmail.com" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
                 </div>
-                <div id="login-error" class="alert-error hidden" style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:8px; margin-bottom:12px; font-weight:bold; font-size:0.88rem;">
-                    Accesso negato: questa email non è autorizzata come Amministratore.
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label for="admin-password" style="display: block; font-weight: bold; margin-bottom: 6px; color: #0b2545;">Password Amministratore *</label>
+                    <input type="password" id="admin-password" required placeholder="Inserisci la password" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
                 </div>
-                <button type="submit" class="btn-primary full-width" style="background:#0b2545;">Accedi al Pannello Admin</button>
+                <div id="login-error" class="alert-error hidden" style="background:#fee2e2; color:#991b1b; padding:12px; border-radius:8px; margin-bottom:15px; font-weight:bold; font-size:0.88rem;">
+                    ⛔ Accesso negato: Email o Password errate.
+                </div>
+                <button type="submit" class="btn-primary full-width" style="background:#0b2545; padding: 12px; font-size: 1rem; font-weight: bold; width: 100%; cursor: pointer;">🔐 Accedi al Pannello Admin</button>
             </form>
 
-            <div class="login-footer">
-                <a href="../index.html">← Torna al sito principale</a>
+            <div class="login-footer" style="margin-top: 20px; text-align: center;">
+                <a href="../index.html" style="color: #64748b; text-decoration: none;">← Torna al sito principale</a>
             </div>
         </section>
 
@@ -303,8 +307,26 @@
                 <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 25px;">Seleziona la configurazione che desideri modificare:</p>
 
                 <div class="settings-list">
-                    <!-- Voce Lista 1: WhatsApp -->
+                    <!-- Voce Lista 0: Password Admin -->
                     <div class="settings-item">
+                        <div class="settings-item-header" onclick="toggleSettingBox('box-admin-password')">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">🔑</span>
+                                <strong style="color: #1b4f72; font-size: 1.05rem;">Cambia Password di Accesso Admin</strong>
+                            </div>
+                            <span id="arrow-box-admin-password" class="settings-arrow">▼</span>
+                        </div>
+                        <div id="box-admin-password" class="settings-item-body hidden">
+                            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">Inserisci la nuova password per l'accesso al tuo pannello admin:</p>
+                            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 500px;">
+                                <input type="password" id="nuova-password-input" placeholder="Nuova Password (es. MiaPassword123!)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                                <button onclick="salvaNuovaPasswordAdmin()" class="btn-primary" style="background-color: #0b2545; padding: 10px 20px;">💾 Salva Nuova Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voce Lista 1: WhatsApp -->
+                    <div class="settings-item" style="margin-top: 15px;">
                         <div class="settings-item-header" onclick="toggleSettingBox('box-whatsapp')">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 1.2rem;">📱</span>

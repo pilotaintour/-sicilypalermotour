@@ -2,8 +2,6 @@
  * Logica Principale di Inizializzazione e Contatti - Sicily Palermo Tour
  */
 
-const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
-
 document.addEventListener('DOMContentLoaded', () => {
     // Avvia il carosello sfondi della copertina Hero
     avviaHeroBgSlider();
@@ -11,22 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Carica gli itinerari nella Home
     if (typeof caricaItinerari === 'function') {
         caricaItinerari();
-    }
-
-    // Riconoscimento dinamico dell'amministratore: MOSTRA il tasto Admin SOLO sul browser dell'amministratore autenticato
-    const savedEmail = (localStorage.getItem('spt_admin_email') || '').toLowerCase();
-    const isLoggedIn = localStorage.getItem('spt_admin_logged_in') === 'true';
-
-    if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL.toLowerCase()) {
-        const navSlot = document.getElementById('nav-admin-slot');
-        const footerSlot = document.getElementById('footer-admin-slot');
-
-        if (navSlot) {
-            navSlot.innerHTML = `<a href="admin/index.html" target="_blank" class="nav-admin">⚙️ Area Gestione Admin</a>`;
-        }
-        if (footerSlot) {
-            footerSlot.innerHTML = `| <a href="admin/index.html" target="_blank" style="color: #e67e22; text-decoration: none; font-weight: bold;">⚙️ Area Gestione Admin</a>`;
-        }
     }
 
     // Sincronizzazione automatica se l'admin aggiorna gli itinerari in un'altra scheda
@@ -55,17 +37,11 @@ function avviaHeroBgSlider() {
         `).join('');
     } else {
         const defaultPhotos = [
-            // Foto 2 (Alta Risoluzione)
             'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkPa80fb7bWzzi0MNJyxopYrebJqu3gP-LZCKNRZpABdTfSB88N6THhmQb0rt8dxBGARxBqdgpUBfcUhXhoSa2YQ3Ff4VbKIgMG3B4zlJ3t1Z9ca4fx-DpDYsTkt2fD2b4S5Yn9Xw=s1600-w1600-h1200-rw',
-            // Foto 3 (Alta Risoluzione)
             'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkMGPV26BT3RCm8a24p-Lq3TQqh0q8vIFFbpm18Qu4aa8cf39Nh_jMCFnWLylGRUhHMb49rFd76ZI845PQ33RXIxBHK8WOQ6ghhCzQct9FViQEnJwbrRgsx36aa3qHueLj67lA95w=s1600-w1600-h1200-rw',
-            // Foto 5 (Alta Risoluzione)
             'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkMEu9jf65pXTAwJzsiDkigvj1bC-BmDUox7HtegL_cET6H47xZ50quaBWPE57qGqtwizB4KAfpyfNbWSX8EKpqMnoUfvSUonWELfU7GV7h2bI2zb5lKyOBRRQTDqL0x2_Djk2Qdw=s1600-w1600-h1200-rw',
-            // Foto 7 (Scala dei Turchi)
             'https://www.sicilia.info/wp-content/uploads/sites/91/scala-dei-turchi-hd.jpg',
-            // Foto 8 (Alta Risoluzione)
             'https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkd6Df7P4KVpNkdGj0jXxT2XAi45tU9zhkQ4JKIQNatgYnar92eCIShP7geZGsjhrKB8NAsb5NQj6edq3rPBLUrU_ipeSh_ncYcD_svY4uf0qo2nr7toOTiklPFuHnC5gwuxDB_=s1600-w1600-h1200-rw',
-            // Foto 9 (San Vito lo Capo)
             'https://www.mooway.it/public/1621965619-vedere-sanvito-1.jpg'
         ];
         sliderBox.innerHTML = defaultPhotos.map((url, i) => `

@@ -1,10 +1,15 @@
 /**
  * MAIN ADMIN ENTRY POINT - Sicily Palermo Tour
- * Controllo di Sicurezza Rigido: Riservato Esclusivamente a pilotaintour13@gmail.com
+ * Accesso Riservato con Email e Password Amministratore
  */
 
 const AUTH_KEY_MAIN = 'spt_admin_logged_in';
 const AUTHORIZED_EMAIL_MAIN = 'pilotaintour13@gmail.com';
+const DEFAULT_ADMIN_PASSWORD = 'Palermo2025!';
+
+function getAdminPassword() {
+    return localStorage.getItem('spt_admin_password') || DEFAULT_ADMIN_PASSWORD;
+}
 
 // INIZIALIZZAZIONE ALL'AVVIO
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,17 +20,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
 });
 
-// LOGIN E AUTENTICAZIONE RISERVATA ESCLUSIVAMENTE A PILOTAINTOR13@GMAIL.COM
+// LOGIN CON EMAIL E PASSWORD
 function effettuaLogin(event) {
     if (event) event.preventDefault();
     const emailInput = document.getElementById('admin-email');
+    const passwordInput = document.getElementById('admin-password');
     const loginError = document.getElementById('login-error');
 
-    if (!emailInput) return;
+    if (!emailInput || !passwordInput) return;
 
     const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    const targetPassword = getAdminPassword();
 
-    if (email === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
+    if (email === AUTHORIZED_EMAIL_MAIN.toLowerCase() && password === targetPassword) {
         localStorage.setItem('spt_admin_email', AUTHORIZED_EMAIL_MAIN);
         localStorage.setItem(AUTH_KEY_MAIN, 'true');
         if (loginError) loginError.classList.add('hidden');
@@ -33,9 +41,21 @@ function effettuaLogin(event) {
     } else {
         if (loginError) {
             loginError.classList.remove('hidden');
-            loginError.textContent = `⛔ Accesso Negato: L'indirizzo "${email}" non è autorizzato. L'area di gestione è riservata esclusivamente all'amministratore.`;
+            loginError.textContent = `⛔ Accesso Negato: Email o Password errate.`;
         }
     }
+}
+
+function salvaNuovaPasswordAdmin() {
+    const input = document.getElementById('nuova-password-input');
+    if (!input || !input.value.trim()) {
+        alert('Per favore inserisci la nuova password.');
+        return;
+    }
+    const nuova = input.value.trim();
+    localStorage.setItem('spt_admin_password', nuova);
+    alert('✅ Password Amministratore aggiornata con successo!');
+    input.value = '';
 }
 
 function logout() {
@@ -53,7 +73,6 @@ function verificaStatoAutenticazione() {
     const userControls = document.getElementById('user-controls');
     const welcomeMsg = document.getElementById('welcome-msg');
 
-    // Verifica la corrispondenza con l'email autorizzata pilotaintour13@gmail.com
     if (isLoggedIn && savedEmail === AUTHORIZED_EMAIL_MAIN.toLowerCase()) {
         if (loginSection) loginSection.classList.add('hidden');
         if (dashboardSection) dashboardSection.classList.remove('hidden');
