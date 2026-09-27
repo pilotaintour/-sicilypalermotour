@@ -7,78 +7,8 @@ const STORAGE_KEY = 'spt_itineraries';
 // Traccia l'indice della foto corrente nel carosello per ciascun tour
 const indiciCarosello = {};
 
-// Itinerari Iniziali Predefiniti
-const DEFAULT_ITINERARIES = [
-    {
-        id: '1',
-        title: 'Palermo Arabo-Normanna',
-        category: 'Storia e Cultura',
-        duration: '3 Ore',
-        price: 'Da 25€',
-        meetingPoint: 'Piazza Bellini / Cattedrale',
-        timeSlots: ['09:30', '11:30', '15:30', '18:00'],
-        featured: 'true',
-        imageUrl: 'unnamed.webp',
-        images: [
-            'unnamed.webp'
-        ],
-        tappe: [
-            'Cattedrale di Palermo',
-            'Palazzo dei Normanni e Cappella Palatina',
-            'Chiesa di San Giovanni degli Eremiti',
-            'Quattro Canti e Piazza Pretoria'
-        ],
-        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Adatto a Famiglie', 'Cancellazione Gratuita'],
-        shortDesc: 'Visita la Cattedrale, il Palazzo dei Normanni e la meravigliosa Cappella Palatina, patrimonio UNESCO.',
-        fullDesc: 'Un viaggio straordinario nel cuore di Palermo tra architetture uniche al mondo.'
-    },
-    {
-        id: '2',
-        title: 'Tour del Gusto e Street Food',
-        category: 'Street Food',
-        duration: '2.5 Ore',
-        price: 'Da 20€',
-        meetingPoint: 'Mercato di Ballarò',
-        timeSlots: ['10:30', '12:30', '17:30', '19:30'],
-        featured: 'true',
-        imageUrl: 'unnamed.webp',
-        images: [
-            'unnamed.webp'
-        ],
-        tappe: [
-            'Panelle e Crocchè calde',
-            'Sfincione palermitano artigianale',
-            'Pane con la milza (per i più audaci)',
-            'Cannolo siciliano con ricotta fresca'
-        ],
-        servizi: ['Guida Locale Esperta', 'Degustazione Cibo', 'Adatto a Famiglie'],
-        shortDesc: 'Esplora i mercati storici di Ballarò e del Capo assaggiando panelle, crocchè e il pane con la milza.',
-        fullDesc: 'Vivi l\'esperienza gastronomica palermitana autentica nei vicoli e tra i banchi dei mercati secolari.'
-    },
-    {
-        id: '3',
-        title: 'Mondello e il Barocco',
-        category: 'Mare e Natura',
-        duration: 'Mezza Giornata',
-        price: 'Da 30€',
-        meetingPoint: 'Piazza Politeama',
-        timeSlots: ['09:00', '15:00'],
-        featured: 'false',
-        imageUrl: 'unnamed.webp',
-        images: [
-            'unnamed.webp'
-        ],
-        tappe: [
-            'Passeggiata sul lungomare di Mondello',
-            'Ammirare le Ville Liberty e lo Stabilimento Balneare',
-            'Sosta per gelato artigianale o granita siciliana',
-            'Rientro panoramico verso Palermo'
-        ],
-        servizi: ['Guida Locale Esperta', 'Assistenza Personalizzata', 'Cancellazione Gratuita'],
-        shortDesc: 'Rilassati sulla spiaggia dorata di Mondello e ammira le splendide ville Liberty e il centro barocco.',
-        fullDesc: 'Dalla costa cristallina alla bellezza architettonica Liberty del borgo marinaro di Mondello.'
-    }
-];
+// Itinerari Iniziali Predefiniti (Vuoti per lasciare spazio solo agli itinerari reali creati dall'Admin)
+const DEFAULT_ITINERARIES = [];
 
 let itinerarioSelezionatoAttuale = null;
 let categoriaSelezionata = 'Tutti';
@@ -87,14 +17,13 @@ let categoriaSelezionata = 'Tutti';
 function getItinerari() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITINERARIES));
-        return DEFAULT_ITINERARIES;
+        return [];
     }
     try {
         const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_ITINERARIES;
+        return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-        return DEFAULT_ITINERARIES;
+        return [];
     }
 }
 
