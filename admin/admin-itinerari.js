@@ -48,7 +48,10 @@ function getItinerari() {
 async function saveItinerari(itinerari) {
     const cleanList = pulisciVecchiItinerariDemo(itinerari);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanList));
-    if (window.cloudDB) {
+
+    if (window.cloudAdmin && window.cloudAdmin.isAuthorized()) {
+        await window.cloudAdmin.salvaItinerariAdmin(cleanList);
+    } else if (window.cloudDB) {
         await window.cloudDB.salvaItinerariCloud(cleanList);
     }
 }
