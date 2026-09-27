@@ -165,6 +165,12 @@ class CloudDatabaseManager {
                 console.log("☁️ Dati pubblicati con successo nel Cloud!");
                 this.isSaving = false;
                 return true;
+            } else {
+                const errText = await res.text();
+                console.error("⚠️ Errore risposta salvataggio Cloud:", res.status, errText);
+                if (res.status === 403) {
+                    alert("⚠️ Attenzione: Le foto o i dati inseriti superano la dimensione massima consentita dal Cloud (100KB). Prova a rimuovere qualche foto o ad usare link URL!");
+                }
             }
         } catch (e) {
             console.error("Errore salvataggio Cloud:", e);

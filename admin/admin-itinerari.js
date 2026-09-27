@@ -408,8 +408,8 @@ function gestisciCaricamentoFotoMultiple(event) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1200;
-                const MAX_HEIGHT = 800;
+                const MAX_WIDTH = 600;
+                const MAX_HEIGHT = 400;
                 let width = img.width;
                 let height = img.height;
 
@@ -431,7 +431,7 @@ function gestisciCaricamentoFotoMultiple(event) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.60);
                 fotoItinerarioCorrenti.push(compressedDataUrl);
 
                 completati++;
