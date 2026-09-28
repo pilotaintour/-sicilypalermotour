@@ -534,8 +534,22 @@ function renderSchedePrenotazioni(bookingsList) {
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
-                    <button type="button" class="btn-primary btn-small" style="background-color: #0369a1;" onclick="incassaPagamentoStripeAdmin('${b.id}')">💰 Incassa Importo</button>
-                    <button type="button" class="btn-secondary btn-small" style="background-color: #dc2626;" onclick="rimborsaPagamentoStripeAdmin('${b.id}')">🔄 Rimborso / Sblocca Carta</button>
+                    ${!isIncassata ? `
+                        <button type="button" class="btn-primary btn-small" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="incassaPagamentoStripeAdmin('${b.id}')">
+                            💰 Incassa Importo (Sposta in Incassate)
+                        </button>
+                    ` : `
+                        <span style="color: #059669; font-weight: bold; font-size: 0.88rem; display: flex; align-items: center;">✅ Importo già incassato su Stripe (€${b.amountCollected || b.total})</span>
+                    `}
+
+                    ${!isRimborsata ? `
+                        <button type="button" class="btn-secondary btn-small" style="background: #dc2626; color: white; border: none;" onclick="rimborsaPagamentoStripeAdmin('${b.id}')">
+                            🔄 Rimborso / Sblocca Carta (Sposta in Rimborsate)
+                        </button>
+                    ` : `
+                        <span style="color: #dc2626; font-weight: bold; font-size: 0.88rem; display: flex; align-items: center;">🔴 Transazione rimborsata / sbloccata</span>
+                    `}
+
                     <button type="button" class="btn-primary btn-small" style="background-color: #25d366;" onclick="apriChatWhatsAppCliente('${escapeHtmlBooking(b.customerPhone)}', '${escapeHtmlBooking(b.customerName)}', '${escapeHtmlBooking(b.tourTitle)}')">💬 WhatsApp</button>
                     <button type="button" class="btn-danger btn-small" onclick="eliminaPrenotazioneAdmin('${b.id}')">🗑️ Elimina</button>
                 </div>
@@ -570,6 +584,7 @@ function incassaPagamentoStripeAdmin(bookingId) {
     savePrenotazioniAdmin(list);
     if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
     caricaPrenotazioniAdmin();
+    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }
 
 function rimborsaPagamentoStripeAdmin(bookingId) {
@@ -596,6 +611,7 @@ function rimborsaPagamentoStripeAdmin(bookingId) {
     savePrenotazioniAdmin(list);
     if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
     caricaPrenotazioniAdmin();
+    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }
 
     const intentId = booking.paymentIntentId || 'pi_test';
