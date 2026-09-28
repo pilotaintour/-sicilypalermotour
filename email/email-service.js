@@ -148,6 +148,7 @@ class BrevoEmailService {
         const customerEmail = bookingData.customerEmail;
         const customerName = bookingData.customerName || 'Cliente';
         const code = bookingData.code || '#SPT-BOOK';
+        const stripeRef = bookingData.paymentIntentId || 'pi_stripe_ref';
         const tourTitle = bookingData.tourTitle || 'Tour Palermo';
         const dateStr = bookingData.dateReadable || bookingData.dateISO || 'N/D';
         const timeStr = bookingData.slotTime || '09:30';
@@ -207,12 +208,17 @@ class BrevoEmailService {
                             ${tConf.welcomeMessage}
                         </p>
 
-                        <!-- RIEPILOGO COMPLETO DATI REGISTRATI -->
+                        <!-- RIEPILOGO COMPLETO DATI REGISTRATI E CODICI IDENTIFICATIVI -->
                         <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:20px; margin:20px 0;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
                                 <span style="color:#64748b; font-weight:bold;">Codice Prenotazione:</span>
                                 <strong style="color:#0369a1; font-family:monospace; font-size:1.1rem;">${code}</strong>
                             </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                                <span style="color:#64748b; font-weight:bold;">Riferimento Transazione Bancaria (Stripe):</span>
+                                <code style="color:#0b2545; font-family:monospace; font-weight:bold; background:#e0f2fe; padding:3px 8px; border-radius:6px; font-size:0.9rem;">${stripeRef}</code>
+                            </div>
+
                             <div style="margin-bottom:8px;"><strong>📍 Tour:</strong> ${tourTitle}</div>
                             <div style="margin-bottom:8px;"><strong>🌐 Lingua Guida:</strong> ${lang}</div>
                             <div style="margin-bottom:8px;"><strong>📅 Data della Visita:</strong> ${dateStr}</div>
@@ -239,7 +245,7 @@ class BrevoEmailService {
                         <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:18px; margin-bottom:20px;">
                             <strong style="color:#0369a1; font-size:0.95rem; display:block; margin-bottom:6px;">💬 Hai domande o bisogno di assistenza in privato?</strong>
                             <p style="font-size:0.88rem; color:#334155; margin:0 0 12px 0; line-height:1.5;">
-                                Se hai esigenze particolari, intolleranze o qualsiasi problema con la prenotazione, puoi contattare l'amministratore e guida in privato:
+                                Se hai qualsiasi problema o domanda sul tuo pagamento/prenotazione, comunica all'amministratore il tuo **Codice Prenotazione (${code})** oppure il tuo **Riferimento Transazione (${stripeRef})**:
                             </p>
                             <div style="text-align:center;">
                                 <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:11px 22px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem;">
