@@ -1,9 +1,10 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con Eliminazione di Massa per Cartella
+ * Sicily Palermo Tour - Admin Dashboard con Filtri per Itinerario ed Eliminazione di Massa
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
+let filtroItinerarioTransazioni = 'TUTTI'; // 'TUTTI' oppure Titolo Itinerario
 let ricercaTransazioniText = '';
 
 function getTransazioniAdmin() {
@@ -29,6 +30,9 @@ function caricaSezioneTransazioni() {
 
     const list = getTransazioniAdmin();
 
+    // Estrai la lista di tutti i titoli itinerari presenti
+    const itinerariUnici = [...new Set(list.map(b => b.tourTitle).filter(Boolean))].sort();
+
     const countInAttesa = list.filter(b => !b.status || b.status === 'In attesa' || b.status.includes('Sospeso')).length;
     const countIncassate = list.filter(b => b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'))).length;
     const countRimborsate = list.filter(b => b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'))).length;
@@ -45,6 +49,10 @@ function caricaSezioneTransazioni() {
             if (statusStr !== 'Incassata' && statusStr !== 'Confermata' && !statusStr.includes('Incassat')) return false;
         } else if (filtroStatoTransazioniTab === 'RIMBORSATE') {
             if (statusStr !== 'Rimborsata' && statusStr !== 'Cancellata' && !statusStr.includes('Rimborsat')) return false;
+        }
+
+        if (filtroItinerarioTransazioni !== 'TUTTI' && b.tourTitle !== filtroItinerarioTransazioni) {
+            return false;
         }
 
         if (ricercaTransazioniText) {
@@ -92,8 +100,14 @@ function caricaSezioneTransazioni() {
                     </p>
                 </div>
 
-                <div>
-                    <input type="text" placeholder="🔎 Cerca per Codice, Nome o ID Stripe..." value="${escapeHtmlTransazione(ricercaTransazioniText)}" oninput="ricercaTransazioniText = this.value; caricaSezioneTransazioni();" style="padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; width: 260px;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <!-- FILTRO PER ITINERARIO -->
+                    <select onchange="filtroItinerarioTransazioni = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0b2545; font-weight: bold; background: #ffffff;">
+                        <option value="TUTTI" ${filtroItinerarioTransazioni === 'TUTTI' ? 'selected' : ''}>🏛️ Tutti gli Itinerari (${itinerariUnici.length})</option>
+                        ${itinerariUnici.map(t => `<option value="${escapeHtmlTransazione(t)}" ${filtroItinerarioTransazioni === t ? 'selected' : ''}>🏛️ ${escapeHtmlTransazione(t)}</option>`).join('')}
+                    </select>
+
+                    <input type="text" placeholder="🔎 Cerca per Codice, Nome..." value="${escapeHtmlTransazione(ricercaTransazioniText)}" oninput="ricercaTransazioniText = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; width: 200px;">
                 </div>
             </div>
 
@@ -142,7 +156,7 @@ function renderSchedeTransazioniList(list) {
     if (list.length === 0) {
         return `
             <div style="text-align: center; padding: 40px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <p style="font-size: 1.05rem; margin: 0;">Nessuna transazione presente in questa cartella.</p>
+                <p style="font-size: 1.05rem; margin: 0;">Nessuna transazione presente in questa cartella per i filtri selezionati.</p>
             </div>
         `;
     }
