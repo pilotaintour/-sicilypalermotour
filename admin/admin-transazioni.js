@@ -286,7 +286,7 @@ function renderSchedeTransazioniList(list) {
     }).join('');
 }
 
-function eseguiIncassoTransazioneTab(bookingId) {
+async function eseguiIncassoTransazioneTab(bookingId) {
     let list = getTransazioniAdmin();
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
@@ -301,7 +301,7 @@ function eseguiIncassoTransazioneTab(bookingId) {
     const importoVal = parseFloat(importoInput) || parseFloat(totalAutorizzato);
 
     if (window.stripePayment) {
-        window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
+        await window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
     } else {
         alert(`✅ Importo di €${importoVal.toFixed(2)} incassato ed accreditato con successo su Stripe!`);
     }
@@ -314,7 +314,7 @@ function eseguiIncassoTransazioneTab(bookingId) {
     caricaSezioneTransazioni();
 }
 
-function eseguiRimborsoTransazioneTab(bookingId) {
+async function eseguiRimborsoTransazioneTab(bookingId) {
     let list = getTransazioniAdmin();
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
@@ -329,7 +329,7 @@ function eseguiRimborsoTransazioneTab(bookingId) {
     const importoVal = parseFloat(importoInput) || 0;
 
     if (window.stripePayment) {
-        window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
+        await window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
     } else {
         alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
     }
