@@ -49,17 +49,8 @@ class Step1DataOrario {
             }).filter(Boolean)
             : null;
 
-        // Giorni di disponibilità impostati dall'Admin per questo tour
-        const availableDays = (this.tourData && this.tourData.availableDays && Array.isArray(this.tourData.availableDays) && this.tourData.availableDays.length > 0)
-            ? this.tourData.availableDays.map(n => parseInt(n, 10))
-            : [0, 1, 2, 3, 4, 5, 6];
-
-        const allDays = [0, 1, 2, 3, 4, 5, 6];
-        const closedDays = allDays.filter(d => !availableDays.includes(d));
-
         // Inizializza il Calendario
         this.calendarInstance = new TourCalendar('step1-calendar-app', {
-            closedDays: closedDays,
             defaultSlots: customSlots || undefined,
             onDateChange: (isoStr, dateObj) => {
                 this.selectedDateISO = isoStr;

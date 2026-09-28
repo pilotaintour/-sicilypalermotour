@@ -1,11 +1,9 @@
 /**
- * MODULO AUTONOMO DATABASE CLOUD - JSONBin.io
- * Sicily Palermo Tour - Sincronizzazione AUTOMATICA E CONTINUA IN BACKGROUND (Real-Time Auto-Sync)
+ * MODULO AUTONOMO DATABASE CLOUD - FIREBASE REALTIME DATABASE (GOOGLE)
+ * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Illimitata (1GB Gratis, Nessun Limite di Chiamate)
  */
 
-const JSONBIN_MASTER_KEY = '$2a$10$t1PzsRamZS7b4O1oQc70a.HnjyJH4THbu.yRHU7MlW79xJqi/NuJ6';
-const BIN_ID_STORAGE_KEY = 'spt_jsonbin_id';
-const SHARED_BIN_ID = '6ab99856ac6210605afc0c9d';
+const FIREBASE_DB_URL = 'https://sicilypalermotour-default-rtdb.europe-west1.firebasedatabase.app/spt_database.json';
 
 function pulisciVecchiItinerariDemo(lista) {
     if (!Array.isArray(lista)) return [];
@@ -19,10 +17,7 @@ function pulisciVecchiItinerariDemo(lista) {
 
 class CloudDatabaseManager {
     constructor() {
-        this.masterKey = JSONBIN_MASTER_KEY;
-        this.binId = SHARED_BIN_ID;
-        localStorage.setItem(BIN_ID_STORAGE_KEY, SHARED_BIN_ID);
-
+        this.dbUrl = FIREBASE_DB_URL;
         this.syncInterval = null;
         this.isSaving = false;
 
@@ -34,20 +29,16 @@ class CloudDatabaseManager {
         // 1. Sync immediato all'avvio
         setTimeout(() => this.fetchTuttiDatiCloud(), 300);
 
-        // 2. Poll automatico veloci in background ogni 12 secondi
+        // 2. Poll automatico veloce in background ogni 6 secondi (senza alcun limite su Firebase)
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
-            }, 12000);
+            }, 6000);
         }
 
         // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
         window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
         window.addEventListener('online', () => this.fetchTuttiDatiCloud());
-    }
-
-    async getOrCreateBinId() {
-        return SHARED_BIN_ID;
     }
 
     _getCurrentLocalData() {
@@ -64,24 +55,22 @@ class CloudDatabaseManager {
         return { itinerari, heroPhotos, bookings, reviews };
     }
 
-    // Scarica e sincronizza in tempo reale in background TUTTI i dati (Itinerari, Foto, Prenotazioni, Recensioni)
+    // Scarica e sincronizza in tempo reale in background TUTTI i dati da Firebase
     async fetchTuttiDatiCloud() {
         if (this.isSaving) return null;
 
         try {
             const timestamp = Date.now();
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${SHARED_BIN_ID}/latest?nocache=${timestamp}`, {
+            const res = await fetch(`${this.dbUrl}?nocache=${timestamp}`, {
                 method: 'GET',
                 headers: {
-                    'X-Master-Key': this.masterKey,
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache'
                 }
             });
 
             if (res.ok && !this.isSaving) {
-                const data = await res.json();
-                const record = data.record || {};
+                const record = (await res.json()) || {};
 
                 // 1. Sincronizza e renderizza Itinerari
                 if (record.itinerari && Array.isArray(record.itinerari)) {
@@ -92,6 +81,10 @@ class CloudDatabaseManager {
                         const cat = typeof categoriaSelezionata !== 'undefined' ? categoriaSelezionata : 'Tutti';
                         renderItinerariGrid(itinerariPuliti, cat);
                     }
+                    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
+                } else if (!record.itinerari) {
+                    localStorage.setItem('spt_itineraries', JSON.stringify([]));
+                    if (typeof renderItinerariGrid === 'function') renderItinerariGrid([], 'Tutti');
                     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
                 }
 
@@ -124,7 +117,7 @@ class CloudDatabaseManager {
     async fetchItinerariCloud() { return this.fetchTuttiDatiCloud(); }
     async fetchRecensioniCloud() { return this.fetchTuttiDatiCloud(); }
 
-    // Salva automaticamente qualunque modifica nel Cloud
+    // Salva automaticamente qualunque modifica nel Firebase Cloud
     async salvaTuttiDatiCloud(dataObj) {
         this.isSaving = true;
 
@@ -152,24 +145,22 @@ class CloudDatabaseManager {
                 updatedAt: new Date().toISOString()
             };
 
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${SHARED_BIN_ID}`, {
+            const res = await fetch(this.dbUrl, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': this.masterKey
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
             });
 
             if (res.ok) {
-                console.log("☁️ Dati pubblicati con successo nel Cloud!");
+                console.log("🔥 Dati pubblicati con successo su Firebase Realtime Database!");
                 this.isSaving = false;
+                setTimeout(() => this.fetchTuttiDatiCloud(), 200);
                 return true;
-            } else {
-                console.warn("⚠️ Salvataggio Cloud silenzioso (Status):", res.status);
             }
         } catch (e) {
-            console.error("Errore salvataggio Cloud:", e);
+            console.error("Errore salvataggio Firebase:", e);
         } finally {
             this.isSaving = false;
         }
