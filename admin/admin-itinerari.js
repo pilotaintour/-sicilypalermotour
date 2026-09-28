@@ -97,6 +97,12 @@ function caricaElencoItinerari() {
     }
 }
 
+function toggleTuttiGiorni(checked) {
+    document.querySelectorAll('input[name="giorno-check"]').forEach(c => {
+        c.checked = checked;
+    });
+}
+
 async function salvaItinerario(event) {
     event.preventDefault();
 
@@ -109,6 +115,9 @@ async function salvaItinerario(event) {
     const featured = document.getElementById('featured').value;
     const shortDesc = document.getElementById('short-desc').value.trim();
     const fullDesc = document.getElementById('full-desc').value.trim();
+
+    const giorniChecks = document.querySelectorAll('input[name="giorno-check"]:checked');
+    const availableDays = giorniChecks.length > 0 ? Array.from(giorniChecks).map(c => parseInt(c.value, 10)) : [0, 1, 2, 3, 4, 5, 6];
 
     const tappe = tappeCorrenti.map(t => t.trim()).filter(t => t !== '');
 
@@ -130,14 +139,14 @@ async function salvaItinerario(event) {
     if (id) {
         itinerari = itinerari.map(item => {
             if (String(item.id) === String(id)) {
-                return { id, title, category, duration, price, meetingPoint, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
+                return { id, title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
             }
             return item;
         });
     } else {
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, meetingPoint, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
+            title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
     }
@@ -184,6 +193,13 @@ function preparaModifica(id) {
     }
     renderCampiOrari();
 
+    const currentDays = (item.availableDays && Array.isArray(item.availableDays)) ? item.availableDays.map(n => String(n)) : ['0','1','2','3','4','5','6'];
+    document.querySelectorAll('input[name="giorno-check"]').forEach(c => {
+        c.checked = currentDays.includes(String(c.value));
+    });
+    const checkAll = document.getElementById('check-all-days');
+    if (checkAll) checkAll.checked = (currentDays.length === 7);
+
     const serviziChecks = document.querySelectorAll('input[name="servizio-check"]');
     serviziChecks.forEach(c => {
         c.checked = item.servizi ? item.servizi.includes(c.value) : true;
@@ -223,6 +239,10 @@ function resetForm() {
         { time: '15:30', capacity: 15 },
         { time: '18:00', capacity: 15 }
     ];
+    document.querySelectorAll('input[name="giorno-check"]').forEach(c => c.checked = true);
+    const checkAll = document.getElementById('check-all-days');
+    if (checkAll) checkAll.checked = true;
+
     renderGalleriaAnteprima();
     renderCampiTappe();
     renderCampiOrari();
