@@ -369,7 +369,8 @@ function eliminaTutteTransazioniPerStato(tipoStato) {
 
     saveTransazioniAdmin(list);
     caricaSezioneTransazioni();
-    alert(`✅ Tutte le transazioni '${etichetta}' sono state eliminate con successo dall'archivio!`);
+    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+    alert(`✅ Tutte le transazioni '${etichetta}' sono state eliminate con successo dall'archivio e dal Cloud!`);
 }
 window.eliminaTutteTransazioniPerStato = eliminaTutteTransazioniPerStato;
 
