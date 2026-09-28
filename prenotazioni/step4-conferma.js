@@ -1,5 +1,6 @@
 /**
- * STEP 4: Riepilogo & Pre-Autorizzazione Pagamento Carta di Credito / Stripe
+ * STEP 4: Riepilogo Professionale & Pre-Autorizzazione Pagamento Carta / Stripe / PayPal
+ * Sicily Palermo Tour - Layout Elegante con Trust Badges e Garanzie di Sicurezza
  */
 
 class Step4Conferma {
@@ -17,17 +18,39 @@ class Step4Conferma {
 
         this.container.innerHTML = `
             <div class="step-card-header">
-                📋 Step 4: Riepilogo & Pre-Autorizzazione Pagamento
+                📋 Step 4: Riepilogo Ordine & Pagamento Sicuro
+            </div>
+
+            <!-- Riquadro Garanzia & Cancellazione Gratuita -->
+            <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px;">
+                <div style="font-size: 2rem;">🔄</div>
+                <div>
+                    <strong style="color: #166534; font-size: 0.98rem; display: block;">Cancellazione Gratuita al 100%</strong>
+                    <span style="font-size: 0.85rem; color: #15803d;">Puoi cancellare la prenotazione fino a 24 ore prima dell'inizio del tour senza alcuna penale o trattenuta.</span>
+                </div>
             </div>
 
             <div id="step4-summary-box" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 22px; margin-bottom: 20px;">
                 <!-- Popolato via JS -->
             </div>
 
-            <!-- Contenitore Form Carta Stripe Montato dal modulo autonomo stripe-payment.js -->
+            <!-- Contenitore Form Carta Stripe & PayPal Montato da stripe-payment.js -->
             <div id="stripe-card-slot"></div>
 
-            <div class="step-nav-bar">
+            <!-- Badge di Sicurezza Transazione (Trust Badges) -->
+            <div style="margin-top: 18px; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 10px; text-align: center;">
+                <div style="font-size: 0.82rem; color: #475569; font-weight: 600;">
+                    🔒 Connessione Crittografata SSL 256-bit
+                </div>
+                <div style="font-size: 0.82rem; color: #475569; font-weight: 600;">
+                    🛡️ Sicurezza PCI-DSS Livello 1
+                </div>
+                <div style="font-size: 0.82rem; color: #0b2545; font-weight: bold;">
+                    💳 Powered by Stripe & PayPal
+                </div>
+            </div>
+
+            <div class="step-nav-bar" style="margin-top: 25px;">
                 <button type="button" class="btn-nav-prev" id="btn-step4-prev">
                     ← Indietro
                 </button>
@@ -46,7 +69,7 @@ class Step4Conferma {
                 const btnConfirm = this.container.querySelector('#btn-step4-confirm');
                 if (btnConfirm) {
                     btnConfirm.disabled = true;
-                    btnConfirm.textContent = "⏳ Elaborazione Carta...";
+                    btnConfirm.textContent = "⏳ Elaborazione in corso...";
                 }
 
                 const res = await window.stripePayment.processaPreAutorizzazione(
@@ -76,6 +99,8 @@ class Step4Conferma {
         const box = this.container.querySelector('#step4-summary-box');
         if (!box) return;
 
+        const langLabel = data.language ? ` 🌐 (${data.language})` : '';
+
         box.innerHTML = `
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
                 <span style="color: #64748b;">Codice Prenotazione:</span>
@@ -83,7 +108,7 @@ class Step4Conferma {
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
                 <span style="color: #64748b;">Tour Selezionato:</span>
-                <strong style="color: #1b4f72;">${data.tourTitle || 'Tour Palermo'}</strong>
+                <strong style="color: #1b4f72;">${data.tourTitle || 'Tour Palermo'}${langLabel}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
                 <span style="color: #64748b;">Data della Visita:</span>
@@ -98,9 +123,16 @@ class Step4Conferma {
                 <strong>${data.adults} Adulti${data.children > 0 ? `, ${data.children} Bambini` : ''}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
-                <span style="color: #64748b;">Referente:</span>
+                <span style="color: #64748b;">Referente Principale:</span>
                 <strong>${data.customerName} (${data.customerPhone})</strong>
             </div>
+            ${data.billingAddress ? `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.92rem;">
+                    <span style="color: #64748b;">Residenza / Fatturazione:</span>
+                    <span style="color: #334155; font-weight: 600;">${data.billingAddress}</span>
+                </div>
+            ` : ''}
+
             ${data.participantsList && data.participantsList.length > 0 ? `
                 <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e8f0;">
                     <strong style="color: #1b4f72; display: block; margin-bottom: 8px;">🧳 Elenco Dettagliato Partecipanti (${data.participantsList.length}):</strong>
@@ -115,14 +147,21 @@ class Step4Conferma {
                     </ol>
                 </div>
             ` : ''}
-            ${data.notes ? `
-                <div style="margin-top: 12px; font-size: 0.95rem; color: #475569;">
-                    <span>Note:</span> <em>"${data.notes}"</em>
+
+            <!-- Ripartizione Trasparente del Prezzo -->
+            <div style="border-top: 2px dashed #cbd5e1; padding-top: 14px; margin-top: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.92rem; color: #64748b; margin-bottom: 6px;">
+                    <span>Quota Partecipanti (${data.adults} Adulti${data.children > 0 ? `, ${data.children} Bambini` : ''}):</span>
+                    <span>€${data.total}</span>
                 </div>
-            ` : ''}
-            <div style="border-top: 2px dashed #cbd5e1; padding-top: 14px; margin-top: 14px; display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800; color: #1b4f72;">
-                <span>Totale in Pre-Autorizzazione:</span>
-                <span>€${data.total}</span>
+                <div style="display: flex; justify-content: space-between; font-size: 0.92rem; color: #166534; margin-bottom: 10px;">
+                    <span>Tasse, Servizi & Assistenza:</span>
+                    <span>Inclusi (0.00€)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800; color: #0b2545; border-top: 1px solid #cbd5e1; padding-top: 10px;">
+                    <span>Totale in Pre-Autorizzazione:</span>
+                    <span style="color: #0369a1;">€${data.total}</span>
+                </div>
             </div>
         `;
 

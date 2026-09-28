@@ -1,6 +1,6 @@
 /**
- * STEP 3: Dati Personali Completi e Data di Nascita per CIASCUN Partecipante (Obbligatori)
- * Nome, Cognome, Data di Nascita (Giorno/Mese/Anno), Luogo di Provenienza e Note per ciascun partecipante.
+ * STEP 3: Dati Personali Completi, Lingua e Indirizzo di Fatturazione / Residenza
+ * Sicily Palermo Tour - Raccolta Dati Professionale per Tour Operator
  */
 
 class Step3Dati {
@@ -78,11 +78,11 @@ class Step3Dati {
 
         let html = `
             <div class="step-card-header">
-                🛡️ Step 3: Dati Personali dei Partecipanti (${totalePartecipanti} Persone Obbligatorie)
+                🛡️ Step 3: Dati Referente, Partecipanti e Fatturazione
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
-                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong>.
+                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong> per la lista passeggiati ed assicurazione tour.
             </div>
 
             <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE (PREMIUM GOLD & NAVY CARD) -->
@@ -116,14 +116,42 @@ class Step3Dati {
                         <input type="email" id="step3-lead-email" required placeholder="mario@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                     <div>
-                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #0f172a;">📞 Telefono / WhatsApp *</label>
+                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #0f172a;">📞 Telefono / WhatsApp (con Prefisso) *</label>
                         <input type="tel" id="step3-lead-phone" required placeholder="+39 340 1234567" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                 </div>
 
+                <!-- LINGUA PREFERITA E FATTURAZIONE -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; background: #fafcfd; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <div>
+                        <label for="step3-lead-language" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌐 Lingua Preferita per la Guida *</label>
+                        <select id="step3-lead-language" required style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; background: white;">
+                            <option value="Italiano" selected>🇮🇹 Italiano</option>
+                            <option value="English">🇬🇧 English</option>
+                            <option value="Español">🇪🇸 Español</option>
+                            <option value="Français">🇫🇷 Français</option>
+                            <option value="Deutsch">🇩🇪 Deutsch</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="step3-lead-country" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌍 Nazione di Residenza *</label>
+                        <input type="text" id="step3-lead-country" required placeholder="Es. Italia / Francia / USA" value="Italia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <!-- INDIRIZZO FATTURAZIONE -->
+                <div style="background: #fafcfd; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+                    <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; color: #0b2545;">🏠 Indirizzo di Residenza / Fatturazione (per Ricevuta Fiscale)</label>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
+                        <input type="text" id="step3-lead-address" placeholder="Via / Piazza e Numero Civico" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
+                        <input type="text" id="step3-lead-city" placeholder="Città" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
+                        <input type="text" id="step3-lead-zip" placeholder="CAP" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
+                    </div>
+                </div>
+
                 <div>
-                    <label for="step3-notes-1" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #475569;">📝 Note / Esigenze Particolari Referente 1 (Opzionale)</label>
-                    <input type="text" id="step3-notes-1" placeholder="Es. Lingua parlata preferita, allergie alimentari, esigenze particolari..." style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                    <label for="step3-notes-1" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #475569;">📝 Note, Intolleranze Alimentari o Esigenze Particolari (Opzionale)</label>
+                    <input type="text" id="step3-notes-1" placeholder="Es. Allergie, intolleranze cibo, passeggino, esigenze speciali..." style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                 </div>
             </div>
         `;
@@ -131,7 +159,6 @@ class Step3Dati {
         // PARTECIPANTI AGGIUNTIVI (DA 2 A N)
         let partCounter = 2;
 
-        // Altri Adulti (da 2 a adults)
         for (let a = 2; a <= this.adults; a++) {
             html += `
                 <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);">
@@ -159,14 +186,13 @@ class Step3Dati {
 
                     <div>
                         <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #64748b;">📝 Note / Esigenze Particolari Partecipante ${partCounter} (Opzionale)</label>
-                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, preferenze, esigenze particolari..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, intolleranze..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                     </div>
                 </div>
             `;
             partCounter++;
         }
 
-        // Bambini (da 1 a children)
         for (let c = 1; c <= this.children; c++) {
             html += `
                 <div style="background: #fffbf5; border: 1.5px solid #fed7aa; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(217, 119, 6, 0.04);">
@@ -194,7 +220,7 @@ class Step3Dati {
 
                     <div>
                         <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #c2410c;">📝 Note / Esigenze Particolari Bambino ${partCounter} (Opzionale)</label>
-                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze alimentari..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
+                        <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                     </div>
                 </div>
             `;
@@ -224,6 +250,11 @@ class Step3Dati {
     validaEProsegui() {
         const leadEmail = this.container.querySelector('#step3-lead-email').value.trim();
         const leadPhone = this.container.querySelector('#step3-lead-phone').value.trim();
+        const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
+        const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
+        const leadAddress = this.container.querySelector('#step3-lead-address') ? this.container.querySelector('#step3-lead-address').value.trim() : '';
+        const leadCity = this.container.querySelector('#step3-lead-city') ? this.container.querySelector('#step3-lead-city').value.trim() : '';
+        const leadZip = this.container.querySelector('#step3-lead-zip') ? this.container.querySelector('#step3-lead-zip').value.trim() : '';
 
         if (!leadEmail || !leadPhone) {
             alert('Per favore compila l\'Email ed il Telefono del Referente Principale.');
@@ -233,7 +264,6 @@ class Step3Dati {
         const totalePartecipanti = this.adults + this.children;
         const listaPartecipanti = [];
 
-        // Valida Nome, Data di Nascita (Giorno, Mese, Anno), Provenienza e Note per ciascun partecipante da 1 a N
         for (let i = 1; i <= totalePartecipanti; i++) {
             const nameEl = this.container.querySelector(`#step3-name-${i}`);
             const dayEl = this.container.querySelector(`#step3-dob-${i}-day`);
@@ -292,6 +322,9 @@ class Step3Dati {
                 customerName: leadName,
                 customerEmail: leadEmail,
                 customerPhone: leadPhone,
+                language: leadLanguage,
+                country: leadCountry,
+                billingAddress: leadAddress ? `${leadAddress}, ${leadCity} ${leadZip}` : `${leadCountry}`,
                 notes: listaPartecipanti[0].notes || '',
                 participantsList: listaPartecipanti
             });
