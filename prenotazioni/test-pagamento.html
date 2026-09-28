@@ -95,9 +95,11 @@
                         console.error("Errore salvataggio booking test:", e);
                     }
 
-                    alert(`🎉 PRE-AUTORIZZAZIONE STRIPE ED EMAIL DI TEST COMPLETATE CON SUCCESSO!\n\nCodice: ${testBookingData.code}\nTour: ${testBookingData.tourTitle}\nTotale Bloccato su Carta: €${testBookingData.total}\n\nLa prenotazione è stata salvata su Firebase e l'email di conferma è stata inviata via Brevo!`);
+                    alert(`🎉 PRE-AUTORIZZAZIONE STRIPE ED EMAIL DI TEST COMPLETATE CON SUCCESSO!\n\nCodice: ${testBookingData.code}\nTour: ${testBookingData.tourTitle}\nTotale Bloccato su Carta: €${testBookingData.total}\n\nLa prenotazione è stata salvata su Firebase e l'email di conferma è stata inviata via Brevo! Puoi effettuare subito un altro test.`);
 
-                    window.location.href = '../admin/index.html';
+                    // Rigenera codice per il prossimo test mantenendo la pagina aperta
+                    testBookingData.code = '#SPT-TEST-' + Math.floor(1000 + Math.random() * 9000);
+                    step4.renderSummary(testBookingData);
                 }
             });
 
