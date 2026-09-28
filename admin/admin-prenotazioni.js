@@ -252,6 +252,10 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     const orariUnici = [...new Set([...configTimeSlots, ...bookingTimeSlots])].sort();
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
 
+    const countInAttesa = bookingsOfTour.filter(b => b.status === 'In attesa' || !b.status).length;
+    const countIncassate = bookingsOfTour.filter(b => b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'))).length;
+    const countRimborsate = bookingsOfTour.filter(b => b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'))).length;
+
     let html = `
         <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
@@ -301,10 +305,10 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
 
                     <div>
                         <select onchange="setFiltroPrenotazioni(this.value);" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0b2545;">
-                            <option value="TUTTI" ${filtroStatoPrenotazioni === 'TUTTI' ? 'selected' : ''}>🏷️ Tutti gli Stati</option>
-                            <option value="In attesa" ${filtroStatoPrenotazioni === 'In attesa' ? 'selected' : ''}>In Attesa</option>
-                            <option value="Confermata" ${filtroStatoPrenotazioni === 'Confermata' ? 'selected' : ''}>Confermate</option>
-                            <option value="Cancellata" ${filtroStatoPrenotazioni === 'Cancellata' ? 'selected' : ''}>Annullate</option>
+                            <option value="TUTTI" ${filtroStatoPrenotazioni === 'TUTTI' ? 'selected' : ''}>🏷️ Tutti gli Stati (${bookingsOfTour.length})</option>
+                            <option value="In attesa" ${filtroStatoPrenotazioni === 'In attesa' ? 'selected' : ''}>⏳ In Attesa (${countInAttesa})</option>
+                            <option value="Incassata" ${filtroStatoPrenotazioni === 'Incassata' ? 'selected' : ''}>🟢 Incassate (${countIncassate})</option>
+                            <option value="Rimborsata" ${filtroStatoPrenotazioni === 'Rimborsata' ? 'selected' : ''}>🔴 Rimborsate / Sbloccate (${countRimborsate})</option>
                         </select>
                     </div>
 
@@ -328,7 +332,9 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
 
         if (filtroOrarioSelezionato !== 'TUTTI' && b.time !== filtroOrarioSelezionato) return false;
 
-        if (filtroStatoPrenotazioni !== 'TUTTI' && b.status !== filtroStatoPrenotazioni) return false;
+        if (filtroStatoPrenotazioni === 'In attesa' && b.status && b.status !== 'In attesa') return false;
+        if (filtroStatoPrenotazioni === 'Incassata' && !(b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat')))) return false;
+        if (filtroStatoPrenotazioni === 'Rimborsata' && !(b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat')))) return false;
 
         if (ricercaPrenotazioniText) {
             const term = ricercaPrenotazioniText.toLowerCase();
@@ -471,10 +477,10 @@ function renderSchedePrenotazioni(bookingsList) {
     }
 
     return bookingsList.map((b) => {
-        const isConfermata = b.status === 'Confermata';
-        const isCancellata = b.status === 'Cancellata';
-        const borderColor = isConfermata ? '#10b981' : (isCancellata ? '#ef4444' : '#1b4f72');
-        const statusBg = isConfermata ? '#d1fae5; color:#065f46;' : (isCancellata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
+        const isIncassata = b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'));
+        const isRimborsata = b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'));
+        const borderColor = isIncassata ? '#10b981' : (isRimborsata ? '#ef4444' : '#1b4f72');
+        const statusBg = isIncassata ? '#d1fae5; color:#065f46;' : (isRimborsata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
 
         return `
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 5px solid ${borderColor}; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 15px;">
@@ -528,8 +534,6 @@ function renderSchedePrenotazioni(bookingsList) {
                     <button type="button" class="btn-primary btn-small" style="background-color: #0369a1;" onclick="incassaPagamentoStripeAdmin('${b.id}')">💰 Incassa Importo</button>
                     <button type="button" class="btn-secondary btn-small" style="background-color: #dc2626;" onclick="rimborsaPagamentoStripeAdmin('${b.id}')">🔄 Rimborso / Sblocca Carta</button>
                     <button type="button" class="btn-primary btn-small" style="background-color: #25d366;" onclick="apriChatWhatsAppCliente('${escapeHtmlBooking(b.customerPhone)}', '${escapeHtmlBooking(b.customerName)}', '${escapeHtmlBooking(b.tourTitle)}')">💬 WhatsApp</button>
-                    <button type="button" class="btn-secondary btn-small" style="background-color: #10b981;" onclick="cambiaStatoPrenotazione('${b.id}', 'Confermata')">✅ Conferma</button>
-                    <button type="button" class="btn-secondary btn-small" style="background-color: #f59e0b;" onclick="cambiaStatoPrenotazione('${b.id}', 'Cancellata')">⚠️ Annulla</button>
                     <button type="button" class="btn-danger btn-small" onclick="eliminaPrenotazioneAdmin('${b.id}')">🗑️ Elimina</button>
                 </div>
             </div>
@@ -558,9 +562,10 @@ function incassaPagamentoStripeAdmin(bookingId) {
         alert(`✅ Importo di €${importoVal.toFixed(2)} incassato ed accreditato con successo su Stripe!`);
     }
 
-    booking.status = 'Confermata (Incassata)';
+    booking.status = 'Incassata';
     booking.amountCollected = importoVal.toFixed(2);
     savePrenotazioniAdmin(list);
+    if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
     caricaPrenotazioniAdmin();
 }
 
@@ -568,6 +573,27 @@ function rimborsaPagamentoStripeAdmin(bookingId) {
     const list = getPrenotazioniAdmin();
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
+
+    const intentId = booking.paymentIntentId || 'pi_test';
+    const totalAutorizzato = booking.total || '50.00';
+
+    const importoInput = prompt(`🔄 Sblocco Carta / Rimborso Parziale Stripe:\n\nScegli quanto rimborsare o sbloccare al cliente in Euro:\n• Digita '${totalAutorizzato}' o lascia VUOTO per sbloccare/annullare al 100% (0€ commissioni per te).\n• Digita una somma (es. 20.00) per un rimborso parziale.`, totalAutorizzato);
+
+    if (importoInput === null) return;
+
+    const importoVal = parseFloat(importoInput) || 0;
+
+    if (window.stripePayment) {
+        window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
+    } else {
+        alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
+    }
+
+    booking.status = 'Rimborsata';
+    savePrenotazioniAdmin(list);
+    if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
+    caricaPrenotazioniAdmin();
+}
 
     const intentId = booking.paymentIntentId || 'pi_test';
     const totalAutorizzato = booking.total || '50.00';
