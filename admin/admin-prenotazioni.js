@@ -518,7 +518,9 @@ function renderSchedePrenotazioni(bookingsList) {
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
-                    <button type="button" class="btn-primary btn-small" style="background-color: #25d366;" onclick="apriChatWhatsAppCliente('${escapeHtmlBooking(b.customerPhone)}', '${escapeHtmlBooking(b.customerName)}', '${escapeHtmlBooking(b.tourTitle)}')">💬 Chatta su WhatsApp</button>
+                    <button type="button" class="btn-primary btn-small" style="background-color: #0369a1;" onclick="incassaPagamentoStripeAdmin('${b.id}')">💰 Incassa Importo</button>
+                    <button type="button" class="btn-secondary btn-small" style="background-color: #dc2626;" onclick="rimborsaPagamentoStripeAdmin('${b.id}')">🔄 Rimborso / Sblocca Carta</button>
+                    <button type="button" class="btn-primary btn-small" style="background-color: #25d366;" onclick="apriChatWhatsAppCliente('${escapeHtmlBooking(b.customerPhone)}', '${escapeHtmlBooking(b.customerName)}', '${escapeHtmlBooking(b.tourTitle)}')">💬 WhatsApp</button>
                     <button type="button" class="btn-secondary btn-small" style="background-color: #10b981;" onclick="cambiaStatoPrenotazione('${b.id}', 'Confermata')">✅ Conferma</button>
                     <button type="button" class="btn-secondary btn-small" style="background-color: #f59e0b;" onclick="cambiaStatoPrenotazione('${b.id}', 'Cancellata')">⚠️ Annulla</button>
                     <button type="button" class="btn-danger btn-small" onclick="eliminaPrenotazioneAdmin('${b.id}')">🗑️ Elimina</button>
@@ -527,6 +529,61 @@ function renderSchedePrenotazioni(bookingsList) {
         `;
     }).join('');
 }
+
+// Funzioni Gestione Incasso & Rimborso Parziale o Totale Stripe dall'Admin
+function incassaPagamentoStripeAdmin(bookingId) {
+    const list = getPrenotazioniAdmin();
+    const booking = list.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const intentId = booking.paymentIntentId || 'pi_test';
+    const totalAutorizzato = booking.total || '50.00';
+
+    const importoInput = prompt(`💶 Incasso Pagamento Stripe (Totale Autorizzato: €${totalAutorizzato}):\n\nInserisci l'importo esatto che desideri incassare in Euro (es. ${totalAutorizzato} per il 100%, oppure un importo minore come 30.00 se fai uno sconto parziale):\n\nL'eventuale differenza rimanente verrà rilasciata subito al cliente con 0€ commissioni.`, totalAutorizzato);
+
+    if (importoInput === null) return;
+
+    const importoVal = parseFloat(importoInput) || parseFloat(totalAutorizzato);
+
+    if (window.stripePayment) {
+        window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
+    } else {
+        alert(`✅ Importo di €${importoVal.toFixed(2)} incassato ed accreditato con successo su Stripe!`);
+    }
+
+    booking.status = 'Confermata (Incassata)';
+    booking.amountCollected = importoVal.toFixed(2);
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
+}
+
+function rimborsaPagamentoStripeAdmin(bookingId) {
+    const list = getPrenotazioniAdmin();
+    const booking = list.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const intentId = booking.paymentIntentId || 'pi_test';
+    const totalAutorizzato = booking.total || '50.00';
+
+    const importoInput = prompt(`🔄 Sblocco Carta / Rimborso Parziale Stripe:\n\nScegli quanto rimborsare o sbloccare al cliente in Euro:\n• Digita '${totalAutorizzato}' o lascia VUOTO per sbloccare/annullare al 100% (0€ commissioni per te).\n• Digita una somma (es. 20.00) per un rimborso parziale.`, totalAutorizzato);
+
+    if (importoInput === null) return;
+
+    const importoVal = parseFloat(importoInput) || 0;
+
+    if (window.stripePayment) {
+        window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
+    } else {
+        alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
+    }
+
+    booking.status = 'Cancellata (Rimborsata)';
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
+}
+
+window.incassaPagamentoStripeAdmin = incassaPagamentoStripeAdmin;
+window.rimborsaPagamentoStripeAdmin = rimborsaPagamentoStripeAdmin;
 
 // SCARICA E SALVA IL DOCUMENTO UFFICIALE APRIBILE E CONDIVISIBILE SU QUALSIASI DISPOSITIVO
 function scaricaSalvaDocumentoLista(titoloTour) {

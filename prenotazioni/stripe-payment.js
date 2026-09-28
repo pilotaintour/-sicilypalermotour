@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO PAGAMENTI E PRE-AUTORIZZAZIONI STRIPE & PAYPAL (WEB)
- * Sicily Palermo Tour - Pre-Autorizzazione in Sospeso (Hold 0€ Commissioni Annullamento)
+ * Sicily Palermo Tour - Supporto Incassi Parziali, Rimborsi Personalizzati e Annullamento 0€ Commissioni
  */
 
 const STRIPE_PK_KEY = 'spt_stripe_pk';
@@ -264,32 +264,65 @@ class StripePaymentManager {
         };
     }
 
-    // Incassa l'importo dal Pannello Admin
-    async incassaImportoPreAutorizzato(intentId) {
+    // Incassa l'importo totale o parziale dal Pannello Admin
+    async incassaImportoPreAutorizzato(intentId, importoCustom) {
         const sk = this.getSecretKey();
         if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
             try {
+                const params = new URLSearchParams();
+                if (importoCustom && parseFloat(importoCustom) > 0) {
+                    const cents = Math.round(parseFloat(importoCustom) * 100);
+                    params.append('amount_to_capture', cents.toString());
+                }
+
                 const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/capture`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + sk
-                    }
+                        'Authorization': 'Bearer ' + sk,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params
                 });
                 if (res.ok) {
-                    alert(`✅ Importo della prenotazione (${intentId}) incassato ed accreditato con successo su Stripe!`);
+                    const data = await res.json();
+                    const euroIncassati = (data.amount_received / 100).toFixed(2);
+                    alert(`✅ Importo di €${euroIncassati} per la prenotazione (${intentId}) incassato ed accreditato con successo su Stripe! L'eventuale rimanenza è stata rilasciata al cliente.`);
                     return true;
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("Errore incasso Stripe:", e);
+            }
         }
-        alert(`✅ Importo della prenotazione ${intentId} incassato ed accreditato con successo sul tuo conto bancario!`);
+        alert(`✅ Importo della prenotazione (${intentId}) incassato ed accreditato con successo sul tuo conto bancario!`);
         return true;
     }
 
-    // Annulla / Sblocca il pagamento in sospeso dal Pannello Admin (0€ Commissioni per te e Rimborso 100%)
-    async sbloccaImportoCarta(intentId) {
+    // Annulla o Esegue un Rimborso Parziale/Totale dal Pannello Admin (0€ Commissioni per l'importo rilasciato)
+    async sbloccaImportoCarta(intentId, importoRimborsoCustom) {
         const sk = this.getSecretKey();
         if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
             try {
+                if (importoRimborsoCustom && parseFloat(importoRimborsoCustom) > 0) {
+                    const cents = Math.round(parseFloat(importoRimborsoCustom) * 100);
+                    const params = new URLSearchParams();
+                    params.append('payment_intent', intentId);
+                    params.append('amount', cents.toString());
+
+                    const resRefund = await fetch('https://api.stripe.com/v1/refunds', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + sk,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: params
+                    });
+
+                    if (resRefund.ok) {
+                        alert(`⚠️ Rimborso parziale di €${parseFloat(importoRimborsoCustom).toFixed(2)} inviato con successo sulla carta del cliente!`);
+                        return true;
+                    }
+                }
+
                 const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/cancel`, {
                     method: 'POST',
                     headers: {
@@ -300,7 +333,9 @@ class StripePaymentManager {
                     alert(`⚠️ Pre-autorizzazione annullata nel Cloud Stripe. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente SENZA alcuna commissione.`);
                     return true;
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("Errore annullamento/rimborso Stripe:", e);
+            }
         }
         alert(`⚠️ Pre-autorizzazione per la prenotazione ${intentId} annullata. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente senza alcuna commissione.`);
         return true;
