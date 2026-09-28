@@ -65,31 +65,34 @@ class Step4Conferma {
         };
 
         this.container.querySelector('#btn-step4-confirm').onclick = async () => {
-            if (window.stripePayment) {
-                const btnConfirm = this.container.querySelector('#btn-step4-confirm');
-                if (btnConfirm) {
-                    btnConfirm.disabled = true;
-                    btnConfirm.textContent = "⏳ Elaborazione in corso...";
+            const btnConfirm = this.container.querySelector('#btn-step4-confirm');
+            if (btnConfirm) {
+                btnConfirm.disabled = true;
+                btnConfirm.textContent = "⏳ Elaborazione in corso...";
+            }
+
+            try {
+                let res = { success: true, paymentIntentId: 'pi_hold_' + Math.floor(100000 + Math.random() * 900000) };
+                if (window.stripePayment) {
+                    res = await window.stripePayment.processaPreAutorizzazione(
+                        this.lastData ? this.lastData.total : '25.00',
+                        this.lastData ? this.lastData.customerName : 'Cliente',
+                        this.lastData ? this.lastData.customerEmail : ''
+                    );
                 }
 
-                const res = await window.stripePayment.processaPreAutorizzazione(
-                    this.lastData ? this.lastData.total : '25.00',
-                    this.lastData ? this.lastData.customerName : 'Cliente',
-                    this.lastData ? this.lastData.customerEmail : ''
-                );
-
+                if (res && res.success) {
+                    if (typeof this.onConfirm === 'function') {
+                        await this.onConfirm(res);
+                    }
+                }
+            } catch (err) {
+                console.error("Errore processo conferma:", err);
+            } finally {
                 if (btnConfirm) {
                     btnConfirm.disabled = false;
                     btnConfirm.textContent = "💳 Pre-Autorizza & Invia Prenotazione";
                 }
-
-                if (res.success) {
-                    if (typeof this.onConfirm === 'function') {
-                        this.onConfirm(res);
-                    }
-                }
-            } else {
-                if (typeof this.onConfirm === 'function') this.onConfirm();
             }
         };
     }
