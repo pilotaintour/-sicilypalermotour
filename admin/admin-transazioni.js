@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con 3 Pulsanti Distinti: Incassa 100%, Penale Parziale, Rimborso 100%
+ * Sicily Palermo Tour - Admin Dashboard con Funzioni Globali Esplicite
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
@@ -198,6 +198,7 @@ function caricaSezioneTransazioni() {
 
     container.innerHTML = html;
 }
+window.caricaSezioneTransazioni = caricaSezioneTransazioni;
 
 function renderSchedeTransazioniList(list) {
     if (list.length === 0) {
@@ -255,7 +256,6 @@ function renderSchedeTransazioniList(list) {
                     ${b.billingAddress ? `<div style="margin-top: 4px;">🏠 <strong>Residenza/Fatturazione:</strong> ${escapeHtmlTransazione(b.billingAddress)}</div>` : ''}
                 </div>
 
-                <!-- I 3 PULSANTI AZIONE DISTINTI E PULITI PER AZIONE STRIPE -->
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
                     ${!isIncassata ? `
                         <button type="button" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); padding: 10px 18px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="eseguiIncassoTotale100('${b.id}')">
@@ -316,6 +316,7 @@ async function eseguiIncassoTotale100(bookingId) {
     filtroStatoTransazioniTab = 'INCASSATE';
     caricaSezioneTransazioni();
 }
+window.eseguiIncassoTotale100 = eseguiIncassoTotale100;
 
 // 2. PENALE / INCASSO PARZIALE
 async function eseguiIncassoPenaleParziale(bookingId) {
@@ -350,6 +351,7 @@ async function eseguiIncassoPenaleParziale(bookingId) {
     filtroStatoTransazioniTab = 'INCASSATE';
     caricaSezioneTransazioni();
 }
+window.eseguiIncassoPenaleParziale = eseguiIncassoPenaleParziale;
 
 // 3. RIMBORSO / SBLOCCO CARTA 100%
 async function eseguiRimborsoSblocco100(bookingId) {
@@ -375,6 +377,7 @@ async function eseguiRimborsoSblocco100(bookingId) {
     filtroStatoTransazioniTab = 'RIMBORSATE';
     caricaSezioneTransazioni();
 }
+window.eseguiRimborsoSblocco100 = eseguiRimborsoSblocco100;
 
 function eliminaTransazioneTab(bookingId) {
     if (confirm("Sei sicuro di voler eliminare questa transazione dall'archivio?")) {
@@ -384,6 +387,7 @@ function eliminaTransazioneTab(bookingId) {
         caricaSezioneTransazioni();
     }
 }
+window.eliminaTransazioneTab = eliminaTransazioneTab;
 
 function eliminaTutteTransazioniPerStato(tipoStato) {
     const etichetta = tipoStato === 'INCASSATE' ? 'INCASSATE' : 'RIMBORSATE / SBLOCCATE';
