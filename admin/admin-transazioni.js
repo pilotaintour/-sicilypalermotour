@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard
+ * Sicily Palermo Tour - Admin Dashboard con Eliminazione di Massa per Cartella
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
@@ -58,6 +58,28 @@ function caricaSezioneTransazioni() {
         return true;
     });
 
+    // Toolbar con pulsante 'Elimina Tutto' per le cartelle specifiche
+    let toolbarEliminaMassa = '';
+    if (filtroStatoTransazioniTab === 'INCASSATE' && countIncassate > 0) {
+        toolbarEliminaMassa = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 12px 18px; flex-wrap: wrap; gap: 10px;">
+                <strong style="color: #065f46; font-size: 0.95rem;">🟢 Cartella Transazioni Incassate (${countIncassate} Schede)</strong>
+                <button type="button" class="btn-danger btn-small" style="background: #dc2626; font-weight: 800; border-radius: 8px; padding: 8px 16px; font-size: 0.88rem;" onclick="eliminaTutteTransazioniPerStato('INCASSATE')">
+                    🧹 Elimina Tutte le Schede Incassate (${countIncassate})
+                </button>
+            </div>
+        `;
+    } else if (filtroStatoTransazioniTab === 'RIMBORSATE' && countRimborsate > 0) {
+        toolbarEliminaMassa = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; padding: 12px 18px; flex-wrap: wrap; gap: 10px;">
+                <strong style="color: #991b1b; font-size: 0.95rem;">🔴 Cartella Transazioni Rimborsate / Sbloccate (${countRimborsate} Schede)</strong>
+                <button type="button" class="btn-danger btn-small" style="background: #dc2626; font-weight: 800; border-radius: 8px; padding: 8px 16px; font-size: 0.88rem;" onclick="eliminaTutteTransazioniPerStato('RIMBORSATE')">
+                    🧹 Elimina Tutte le Schede Rimborsate (${countRimborsate})
+                </button>
+            </div>
+        `;
+    }
+
     let html = `
         <div class="card" style="background: #ffffff; border-radius: 16px; padding: 22px; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 2px solid #0b2545; padding-bottom: 14px; margin-bottom: 20px;">
@@ -103,6 +125,8 @@ function caricaSezioneTransazioni() {
                 </div>
 
             </div>
+
+            ${toolbarEliminaMassa}
 
             <!-- ELENCO SCHEDE TRANSAZIONE -->
             <div id="lista-transazioni-cards">
@@ -227,7 +251,7 @@ function eseguiIncassoTransazioneTab(bookingId) {
     booking.amountCollected = importoVal.toFixed(2);
 
     saveTransazioniAdmin(list);
-    filtroStatoTransazioniTab = 'INCASSATE'; // Sposta automaticamente la vista nella cartella INCASSATE!
+    filtroStatoTransazioniTab = 'INCASSATE';
     caricaSezioneTransazioni();
 }
 
@@ -254,7 +278,7 @@ function eseguiRimborsoTransazioneTab(bookingId) {
     booking.status = 'Rimborsata';
 
     saveTransazioniAdmin(list);
-    filtroStatoTransazioniTab = 'RIMBORSATE'; // Sposta automaticamente la vista nella cartella RIMBORSATE!
+    filtroStatoTransazioniTab = 'RIMBORSATE';
     caricaSezioneTransazioni();
 }
 
@@ -266,6 +290,29 @@ function eliminaTransazioneTab(bookingId) {
         caricaSezioneTransazioni();
     }
 }
+
+function eliminaTutteTransazioniPerStato(tipoStato) {
+    const etichetta = tipoStato === 'INCASSATE' ? 'INCASSATE' : 'RIMBORSATE / SBLOCCATE';
+    if (!confirm(`⚠️ ATTENZIONE:\nSei sicuro di voler eliminare DEFINITIVAMENTE tutte le transazioni nella cartella '${etichetta}' dall'archivio e dal Cloud?`)) {
+        return;
+    }
+
+    let list = getTransazioniAdmin();
+    list = list.filter(b => {
+        const statusStr = b.status || 'In attesa';
+        if (tipoStato === 'INCASSATE') {
+            return !(statusStr === 'Incassata' || statusStr === 'Confermata' || statusStr.includes('Incassat'));
+        } else if (tipoStato === 'RIMBORSATE') {
+            return !(statusStr === 'Rimborsata' || statusStr === 'Cancellata' || statusStr.includes('Rimborsat'));
+        }
+        return true;
+    });
+
+    saveTransazioniAdmin(list);
+    caricaSezioneTransazioni();
+    alert(`✅ Tutte le transazioni '${etichetta}' sono state eliminate con successo dall'archivio!`);
+}
+window.eliminaTutteTransazioniPerStato = eliminaTutteTransazioniPerStato;
 
 function escapeHtmlTransazione(str) {
     if (!str) return '';
