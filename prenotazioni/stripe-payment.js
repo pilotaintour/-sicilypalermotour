@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO PAGAMENTI E PRE-AUTORIZZAZIONI STRIPE & PAYPAL (WEB)
- * Sicily Palermo Tour - Gestione Carte di Credito/Debito (Visa, Mastercard, Amex) e PayPal
+ * Sicily Palermo Tour - Layout Elegante, Spazioso e Professionale per Carte e PayPal
  */
 
 const STRIPE_PK_KEY = 'spt_stripe_pk';
@@ -18,13 +18,29 @@ function selezionaMetodoPagamento(tipo) {
     if (tipo === 'card') {
         if (boxCard) boxCard.style.display = 'block';
         if (boxPaypal) boxPaypal.style.display = 'none';
-        if (labelCard) { labelCard.style.border = '2px solid #0b2545'; labelCard.style.background = '#f0f9ff'; }
-        if (labelPaypal) { labelPaypal.style.border = '1px solid #cbd5e1'; labelPaypal.style.background = '#ffffff'; }
+        if (labelCard) {
+            labelCard.style.border = '2px solid #0b2545';
+            labelCard.style.background = '#f0f9ff';
+            labelCard.style.boxShadow = '0 4px 12px rgba(11, 37, 69, 0.08)';
+        }
+        if (labelPaypal) {
+            labelPaypal.style.border = '1.5px solid #cbd5e1';
+            labelPaypal.style.background = '#ffffff';
+            labelPaypal.style.boxShadow = 'none';
+        }
     } else {
         if (boxCard) boxCard.style.display = 'none';
         if (boxPaypal) boxPaypal.style.display = 'block';
-        if (labelCard) { labelCard.style.border = '1px solid #cbd5e1'; labelCard.style.background = '#ffffff'; }
-        if (labelPaypal) { labelPaypal.style.border = '2px solid #0070ba'; labelPaypal.style.background = '#f0f9ff'; }
+        if (labelCard) {
+            labelCard.style.border = '1.5px solid #cbd5e1';
+            labelCard.style.background = '#ffffff';
+            labelCard.style.boxShadow = 'none';
+        }
+        if (labelPaypal) {
+            labelPaypal.style.border = '2px solid #0070ba';
+            labelPaypal.style.background = '#f0f9ff';
+            labelPaypal.style.boxShadow = '0 4px 12px rgba(0, 112, 186, 0.08)';
+        }
     }
 }
 window.selezionaMetodoPagamento = selezionaMetodoPagamento;
@@ -64,57 +80,75 @@ class StripePaymentManager {
         this.init();
     }
 
-    // Monta il selettore metodi di pagamento ed il form sicuro della carta di credito
+    // Monta il selettore metodi di pagamento con stile elegante e spazioso
     mountCardForm(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         container.innerHTML = `
-            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-                <label style="font-weight: 800; color: #0b2545; font-size: 1rem; display: block; margin-bottom: 12px;">
-                    💳 Scegli il Metodo di Pagamento:
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 24px; margin-top: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.04);">
+                <label style="font-weight: 800; color: #0b2545; font-size: 1.05rem; display: block; margin-bottom: 16px;">
+                    💳 Scegli la Modalità di Pagamento:
                 </label>
 
-                <!-- Selettore Opzioni Pagamento -->
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px;">
-                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 2px solid #0b2545; border-radius: 10px; cursor: pointer; background: #f0f9ff;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 18px; height: 18px; cursor: pointer;">
-                            <strong style="color: #0b2545; font-size: 0.95rem;">Carta di Credito / Debito</strong>
+                <!-- Selettore Metodi Pagamento (Carte vs PayPal) -->
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px;">
+
+                    <!-- Opzione 1: Carta di Credito / Debito -->
+                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border: 2px solid #0b2545; border-radius: 12px; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(11, 37, 69, 0.08);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 20px; height: 20px; cursor: pointer;">
+                            <div>
+                                <strong style="color: #0b2545; font-size: 1rem; display: block;">Carta di Credito / Debito</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Visa, MasterCard, American Express, Maestro</span>
+                            </div>
                         </div>
-                        <div style="font-size: 1.1rem; font-weight: bold; color: #1e293b;">Visa / MC / Amex</div>
+                        <div style="font-size: 1.3rem; letter-spacing: 2px;">💳</div>
                     </label>
 
-                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; background: #ffffff;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0b2545; width: 18px; height: 18px; cursor: pointer;">
-                            <strong style="color: #003087; font-size: 0.95rem;">PayPal</strong>
+                    <!-- Opzione 2: PayPal -->
+                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border: 1.5px solid #cbd5e1; border-radius: 12px; cursor: pointer; background: #ffffff; transition: all 0.2s ease;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 20px; height: 20px; cursor: pointer;">
+                            <div>
+                                <strong style="color: #003087; font-size: 1rem; display: block;">PayPal</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Paga in modo rapido e sicuro con il tuo conto PayPal</span>
+                            </div>
                         </div>
-                        <div style="font-weight: 800; color: #0070ba; font-style: italic; font-size: 1.1rem;">PayPal</div>
+                        <div style="font-weight: 900; color: #0070ba; font-style: italic; font-size: 1.25rem;">PayPal</div>
                     </label>
+
                 </div>
 
-                <!-- Box Carta di Credito (Stripe Elements) -->
-                <div id="box-metodo-card" style="display: block;">
-                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 12px; line-height: 1.4;">
-                        L'importo verrà unicamente <strong>bloccato in sospeso</strong> (Pre-Autorizzazione). Inserisci il numero di carta di seguito:
+                <!-- Box Dati Carta di Credito (Stripe Elements) -->
+                <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: #0b2545;">Dati della Carta di Credito / Debito</span>
+                        <span style="font-size: 0.78rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 10px; border-radius: 12px;">🔒 Pre-Autorizzazione Sicura</span>
+                    </div>
+
+                    <p style="font-size: 0.83rem; color: #64748b; margin-top: 0; margin-bottom: 14px; line-height: 1.4;">
+                        Digita le 16 cifre della carta, la scadenza e il codice CVC nel riquadro sottostante:
                     </p>
 
                     <!-- Riquadro Form Carta Stripe Elements -->
-                    <div id="stripe-card-mount-point" style="padding: 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc; min-height: 42px;"></div>
+                    <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
 
-                    <div id="stripe-card-errors" style="color: #ef4444; font-size: 0.85rem; margin-top: 8px; font-weight: 600;"></div>
+                    <div id="stripe-card-errors" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; font-weight: 600;"></div>
                 </div>
 
                 <!-- Box PayPal -->
-                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 18px; text-align: center;">
-                    <p style="font-size: 0.92rem; color: #0369a1; margin: 0 0 12px 0; font-weight: 600;">
-                        🔵 Verrai reindirizzato in modo sicuro su PayPal per confermare la pre-autorizzazione della tua carta o conto.
+                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 22px; text-align: center;">
+                    <div style="font-size: 2.2rem; margin-bottom: 8px;">🔵</div>
+                    <strong style="font-size: 1.05rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
+                    <p style="font-size: 0.88rem; color: #0369a1; margin: 0 0 16px 0; line-height: 1.5;">
+                        Verrai reindirizzato in modo sicuro su PayPal per confermare la pre-autorizzazione del pagamento in totale tranquillità.
                     </p>
-                    <button type="button" onclick="alert('🔵 Reindirizzamento su PayPal in corso... (Modalità Test PayPal)')" style="background: #ffc439; color: #003087; border: none; padding: 12px 28px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                    <button type="button" onclick="alert('🔵 Reindirizzamento su PayPal in corso... (Modalità Test PayPal)')" style="background: #ffc439; color: #003087; border: none; padding: 13px 32px; border-radius: 10px; font-weight: 800; font-size: 1.05rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 196, 57, 0.3);">
                         Paga con <i>PayPal</i>
                     </button>
                 </div>
+
             </div>
         `;
 
@@ -130,7 +164,7 @@ class StripePaymentManager {
                             color: '#0f172a',
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                             fontSmoothing: 'antialiased',
-                            fontSize: '15px',
+                            fontSize: '16px',
                             '::placeholder': { color: '#94a3b8' }
                         },
                         invalid: {
@@ -160,7 +194,6 @@ class StripePaymentManager {
 
     // Esegue la Pre-Autorizzazione (Blocco Importo in Sospeso)
     async processaPreAutorizzazione(totaleEuro, customerName, customerEmail) {
-        // Controlla se è selezionata l'opzione PayPal
         const radioPaypal = document.querySelector('input[name="payment_method"][value="paypal"]');
         if (radioPaypal && radioPaypal.checked) {
             return {
