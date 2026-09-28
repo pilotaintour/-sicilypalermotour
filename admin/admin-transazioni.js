@@ -1,11 +1,31 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con Filtri per Itinerario ed Eliminazione di Massa
+ * Sicily Palermo Tour - Admin Dashboard con 1-Click Copy per Codice ed ID Stripe
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
 let filtroItinerarioTransazioni = 'TUTTI'; // 'TUTTI' oppure Titolo Itinerario
 let ricercaTransazioniText = '';
+
+function copiaTestoAppunti(testo, el) {
+    if (!testo) return;
+    navigator.clipboard.writeText(testo).then(() => {
+        if (el) {
+            const originalText = el.innerText;
+            el.innerText = "Copiato! 📋";
+            el.style.background = "#dcfce7";
+            el.style.color = "#15803d";
+            setTimeout(() => {
+                el.innerText = originalText;
+                el.style.background = "#ffffff";
+                el.style.color = "#0b2545";
+            }, 1200);
+        }
+    }).catch(e => {
+        console.error("Errore copia negli appunti:", e);
+    });
+}
+window.copiaTestoAppunti = copiaTestoAppunti;
 
 function getTransazioniAdmin() {
     try {
@@ -176,7 +196,7 @@ function renderSchedeTransazioniList(list) {
                 <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">🔖 Codice Prenotazione:</span>
-                        <code style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd; font-size: 1rem; color: #0b2545;">${escapeHtmlTransazione(b.code || '#SPT-BOOK')}</code>
+                        <code onclick="copiaTestoAppunti('${escapeHtmlTransazione(b.code || '#SPT-BOOK')}', this)" style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd; font-size: 1rem; color: #0b2545; cursor: pointer;" title="Clicca per copiare il codice negli appunti">${escapeHtmlTransazione(b.code || '#SPT-BOOK')} 📋</code>
                     </div>
                     <div>
                         <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">🕒 Data e Ora Transazione:</span>
@@ -184,7 +204,7 @@ function renderSchedeTransazioniList(list) {
                     </div>
                     <div>
                         <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">💳 ID Stripe:</span>
-                        <code style="font-family: monospace; font-size: 0.85rem; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd;">${escapeHtmlTransazione(b.paymentIntentId || 'pi_stripe')}</code>
+                        <code onclick="copiaTestoAppunti('${escapeHtmlTransazione(b.paymentIntentId || 'pi_stripe')}', this)" style="font-family: monospace; font-size: 0.85rem; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd; cursor: pointer;" title="Clicca per copiare l'ID Stripe negli appunti">${escapeHtmlTransazione(b.paymentIntentId || 'pi_stripe')} 📋</code>
                     </div>
                 </div>
 
