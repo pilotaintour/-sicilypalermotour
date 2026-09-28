@@ -93,10 +93,15 @@ class CloudDatabaseManager {
                     localStorage.setItem('spt_hero_photos', JSON.stringify(record.heroPhotos));
                 }
 
-                // 3. Sincronizza Prenotazioni
+                // 3. Sincronizza Prenotazioni & Transazioni
                 if (record.bookings && Array.isArray(record.bookings)) {
                     localStorage.setItem('spt_bookings', JSON.stringify(record.bookings));
                     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+                    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
+                } else {
+                    localStorage.setItem('spt_bookings', JSON.stringify([]));
+                    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+                    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
                 }
 
                 // 4. Sincronizza e renderizza Recensioni
