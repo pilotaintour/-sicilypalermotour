@@ -29,8 +29,9 @@ function salvaNumeroWhatsApp() {
 function caricaChiaviStripe() {
     const pkInput = document.getElementById('stripe-pk-input');
     const skInput = document.getElementById('stripe-sk-input');
+    const defaultPK = 'pk_test_51UJGJt383oZgJlwEDcZkzbdzODlKRxPfanpz31XrWbmJDpmQnCnsA3qPLtCIn8FoR5DlTX2rqnzAmr4UWdo1bo2k00tAdmIYH1';
 
-    if (pkInput) pkInput.value = localStorage.getItem('spt_stripe_pk') || '';
+    if (pkInput) pkInput.value = localStorage.getItem('spt_stripe_pk') || defaultPK;
     if (skInput) skInput.value = localStorage.getItem('spt_stripe_sk') || '';
 }
 
