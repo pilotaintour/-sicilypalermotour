@@ -75,8 +75,9 @@
                         const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                         const record = {
                             ...testBookingData,
+                            paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                             id: Date.now().toString(),
-                            createdAt: new Date().toLocaleString(),
+                            createdAt: new Date().toLocaleString('it-IT'),
                             status: 'In attesa'
                         };
                         list.unshift(record);

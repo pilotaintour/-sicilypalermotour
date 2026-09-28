@@ -205,7 +205,7 @@
 
                 this.step4Module = new Step4Conferma('step-card-4', {
                     onPrev: () => this.goToStep(3),
-                    onConfirm: () => this.confermaDefinitiva()
+                    onConfirm: (res) => this.confermaDefinitiva(res)
                 });
 
                 this.goToStep(1);
@@ -283,14 +283,15 @@
                 }
             }
 
-            confermaDefinitiva() {
+            confermaDefinitiva(res) {
                 // Salva nel localStorage delle prenotazioni per l'Admin
                 try {
                     const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                     const record = {
                         ...this.bookingData,
+                        paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                         id: Date.now().toString(),
-                        createdAt: new Date().toLocaleString(),
+                        createdAt: new Date().toLocaleString('it-IT'),
                         status: 'In attesa'
                     };
                     list.unshift(record);
