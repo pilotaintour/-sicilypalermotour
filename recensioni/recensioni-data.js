@@ -5,44 +5,20 @@
 
 const RECENSIONI_STORAGE_KEY = 'spt_recensioni';
 
-const recensioniPredefinite = [
-    {
-        id: 1,
-        nome: "Marco Rossi",
-        voto: 5,
-        testo: "Esperienza indimenticabile! La guida è stata eccezionale, spiegandoci ogni dettaglio storico e artistico di Palermo con una passione contagiosa. Consigliatissimo a tutti!",
-        foto: [],
-        data: "12 Maggio 2024"
-    },
-    {
-        id: 2,
-        nome: "Sophie Martin",
-        voto: 5,
-        testo: "Un tour spettacolare tra i mercati storici e i monumenti arabo-normanni. Organizzazione perfetta e puntualità impeccabile. Torneremo sicuramente!",
-        foto: [],
-        data: "28 Aprile 2024"
-    },
-    {
-        id: 3,
-        nome: "Giuseppe Conti",
-        voto: 5,
-        testo: "Professionalità e cortesia ai massimi livelli. I sapori e le bellezze di Palermo raccontate in questo modo lasciano il segno. Bravi davvero!",
-        foto: [],
-        data: "10 Giugno 2024"
-    }
-];
+// Recensioni Iniziali Predefiniti (Vuote per lasciare spazio solo alle recensioni reali dei turisti)
+const recensioniPredefinite = [];
 
 function getRecensioni() {
     try {
         const salvate = localStorage.getItem(RECENSIONI_STORAGE_KEY);
         if (salvate) {
             const parsed = JSON.parse(salvate);
-            if (Array.isArray(parsed) && parsed.length > 0) {
+            if (Array.isArray(parsed)) {
                 return parsed;
             }
         }
     } catch (e) {}
-    return recensioniPredefinite;
+    return [];
 }
 
 function salvaRecensioni(lista) {
@@ -90,6 +66,16 @@ function renderRecensioniGrid() {
 
     const lista = getRecensioni();
     const isAdmin = localStorage.getItem('spt_admin_logged_in') === 'true';
+
+    if (!lista || lista.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 35px 20px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                <h3 style="color: #1b4f72; margin-bottom: 8px;">⭐ Sii il primo a lasciare una recensione!</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Hai partecipato ad uno dei nostri tour? Condividi la tua esperienza e le tue foto con i prossimi viaggiatori!</p>
+            </div>
+        `;
+        return;
+    }
 
     grid.innerHTML = lista.map(rec => {
         const stelle = '★'.repeat(rec.voto || 5) + '☆'.repeat(5 - (rec.voto || 5));
