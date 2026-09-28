@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con Filtro Giorni/Date, Itinerari ed 1-Click Copy
+ * Sicily Palermo Tour - Admin Dashboard con Filtro Giorni/Date, Itinerari ed Chat WhatsApp Garantita
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
@@ -28,6 +28,27 @@ function copiaTestoAppunti(testo, el) {
 }
 window.copiaTestoAppunti = copiaTestoAppunti;
 
+function apriChatWhatsAppCliente(telefono, nome, tour) {
+    let cleanNum = (telefono || '').replace(/[^0-9]/g, '');
+    if (cleanNum.length === 10 && cleanNum.startsWith('3')) {
+        cleanNum = '39' + cleanNum;
+    }
+
+    if (!cleanNum || cleanNum.length < 8) {
+        const inputNum = prompt('Inserisci il numero WhatsApp del cliente (con prefisso, es. 393401234567):', cleanNum || '39');
+        if (!inputNum) return;
+        cleanNum = inputNum.replace(/[^0-9]/g, '');
+    }
+
+    const clientName = nome || 'Cliente';
+    const tourName = tour || 'Tour Palermo';
+    const msg = `Ciao ${clientName}! Ti contattiamo da Sicily Palermo Tour riguardo la tua prenotazione per il tour "${tourName}".`;
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${cleanNum}&text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+}
+window.apriChatWhatsAppCliente = apriChatWhatsAppCliente;
+
 function getTransazioniAdmin() {
     try {
         const saved = localStorage.getItem('spt_bookings') || '[]';
@@ -51,7 +72,6 @@ function caricaSezioneTransazioni() {
 
     const list = getTransazioniAdmin();
 
-    // Estrai la lista di tutti i titoli itinerari e date uniche presenti
     const itinerariUnici = [...new Set(list.map(b => b.tourTitle).filter(Boolean))].sort();
     const dateUniche = [...new Set(list.map(b => b.dateReadable || b.dateISO).filter(Boolean))].sort();
 
@@ -59,7 +79,6 @@ function caricaSezioneTransazioni() {
     const countIncassate = list.filter(b => b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'))).length;
     const countRimborsate = list.filter(b => b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'))).length;
 
-    // Aggiorna badge nel tasto della barra principale
     const badgeTab = document.getElementById('cnt-transazioni-badge');
     if (badgeTab) badgeTab.textContent = countInAttesa;
 
@@ -93,7 +112,6 @@ function caricaSezioneTransazioni() {
         return true;
     });
 
-    // Toolbar con pulsante 'Elimina Tutto' per le cartelle specifiche
     let toolbarEliminaMassa = '';
     if (filtroStatoTransazioniTab === 'INCASSATE' && countIncassate > 0) {
         toolbarEliminaMassa = `
@@ -128,13 +146,11 @@ function caricaSezioneTransazioni() {
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <!-- FILTRO PER DATA / GIORNO -->
                     <select onchange="filtroDataTransazioni = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0b2545; font-weight: bold; background: #ffffff;">
                         <option value="TUTTI" ${filtroDataTransazioni === 'TUTTI' ? 'selected' : ''}>📅 Tutte le Date (${dateUniche.length})</option>
                         ${dateUniche.map(d => `<option value="${escapeHtmlTransazione(d)}" ${filtroDataTransazioni === d ? 'selected' : ''}>📅 ${escapeHtmlTransazione(d)}</option>`).join('')}
                     </select>
 
-                    <!-- FILTRO PER ITINERARIO -->
                     <select onchange="filtroItinerarioTransazioni = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0b2545; font-weight: bold; background: #ffffff;">
                         <option value="TUTTI" ${filtroItinerarioTransazioni === 'TUTTI' ? 'selected' : ''}>🏛️ Tutti gli Itinerari (${itinerariUnici.length})</option>
                         ${itinerariUnici.map(t => `<option value="${escapeHtmlTransazione(t)}" ${filtroItinerarioTransazioni === t ? 'selected' : ''}>🏛️ ${escapeHtmlTransazione(t)}</option>`).join('')}
@@ -144,7 +160,6 @@ function caricaSezioneTransazioni() {
                 </div>
             </div>
 
-            <!-- SCHERMATE CARTELE E CARTE TAB DELLE TRANSAZIONI -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px;">
 
                 <div onclick="filtroStatoTransazioniTab = 'IN_ATTESA'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? 'linear-gradient(135deg, #0b2545, #134074)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? '#ffffff' : '#0f172a'}; border: 2px solid #0b2545; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -175,7 +190,6 @@ function caricaSezioneTransazioni() {
 
             ${toolbarEliminaMassa}
 
-            <!-- ELENCO SCHEDE TRANSAZIONE -->
             <div id="lista-transazioni-cards">
                 ${renderSchedeTransazioniList(filtrate)}
             </div>
@@ -205,7 +219,6 @@ function renderSchedeTransazioniList(list) {
         return `
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 6px solid ${borderColor}; border-radius: 14px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
 
-                <!-- INTESTAZIONE BARRA REGISTRAZIONE TRANSAZIONE -->
                 <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">🔖 Codice Prenotazione:</span>
@@ -242,7 +255,6 @@ function renderSchedeTransazioniList(list) {
                     ${b.billingAddress ? `<div style="margin-top: 4px;">🏠 <strong>Residenza/Fatturazione:</strong> ${escapeHtmlTransazione(b.billingAddress)}</div>` : ''}
                 </div>
 
-                <!-- PULSANTI AZIONE DI TRASFERIMENTO NELLE CARTELLE INCASSATE / RIMBORSATE -->
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
                     ${!isIncassata ? `
                         <button type="button" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); padding: 10px 18px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="eseguiIncassoTransazioneTab('${b.id}')">

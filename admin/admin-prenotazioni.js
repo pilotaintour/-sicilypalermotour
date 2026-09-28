@@ -765,10 +765,25 @@ function eliminaPrenotazioneAdmin(id) {
 }
 
 function apriChatWhatsAppCliente(telefono, nome, tour) {
-    const cleanNum = telefono.replace(/[^0-9]/g, '');
-    const msg = `Ciao ${nome}! Ti contattiamo da Sicily Palermo Tour riguardo la tua prenotazione per il tour "${tour}".`;
-    window.open(`https://wa.me/${cleanNum}?text=${encodeURIComponent(msg)}`, '_blank');
+    let cleanNum = (telefono || '').replace(/[^0-9]/g, '');
+    if (cleanNum.length === 10 && cleanNum.startsWith('3')) {
+        cleanNum = '39' + cleanNum;
+    }
+
+    if (!cleanNum || cleanNum.length < 8) {
+        const inputNum = prompt('Inserisci il numero WhatsApp del cliente (con prefisso, es. 393401234567):', cleanNum || '39');
+        if (!inputNum) return;
+        cleanNum = inputNum.replace(/[^0-9]/g, '');
+    }
+
+    const clientName = nome || 'Cliente';
+    const tourName = tour || 'Tour Palermo';
+    const msg = `Ciao ${clientName}! Ti contattiamo da Sicily Palermo Tour riguardo la tua prenotazione per il tour "${tourName}".`;
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${cleanNum}&text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
 }
+window.apriChatWhatsAppCliente = apriChatWhatsAppCliente;
 
 function escapeHtmlBooking(str) {
     if (!str) return '';
