@@ -535,16 +535,19 @@ function renderSchedePrenotazioni(bookingsList) {
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
                     ${!isIncassata ? `
-                        <button type="button" class="btn-primary btn-small" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="incassaPagamentoStripeAdmin('${b.id}')">
-                            💰 Incassa Importo (Sposta in Incassate)
+                        <button type="button" class="btn-primary btn-small" style="background: linear-gradient(135deg, #059669, #10b981);" onclick="eseguiIncassoTotale100('${b.id}')">
+                            💰 Incassa 100%
+                        </button>
+                        <button type="button" class="btn-secondary btn-small" style="background: #d97706; color: white; border: none;" onclick="eseguiIncassoPenaleParziale('${b.id}')">
+                            ⚖️ Penale Parziale
                         </button>
                     ` : `
                         <span style="color: #059669; font-weight: bold; font-size: 0.88rem; display: flex; align-items: center;">✅ Importo già incassato su Stripe (€${b.amountCollected || b.total})</span>
                     `}
 
                     ${!isRimborsata ? `
-                        <button type="button" class="btn-secondary btn-small" style="background: #dc2626; color: white; border: none;" onclick="rimborsaPagamentoStripeAdmin('${b.id}')">
-                            🔄 Rimborso / Sblocca Carta (Sposta in Rimborsate)
+                        <button type="button" class="btn-secondary btn-small" style="background: #dc2626; color: white; border: none;" onclick="eseguiRimborsoSblocco100('${b.id}')">
+                            🔄 Rimborso 100% / Sblocca
                         </button>
                     ` : `
                         <span style="color: #dc2626; font-weight: bold; font-size: 0.88rem; display: flex; align-items: center;">🔴 Transazione rimborsata / sbloccata</span>
