@@ -201,7 +201,31 @@
                     onConfirm: () => this.confermaDefinitiva()
                 });
 
-                this.goToStep(1);
+                // Controllo Scorciatoia di Test Diretto allo Step 4
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('step') === '4' || urlParams.get('test') === 'stripe') {
+                    this.maxStepReached = 4;
+                    this.bookingData = {
+                        code: '#SPT-TEST-' + Math.floor(1000 + Math.random() * 9000),
+                        tourTitle: this.tourCorrente ? this.tourCorrente.title : 'Tour Palermo Centro',
+                        dateReadable: '28 Maggio 2025',
+                        slotTime: '09:30',
+                        adults: 2,
+                        children: 0,
+                        customerName: 'Mario Rossi (Test)',
+                        customerEmail: 'pilotaintour13@gmail.com',
+                        customerPhone: '+39 340 1234567',
+                        total: '50.00',
+                        participantsList: [
+                            { name: 'Mario Rossi', dob: '15/05/1990', origin: 'Roma', notes: 'Test Pagamento Stripe' },
+                            { name: 'Anna Verdi', dob: '20/08/1992', origin: 'Milano', notes: '' }
+                        ]
+                    };
+                    this.calcolaEInviaRiepilogo();
+                    this.goToStep(4);
+                } else {
+                    this.goToStep(1);
+                }
             }
 
             popolaHeroBanner() {
