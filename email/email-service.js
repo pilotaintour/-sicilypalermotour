@@ -30,13 +30,15 @@ class BrevoEmailService {
         }
     }
 
-    // Invia un messaggio dal Form Contatti direttamente alla casella dell'amministratore
+    // Invia un messaggio dal Form Contatti direttamente alla casella dell'amministratore ed invia conferma al cliente
     async inviaEmailMessaggioContatto(nome, emailCliente, messaggio) {
         const apiKey = this.getApiKey();
         if (!apiKey) {
             console.log("Nessuna API Key Brevo configurata.");
             return { success: false, reason: "API Key mancante" };
         }
+
+        const waNum = (localStorage.getItem('spt_wa_number') || '393401234567').replace(/[^0-9]/g, '');
 
         const htmlContattoAdmin = `
             <!DOCTYPE html>
@@ -81,6 +83,9 @@ class BrevoEmailService {
                         <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
                             Per richieste urgenti o informazioni immediate sui nostri tour, puoi scriverci direttamente anche su WhatsApp.
                         </p>
+                        <div style="margin-top:20px; text-align:center;">
+                            <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:10px 20px; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; font-size:0.9rem;">💬 Scrivici in Privato su WhatsApp</a>
+                        </div>
                     </div>
                     <div style="background:#f1f5f9; padding:12px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
                         Sicily Palermo Tour - La tua guida speciale a Palermo
@@ -148,6 +153,10 @@ class BrevoEmailService {
         const timeStr = bookingData.slotTime || '09:30';
         const total = bookingData.total || '0.00';
         const phone = bookingData.customerPhone || 'N/D';
+        const lang = bookingData.language || 'Italiano';
+        const country = bookingData.country || 'Italia';
+        const billingAddress = bookingData.billingAddress || 'N/D';
+        const waNum = (localStorage.getItem('spt_wa_number') || '393401234567').replace(/[^0-9]/g, '');
 
         // Recupera le impostazioni dei testi personalizzati dall'Admin
         const tConf = (window.emailTemplateEditor && typeof window.emailTemplateEditor.getConfig === 'function')
@@ -161,7 +170,26 @@ class BrevoEmailService {
 
         const subjectDyn = tConf.subject.replace('{NOME_TOUR}', tourTitle).replace('{CODICE_PRENOTAZIONE}', code);
 
-        // 1. Email di Conferma Personalizzata per il Turista
+        // Genera la lista dei partecipanti in formato HTML
+        let partecipantiHtml = '';
+        if (bookingData.participantsList && Array.isArray(bookingData.participantsList) && bookingData.participantsList.length > 0) {
+            partecipantiHtml = `
+                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                    <strong style="color: #0b2545; display: block; margin-bottom: 6px;">🧳 Elenco Dettagliato Partecipanti (${bookingData.participantsList.length}):</strong>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem; color: #334155; line-height: 1.6;">
+                        ${bookingData.participantsList.map(p => `
+                            <li style="margin-bottom: 4px;">
+                                <strong>${p.name}</strong>
+                                <span style="color: #64748b;">(${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - Provenienza: ' + p.origin : ''})</span>
+                                ${p.notes ? `<div style="font-size: 0.83rem; color: #475569;">📝 <em>Note: ${p.notes}</em></div>` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // 1. Email di Conferma Completa e Professionale per il Turista
         const htmlTurista = `
             <!DOCTYPE html>
             <html>
@@ -170,7 +198,7 @@ class BrevoEmailService {
                 <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
                     <div style="background:linear-gradient(135deg, #0b2545, #134074); padding:25px; text-align:center; color:#ffffff;">
                         <h1 style="margin:0; font-size:1.6rem; font-weight:800;">🏛️ Sicily Palermo Tour</h1>
-                        <p style="margin:6px 0 0 0; font-size:0.95rem; opacity:0.9;">Conferma di Prenotazione Ricevuta</p>
+                        <p style="margin:6px 0 0 0; font-size:0.95rem; opacity:0.9;">Conferma di Prenotazione Ufficiale</p>
                     </div>
 
                     <div style="padding:28px;">
@@ -179,32 +207,50 @@ class BrevoEmailService {
                             ${tConf.welcomeMessage}
                         </p>
 
+                        <!-- RIEPILOGO COMPLETO DATI REGISTRATI -->
                         <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:20px; margin:20px 0;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
                                 <span style="color:#64748b; font-weight:bold;">Codice Prenotazione:</span>
                                 <strong style="color:#0369a1; font-family:monospace; font-size:1.1rem;">${code}</strong>
                             </div>
                             <div style="margin-bottom:8px;"><strong>📍 Tour:</strong> ${tourTitle}</div>
-                            <div style="margin-bottom:8px;"><strong>📅 Data:</strong> ${dateStr}</div>
+                            <div style="margin-bottom:8px;"><strong>🌐 Lingua Guida:</strong> ${lang}</div>
+                            <div style="margin-bottom:8px;"><strong>📅 Data della Visita:</strong> ${dateStr}</div>
                             <div style="margin-bottom:8px;"><strong>⏰ Orario Partenza:</strong> ${timeStr}</div>
                             <div style="margin-bottom:8px;"><strong>👥 Partecipanti:</strong> ${bookingData.adults} Adulti${bookingData.children > 0 ? `, ${bookingData.children} Bambini` : ''}</div>
-                            <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:1.2rem; font-weight:bold; color:#0b2545;">
-                                Totale: €${total}
+                            <div style="margin-bottom:8px;"><strong>👤 Referente:</strong> ${customerName} (${phone})</div>
+                            <div style="margin-bottom:8px;"><strong>🏠 Fatturazione / Residenza:</strong> ${billingAddress} (${country})</div>
+
+                            ${partecipantiHtml}
+
+                            <div style="margin-top:12px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:1.2rem; font-weight:bold; color:#0b2545; display:flex; justify-content:space-between;">
+                                <span>Totale Pre-Autorizzato:</span>
+                                <span>€${total}</span>
                             </div>
                         </div>
 
+                        <!-- ISTRUZIONI & RACCOMANDAZIONI -->
                         <div style="background:#fffbf5; border:1.5px solid #fed7aa; border-radius:12px; padding:16px; margin-bottom:20px; font-size:0.9rem; color:#9a3412; line-height:1.5;">
-                            <strong>🎒 Istruzioni & Raccomandazioni:</strong><br>
+                            <strong>🎒 Istruzioni & Raccomandazioni Tour:</strong><br>
                             ${tConf.instructions}
+                        </div>
+
+                        <!-- SEZIONE CONTATTO PRIVATO CON L'ADMIN -->
+                        <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:18px; margin-bottom:20px;">
+                            <strong style="color:#0369a1; font-size:0.95rem; display:block; margin-bottom:6px;">💬 Hai domande o bisogno di assistenza in privato?</strong>
+                            <p style="font-size:0.88rem; color:#334155; margin:0 0 12px 0; line-height:1.5;">
+                                Se hai esigenze particolari, intolleranze o qualsiasi problema con la prenotazione, puoi contattare l'amministratore e guida in privato:
+                            </p>
+                            <div style="text-align:center;">
+                                <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:11px 22px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem;">
+                                    💬 Contatta l'Admin su WhatsApp (+39 340 1234567)
+                                </a>
+                            </div>
                         </div>
 
                         <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
                             ${tConf.footerText}
                         </p>
-
-                        <div style="margin-top:25px; text-align:center;">
-                            <a href="https://wa.me/393401234567" style="background:#25d366; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block;">💬 Contattaci su WhatsApp</a>
-                        </div>
                     </div>
 
                     <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
