@@ -478,6 +478,13 @@ function renderSchedePrenotazioni(bookingsList) {
 
         return `
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 5px solid ${borderColor}; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 15px;">
+                <!-- BARRA INFO DETTAGLIATA PAGAMENTO ED ORA TRANSAZIONE -->
+                <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.88rem; color: #0369a1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <div><strong>🔖 Codice:</strong> <code style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95rem; color: #0b2545;">${escapeHtmlBooking(b.code || '#SPT-BOOK')}</code></div>
+                    <div><strong>🕒 Data e Ora Transazione:</strong> <span style="font-weight: bold; color: #0b2545;">${escapeHtmlBooking(b.createdAt || 'Registrato il ' + new Date().toLocaleString('it-IT'))}</span></div>
+                    <div><strong>💳 ID Stripe:</strong> <code style="font-family: monospace; font-size: 0.82rem; background: #ffffff; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1;">${escapeHtmlBooking(b.paymentIntentId || 'pi_stripe')}</code></div>
+                </div>
+
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
                     <div>
                         <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; font-family: monospace;">${escapeHtmlBooking(b.code || '#SPT-BOOK')}</span>
