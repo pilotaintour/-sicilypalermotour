@@ -38,7 +38,7 @@ class BrevoEmailService {
             return { success: false, reason: "API Key mancante" };
         }
 
-        const htmlContatto = `
+        const htmlContattoAdmin = `
             <!DOCTYPE html>
             <html>
             <head><meta charset="UTF-8"></head>
@@ -59,8 +59,40 @@ class BrevoEmailService {
             </html>
         `;
 
+        const htmlCopiaCortesiaCliente = `
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"></head>
+            <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; padding:20px; color:#1e293b; background:#f8fafc;">
+                <div style="max-width:550px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
+                    <div style="background:linear-gradient(135deg, #0b2545, #134074); padding:22px; text-align:center; color:#ffffff;">
+                        <h2 style="margin:0; font-size:1.4rem;">🏛️ Sicily Palermo Tour</h2>
+                        <p style="margin:4px 0 0 0; font-size:0.9rem; opacity:0.9;">Messaggio Ricevuto con Successo</p>
+                    </div>
+                    <div style="padding:25px;">
+                        <h3 style="color:#0b2545; margin-top:0;">Ciao ${nome}!</h3>
+                        <p style="font-size:0.95rem; color:#475569; line-height:1.6;">
+                            Grazie per averci contattato! Abbiamo ricevuto il tuo messaggio e la nostra guida ti risponderà nel più breve tempo possibile.
+                        </p>
+                        <div style="background:#f1f5f9; padding:14px 18px; border-left:4px solid #0b2545; border-radius:8px; margin:18px 0; font-style:italic; font-size:0.9rem; color:#334155;">
+                            Riepilogo del tuo messaggio:<br>
+                            "${messaggio}"
+                        </div>
+                        <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
+                            Per richieste urgenti o informazioni immediate sui nostri tour, puoi scriverci direttamente anche su WhatsApp.
+                        </p>
+                    </div>
+                    <div style="background:#f1f5f9; padding:12px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
+                        Sicily Palermo Tour - La tua guida speciale a Palermo
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
         try {
-            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            // 1. Invia notifica all'Amministratore
+            const resAdmin = fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
@@ -72,12 +104,28 @@ class BrevoEmailService {
                     to: [{ email: ADMIN_NOTIFICATION_EMAIL, name: "Admin Palermo Tour" }],
                     replyTo: { email: emailCliente, name: nome },
                     subject: `[Messaggio Contatti] Da ${nome} (${emailCliente})`,
-                    htmlContent: htmlContatto
+                    htmlContent: htmlContattoAdmin
                 })
             });
 
-            if (response.ok) {
-                return { success: true };
+            // 2. Invia email automatica di cortesia al Cliente
+            const resCustomer = fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': apiKey,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: "Sicily Palermo Tour", email: ADMIN_NOTIFICATION_EMAIL },
+                    to: [{ email: emailCliente, name: nome }],
+                    subject: `[Sicily Palermo Tour] Abbiamo ricevuto il tuo messaggio, ${nome}!`,
+                    htmlContent: htmlCopiaCortesiaCliente
+                })
+            });
+
+            await Promise.all([resAdmin, resCustomer]);
+            return { success: true };
             }
         } catch (e) {
             console.error("Errore invio messaggio contatti Brevo:", e);
