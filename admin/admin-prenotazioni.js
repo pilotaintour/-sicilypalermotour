@@ -24,9 +24,12 @@ function getPrenotazioniAdmin() {
     }
 }
 
-// Salva le prenotazioni nel localStorage
+// Salva le prenotazioni nel localStorage e nel Cloud Firebase
 function savePrenotazioniAdmin(list) {
     localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
+    if (window.cloudDB) {
+        window.cloudDB.salvaPrenotazioniCloud(list);
+    }
 }
 
 // Genera una prenotazione di prova 1-click per testare il sistema
