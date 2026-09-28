@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con Incasso e Sblocco 1-Click Garantito
+ * Sicily Palermo Tour - Admin Dashboard con Incassi Parziali, Penali e Rimborsi a Percentuale
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
@@ -258,7 +258,7 @@ function renderSchedeTransazioniList(list) {
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
                     ${!isIncassata ? `
                         <button type="button" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); padding: 10px 18px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="eseguiIncassoTransazioneTab('${b.id}')">
-                            💰 Incassa Importo (Sposta in Incassate)
+                            💰 Incassa / Penale Parziale (Sposta in Incassate)
                         </button>
                     ` : `
                         <span style="color: #059669; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center;">✅ Importo già incassato su Stripe (€${b.amountCollected || b.total})</span>
@@ -291,12 +291,20 @@ async function eseguiIncassoTransazioneTab(bookingId) {
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
 
-    if (!confirm(`💶 Confermi l'incasso definitivo di €${booking.total || '50.00'} per la prenotazione ${booking.code}?`)) {
-        return;
-    }
+    const totalAutorizzato = parseFloat(booking.total || '50.00');
 
+    const inputVal = prompt(
+        `💶 INCASSO / TRATTENUTA PENALE STRIPE (Totale Autorizzato: €${totalAutorizzato.toFixed(2)}):\n\n` +
+        `• Premere OK (o lasciare ${totalAutorizzato.toFixed(2)}) per incassare il 100%.\n` +
+        `• Oppure digita una cifra diversa (es. ${(totalAutorizzato * 0.5).toFixed(2)} per il 50%, oppure ${(totalAutorizzato * 0.3).toFixed(2)} per la penale del 30%):\n\n` +
+        `L'eventuale importo rimanente verrà automaticamente rilasciato al cliente SENZA alcuna commissione.`,
+        totalAutorizzato.toFixed(2)
+    );
+
+    if (inputVal === null) return;
+
+    const importoVal = parseFloat(inputVal) || totalAutorizzato;
     const intentId = booking.paymentIntentId || '';
-    const importoVal = parseFloat(booking.total) || 50;
 
     if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
         await window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
@@ -317,19 +325,28 @@ async function eseguiRimborsoTransazioneTab(bookingId) {
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
 
-    if (!confirm(`🔄 Confermi lo sblocco della carta ed il rimborso 100% (0€ commissioni) per la prenotazione ${booking.code}?`)) {
-        return;
-    }
+    const totalAutorizzato = parseFloat(booking.total || '50.00');
 
+    const inputVal = prompt(
+        `🔄 SBLOCCO CARTA / RIMBORSO STRIPE (Totale Autorizzato: €${totalAutorizzato.toFixed(2)}):\n\n` +
+        `• Premere OK (o lasciare ${totalAutorizzato.toFixed(2)}) per sbloccare/rimborsare il 100% (0€ commissioni per te).\n` +
+        `• Oppure digita la cifra esatta da rimborsare in Euro (es. ${(totalAutorizzato * 0.5).toFixed(2)} per rimborsare il 50%):`,
+        totalAutorizzato.toFixed(2)
+    );
+
+    if (inputVal === null) return;
+
+    const importoVal = parseFloat(inputVal) || totalAutorizzato;
     const intentId = booking.paymentIntentId || '';
 
     if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
-        await window.stripePayment.sbloccaImportoCarta(intentId, null);
+        await window.stripePayment.sbloccaImportoCarta(intentId, importoVal);
     } else {
-        alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
+        alert(`⚠️ Rimborso/Sblocco di €${importoVal.toFixed(2)} effettuato con successo!`);
     }
 
     booking.status = 'Rimborsata';
+    booking.amountRefunded = importoVal.toFixed(2);
 
     saveTransazioniAdmin(list);
     filtroStatoTransazioniTab = 'RIMBORSATE';
