@@ -72,7 +72,7 @@ class BrevoEmailService {
                     <div style="padding:25px;">
                         <h3 style="color:#0b2545; margin-top:0;">Ciao ${nome}!</h3>
                         <p style="font-size:0.95rem; color:#475569; line-height:1.6;">
-                            Grazie per averci contattato! Abbiamo ricevuto il tuo messaggio e la nostra guida ti risponderà nel più breve tempo possibile.
+                            Grazie per averci contattato! Abbiamo ricevuto il tuo messaggio e un nostro operatore ti risponderà al più presto.
                         </p>
                         <div style="background:#f1f5f9; padding:14px 18px; border-left:4px solid #0b2545; border-radius:8px; margin:18px 0; font-style:italic; font-size:0.9rem; color:#334155;">
                             Riepilogo del tuo messaggio:<br>
