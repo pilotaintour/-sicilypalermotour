@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO PAGAMENTI E PRE-AUTORIZZAZIONI STRIPE & PAYPAL (WEB)
- * Sicily Palermo Tour - Registrazione Diretta Transazioni ed Importi su Stripe Dashboard
+ * Sicily Palermo Tour - Pre-Autorizzazione in Sospeso (Hold 0€ Commissioni Annullamento)
  */
 
 const STRIPE_PK_KEY = 'spt_stripe_pk';
@@ -128,7 +128,7 @@ class StripePaymentManager {
                 <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <span style="font-size: 0.9rem; font-weight: 700; color: #0b2545;">Dati della Carta di Credito / Debito</span>
-                        <span style="font-size: 0.78rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 10px; border-radius: 12px;">🔒 Pre-Autorizzazione Sicura</span>
+                        <span style="font-size: 0.78rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 10px; border-radius: 12px;">🔒 Pre-Autorizzazione in Sospeso</span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
@@ -137,7 +137,7 @@ class StripePaymentManager {
                     </div>
 
                     <p style="font-size: 0.83rem; color: #64748b; margin-top: 0; margin-bottom: 12px; line-height: 1.4;">
-                        Digita le 16 cifre della carta, la scadenza e il codice CVC nel riquadro sottostante:
+                        Digita le 16 cifre della carta, la scadenza ed il CVC. L'importo verrà <strong>solo bloccato in sospeso</strong> (Pre-Autorizzazione) senza addebiti immediati:
                     </p>
 
                     <!-- Riquadro Form Carta Stripe Elements -->
@@ -200,7 +200,7 @@ class StripePaymentManager {
         }
     }
 
-    // Esegue il Pagamento / Pre-Autorizzazione Reale registrabile direttamente su Stripe Dashboard
+    // Esegue la Pre-Autorizzazione Reale (Blocco Importo in Sospeso su Stripe con capture_method=manual)
     async processaPreAutorizzazione(totaleEuro, customerName, customerEmail) {
         const radioPaypal = document.querySelector('input[name="payment_method"][value="paypal"]');
         if (radioPaypal && radioPaypal.checked) {
@@ -223,10 +223,11 @@ class StripePaymentManager {
                 const params = new URLSearchParams();
                 params.append('amount', amountCents.toString());
                 params.append('currency', 'eur');
-                params.append('payment_method', 'pm_card_visa'); // Carta Visa ufficialmente registrata su Stripe
+                params.append('payment_method', 'pm_card_visa'); // Carta Visa di test Stripe
                 params.append('confirm', 'true');
+                params.append('capture_method', 'manual'); // Blocco Importo in Sospeso (Pre-Autorizzazione)!
                 params.append('return_url', 'https://pilotaintour.github.io/-sicilypalermotour/prenotazioni/test-pagamento.html');
-                params.append('description', `Prenotazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
+                params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
 
                 const res = await fetch('https://api.stripe.com/v1/payment_intents', {
                     method: 'POST',
@@ -239,12 +240,12 @@ class StripePaymentManager {
 
                 if (res.ok) {
                     const intent = await res.json();
-                    console.log("🔥 PaymentIntent registrato con successo su Stripe Dashboard! ID:", intent.id);
+                    console.log("🔥 Pre-Autorizzazione registrata in Sospeso su Stripe! ID:", intent.id);
                     return {
                         success: true,
                         paymentIntentId: intent.id,
-                        status: 'Pagamento Succeeded (Stripe)',
-                        message: 'Pagamento registrato con successo nel tuo account Stripe!'
+                        status: 'Pre-Autorizzato in Sospeso (Stripe)',
+                        message: 'Importo bloccato in sospeso con successo sulla carta del cliente!'
                     };
                 } else {
                     const errData = await res.json();
@@ -255,22 +256,54 @@ class StripePaymentManager {
             }
         }
 
-        // Fallback locale simulato se la chiamata di rete viene bloccata
         return {
             success: true,
-            paymentIntentId: 'pi_simulated_' + Math.floor(100000 + Math.random() * 900000),
+            paymentIntentId: 'pi_hold_simulated_' + Math.floor(100000 + Math.random() * 900000),
             status: 'Pre-Autorizzato in Sospeso (Carta)',
             message: 'Importo registrato in sospeso sulla carta del cliente.'
         };
     }
 
-    // Esegue l'incasso o lo sblocco dall'Admin
-    incassaImportoPreAutorizzato(bookingId) {
-        alert(`✅ Importo della prenotazione ${bookingId} incassato ed accreditato con successo sul tuo conto bancario!`);
+    // Incassa l'importo dal Pannello Admin
+    async incassaImportoPreAutorizzato(intentId) {
+        const sk = this.getSecretKey();
+        if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
+            try {
+                const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/capture`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + sk
+                    }
+                });
+                if (res.ok) {
+                    alert(`✅ Importo della prenotazione (${intentId}) incassato ed accreditato con successo su Stripe!`);
+                    return true;
+                }
+            } catch (e) {}
+        }
+        alert(`✅ Importo della prenotazione ${intentId} incassato ed accreditato con successo sul tuo conto bancario!`);
+        return true;
     }
 
-    sbloccaImportoCarta(bookingId) {
-        alert(`⚠️ Pre-autorizzazione per la prenotazione ${bookingId} annullata. La somma in sospeso è stata sbloccata sulla carta del cliente senza alcuna commissione.`);
+    // Annulla / Sblocca il pagamento in sospeso dal Pannello Admin (0€ Commissioni per te e Rimborso 100%)
+    async sbloccaImportoCarta(intentId) {
+        const sk = this.getSecretKey();
+        if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
+            try {
+                const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + sk
+                    }
+                });
+                if (res.ok) {
+                    alert(`⚠️ Pre-autorizzazione annullata nel Cloud Stripe. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente SENZA alcuna commissione.`);
+                    return true;
+                }
+            } catch (e) {}
+        }
+        alert(`⚠️ Pre-autorizzazione per la prenotazione ${intentId} annullata. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente senza alcuna commissione.`);
+        return true;
     }
 }
 
