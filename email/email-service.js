@@ -126,7 +126,6 @@ class BrevoEmailService {
 
             await Promise.all([resAdmin, resCustomer]);
             return { success: true };
-            }
         } catch (e) {
             console.error("Errore invio messaggio contatti Brevo:", e);
         }
