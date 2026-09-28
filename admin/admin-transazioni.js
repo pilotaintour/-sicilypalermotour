@@ -1,10 +1,11 @@
 /**
  * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
- * Sicily Palermo Tour - Admin Dashboard con 1-Click Copy per Codice ed ID Stripe
+ * Sicily Palermo Tour - Admin Dashboard con Filtro Giorni/Date, Itinerari ed 1-Click Copy
  */
 
 let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
 let filtroItinerarioTransazioni = 'TUTTI'; // 'TUTTI' oppure Titolo Itinerario
+let filtroDataTransazioni = 'TUTTI'; // 'TUTTI' oppure Data della Visita
 let ricercaTransazioniText = '';
 
 function copiaTestoAppunti(testo, el) {
@@ -50,8 +51,9 @@ function caricaSezioneTransazioni() {
 
     const list = getTransazioniAdmin();
 
-    // Estrai la lista di tutti i titoli itinerari presenti
+    // Estrai la lista di tutti i titoli itinerari e date uniche presenti
     const itinerariUnici = [...new Set(list.map(b => b.tourTitle).filter(Boolean))].sort();
+    const dateUniche = [...new Set(list.map(b => b.dateReadable || b.dateISO).filter(Boolean))].sort();
 
     const countInAttesa = list.filter(b => !b.status || b.status === 'In attesa' || b.status.includes('Sospeso')).length;
     const countIncassate = list.filter(b => b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'))).length;
@@ -72,6 +74,11 @@ function caricaSezioneTransazioni() {
         }
 
         if (filtroItinerarioTransazioni !== 'TUTTI' && b.tourTitle !== filtroItinerarioTransazioni) {
+            return false;
+        }
+
+        const dateStr = b.dateReadable || b.dateISO;
+        if (filtroDataTransazioni !== 'TUTTI' && dateStr !== filtroDataTransazioni) {
             return false;
         }
 
@@ -121,13 +128,19 @@ function caricaSezioneTransazioni() {
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <!-- FILTRO PER DATA / GIORNO -->
+                    <select onchange="filtroDataTransazioni = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0b2545; font-weight: bold; background: #ffffff;">
+                        <option value="TUTTI" ${filtroDataTransazioni === 'TUTTI' ? 'selected' : ''}>📅 Tutte le Date (${dateUniche.length})</option>
+                        ${dateUniche.map(d => `<option value="${escapeHtmlTransazione(d)}" ${filtroDataTransazioni === d ? 'selected' : ''}>📅 ${escapeHtmlTransazione(d)}</option>`).join('')}
+                    </select>
+
                     <!-- FILTRO PER ITINERARIO -->
                     <select onchange="filtroItinerarioTransazioni = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0b2545; font-weight: bold; background: #ffffff;">
                         <option value="TUTTI" ${filtroItinerarioTransazioni === 'TUTTI' ? 'selected' : ''}>🏛️ Tutti gli Itinerari (${itinerariUnici.length})</option>
                         ${itinerariUnici.map(t => `<option value="${escapeHtmlTransazione(t)}" ${filtroItinerarioTransazioni === t ? 'selected' : ''}>🏛️ ${escapeHtmlTransazione(t)}</option>`).join('')}
                     </select>
 
-                    <input type="text" placeholder="🔎 Cerca per Codice, Nome..." value="${escapeHtmlTransazione(ricercaTransazioniText)}" oninput="ricercaTransazioniText = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; width: 200px;">
+                    <input type="text" placeholder="🔎 Cerca per Codice, Nome..." value="${escapeHtmlTransazione(ricercaTransazioniText)}" oninput="ricercaTransazioniText = this.value; caricaSezioneTransazioni();" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; width: 190px;">
                 </div>
             </div>
 
