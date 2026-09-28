@@ -83,6 +83,7 @@ function verificaStatoAutenticazione() {
 
         if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
         if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+        if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
         if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
     } else {
         if (loginSection) loginSection.classList.remove('hidden');
@@ -95,6 +96,7 @@ function verificaStatoAutenticazione() {
 function mostraSezione(sezioneId, btnElement) {
     const sezioneItinerari = document.getElementById('sezione-itinerari');
     const sezionePrenotazioni = document.getElementById('sezione-prenotazioni');
+    const sezioneTransazioni = document.getElementById('sezione-transazioni');
     const sezioneImpostazioni = document.getElementById('sezione-impostazioni');
     const sezioneRecensioni = document.getElementById('sezione-recensioni');
     const tabs = document.querySelectorAll('.tab-btn');
@@ -107,6 +109,7 @@ function mostraSezione(sezioneId, btnElement) {
 
     if (sezioneItinerari) sezioneItinerari.classList.add('hidden');
     if (sezionePrenotazioni) sezionePrenotazioni.classList.add('hidden');
+    if (sezioneTransazioni) sezioneTransazioni.classList.add('hidden');
     if (sezioneImpostazioni) sezioneImpostazioni.classList.add('hidden');
     if (sezioneRecensioni) sezioneRecensioni.classList.add('hidden');
 
@@ -116,6 +119,9 @@ function mostraSezione(sezioneId, btnElement) {
     } else if (sezioneId === 'sezione-prenotazioni') {
         if (sezionePrenotazioni) sezionePrenotazioni.classList.remove('hidden');
         if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
+    } else if (sezioneId === 'sezione-transazioni') {
+        if (sezioneTransazioni) sezioneTransazioni.classList.remove('hidden');
+        if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
     } else if (sezioneId === 'sezione-impostazioni') {
         if (sezioneImpostazioni) sezioneImpostazioni.classList.remove('hidden');
     } else if (sezioneId === 'sezione-recensioni') {

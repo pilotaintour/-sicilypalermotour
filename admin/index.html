@@ -53,6 +53,7 @@
             <div class="admin-tabs">
                 <button class="tab-btn active" id="tab-itinerari-btn" onclick="mostraSezione('sezione-itinerari', this)">📋 Gestione Itinerari</button>
                 <button class="tab-btn" id="tab-prenotazioni-btn" onclick="mostraSezione('sezione-prenotazioni', this)">📥 Prenotazioni (<span id="cnt-prenotazioni-badge">0</span>)</button>
+                <button class="tab-btn" id="tab-transazioni-btn" onclick="mostraSezione('sezione-transazioni', this)">💳 Transazioni & Incassi (<span id="cnt-transazioni-badge">0</span>)</button>
                 <button class="tab-btn" id="tab-impostazioni-btn" onclick="mostraSezione('sezione-impostazioni', this)">⚙️ Impostazioni Sito</button>
                 <button class="tab-btn" id="tab-recensioni-btn" onclick="mostraSezione('sezione-recensioni', this)">⭐ Gestione Recensioni</button>
             </div>
@@ -317,6 +318,11 @@
                 </div>
             </div>
 
+            <!-- SEZIONE 3: Transazioni & Incassi Stripe -->
+            <div id="sezione-transazioni" class="hidden">
+                <!-- Popolato via JS da admin-transazioni.js -->
+            </div>
+
             <!-- SEZIONE 4: Gestione Recensioni -->
             <div id="sezione-recensioni" class="card hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -552,6 +558,7 @@
     <script src="admin-itinerari.js"></script>
     <script src="admin-archivio.js"></script>
     <script src="admin-prenotazioni.js"></script>
+    <script src="admin-transazioni.js"></script>
     <script src="admin-impostazioni.js"></script>
     <script src="admin-recensioni.js"></script>
     <script src="admin.js"></script>

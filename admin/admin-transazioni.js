@@ -1,0 +1,278 @@
+/**
+ * MODULO AUTONOMO DEDICATO: Gestione Transazioni, Incassi & Rimborsi Stripe
+ * Sicily Palermo Tour - Admin Dashboard
+ */
+
+let filtroStatoTransazioniTab = 'IN_ATTESA'; // 'IN_ATTESA', 'INCASSATE', 'RIMBORSATE', 'TUTTE'
+let ricercaTransazioniText = '';
+
+function getTransazioniAdmin() {
+    try {
+        const saved = localStorage.getItem('spt_bookings') || '[]';
+        return JSON.parse(saved);
+    } catch (e) {
+        console.error("Errore lettura transazioni:", e);
+        return [];
+    }
+}
+
+function saveTransazioniAdmin(list) {
+    localStorage.setItem('spt_bookings', JSON.stringify(list));
+    if (window.cloudDB) {
+        window.cloudDB.salvaPrenotazioniCloud(list);
+    }
+}
+
+function caricaSezioneTransazioni() {
+    const container = document.getElementById('sezione-transazioni');
+    if (!container) return;
+
+    const list = getTransazioniAdmin();
+
+    const countInAttesa = list.filter(b => !b.status || b.status === 'In attesa' || b.status.includes('Sospeso')).length;
+    const countIncassate = list.filter(b => b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'))).length;
+    const countRimborsate = list.filter(b => b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'))).length;
+
+    // Aggiorna badge nel tasto della barra principale
+    const badgeTab = document.getElementById('cnt-transazioni-badge');
+    if (badgeTab) badgeTab.textContent = countInAttesa;
+
+    let filtrate = list.filter(b => {
+        const statusStr = b.status || 'In attesa';
+        if (filtroStatoTransazioniTab === 'IN_ATTESA') {
+            if (statusStr !== 'In attesa' && !statusStr.includes('Sospeso')) return false;
+        } else if (filtroStatoTransazioniTab === 'INCASSATE') {
+            if (statusStr !== 'Incassata' && statusStr !== 'Confermata' && !statusStr.includes('Incassat')) return false;
+        } else if (filtroStatoTransazioniTab === 'RIMBORSATE') {
+            if (statusStr !== 'Rimborsata' && statusStr !== 'Cancellata' && !statusStr.includes('Rimborsat')) return false;
+        }
+
+        if (ricercaTransazioniText) {
+            const term = ricercaTransazioniText.toLowerCase();
+            const matchCode = (b.code || '').toLowerCase().includes(term);
+            const matchName = (b.customerName || '').toLowerCase().includes(term);
+            const matchEmail = (b.customerEmail || '').toLowerCase().includes(term);
+            const matchStripe = (b.paymentIntentId || '').toLowerCase().includes(term);
+            return matchCode || matchName || matchEmail || matchStripe;
+        }
+        return true;
+    });
+
+    let html = `
+        <div class="card" style="background: #ffffff; border-radius: 16px; padding: 22px; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 2px solid #0b2545; padding-bottom: 14px; margin-bottom: 20px;">
+                <div>
+                    <h2 style="color: #0b2545; margin: 0; font-size: 1.5rem; font-weight: 800;">
+                        💳 Gestione Transazioni & Incassi Stripe
+                    </h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">
+                        Gestisci pre-autorizzazioni in sospeso, incassi accreditati e rimborsi sblocco carta a 0€ commissioni.
+                    </p>
+                </div>
+
+                <div>
+                    <input type="text" placeholder="🔎 Cerca per Codice, Nome o ID Stripe..." value="${escapeHtmlTransazione(ricercaTransazioniText)}" oninput="ricercaTransazioniText = this.value; caricaSezioneTransazioni();" style="padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; width: 260px;">
+                </div>
+            </div>
+
+            <!-- SCHERMATE CARTELE E CARTE TAB DELLE TRANSAZIONI -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px;">
+
+                <div onclick="filtroStatoTransazioniTab = 'IN_ATTESA'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? 'linear-gradient(135deg, #0b2545, #134074)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? '#ffffff' : '#0f172a'}; border: 2px solid #0b2545; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">⏳ IN ATTESA (Sospese)</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countInAttesa} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
+                    <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Pre-Autorizzazioni bloccate su carta</div>
+                </div>
+
+                <div onclick="filtroStatoTransazioniTab = 'INCASSATE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'INCASSATE' ? 'linear-gradient(135deg, #059669, #10b981)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'INCASSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #059669; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">🟢 INCASSATE (Accreditate)</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countIncassate} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
+                    <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Transazioni accreditate su Stripe</div>
+                </div>
+
+                <div onclick="filtroStatoTransazioniTab = 'RIMBORSATE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? 'linear-gradient(135deg, #dc2626, #ef4444)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #dc2626; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">🔴 RIMBORSATE / SBLOCCATE</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countRimborsate} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
+                    <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Sbloccate al 100% (0€ commissioni)</div>
+                </div>
+
+                <div onclick="filtroStatoTransazioniTab = 'TUTTE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'TUTTE' ? '#334155' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'TUTTE' ? '#ffffff' : '#0f172a'}; border: 2px solid #334155; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">📊 TUTTE LE TRANSAZIONI</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${list.length} <span style="font-size: 0.9rem; font-weight: normal;">totali</span></div>
+                    <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Archivio completo transazioni</div>
+                </div>
+
+            </div>
+
+            <!-- ELENCO SCHEDE TRANSAZIONE -->
+            <div id="lista-transazioni-cards">
+                ${renderSchedeTransazioniList(filtrate)}
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+function renderSchedeTransazioniList(list) {
+    if (list.length === 0) {
+        return `
+            <div style="text-align: center; padding: 40px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 1.05rem; margin: 0;">Nessuna transazione presente in questa cartella.</p>
+            </div>
+        `;
+    }
+
+    return list.map(b => {
+        const isIncassata = b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat'));
+        const isRimborsata = b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'));
+
+        const statusLabel = isIncassata ? '🟢 Incassata (Accreditata)' : (isRimborsata ? '🔴 Rimborsata / Sbloccata' : '⏳ In Attesa (Pre-Autorizzata)');
+        const statusBg = isIncassata ? '#d1fae5; color:#065f46;' : (isRimborsata ? '#fee2e2; color:#991b1b;' : '#fef3c7; color:#92400e;');
+        const borderColor = isIncassata ? '#10b981' : (isRimborsata ? '#ef4444' : '#0369a1');
+
+        return `
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 6px solid ${borderColor}; border-radius: 14px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+
+                <!-- INTESTAZIONE BARRA REGISTRAZIONE TRANSAZIONE -->
+                <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">🔖 Codice Prenotazione:</span>
+                        <code style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd; font-size: 1rem; color: #0b2545;">${escapeHtmlTransazione(b.code || '#SPT-BOOK')}</code>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">🕒 Data e Ora Transazione:</span>
+                        <strong style="color: #0b2545;">${escapeHtmlTransazione(b.createdAt || 'Registrato il ' + new Date().toLocaleString('it-IT'))}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">💳 ID Stripe:</span>
+                        <code style="font-family: monospace; font-size: 0.85rem; background: #ffffff; padding: 3px 8px; border-radius: 6px; border: 1px solid #bae6fd;">${escapeHtmlTransazione(b.paymentIntentId || 'pi_stripe')}</code>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+                    <h3 style="color: #0b2545; margin: 0; font-size: 1.2rem; font-weight: 800;">
+                        🏛️ ${escapeHtmlTransazione(b.tourTitle || 'Tour Palermo')}
+                    </h3>
+                    <span style="font-weight: 800; font-size: 0.88rem; padding: 6px 14px; border-radius: 20px; background: ${statusBg}; border: 1px solid rgba(0,0,0,0.05);">
+                        ${statusLabel}
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.92rem; color: #334155; margin-bottom: 16px; background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <div>📅 <strong>Data Visita:</strong> ${escapeHtmlTransazione(b.dateReadable || b.dateISO || 'N/D')}</div>
+                    <div>⏰ <strong>Orario:</strong> ${escapeHtmlTransazione(b.time || '09:30')}</div>
+                    <div>🎟️ <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #0b2545;">💰 Totale Autorizzato: €${escapeHtmlTransazione(b.total || '0.00')}</div>
+                </div>
+
+                <div style="font-size: 0.92rem; color: #475569; margin-bottom: 16px;">
+                    👤 <strong>Referente:</strong> ${escapeHtmlTransazione(b.customerName)} | 📧 ${escapeHtmlTransazione(b.customerEmail)} | 📞 ${escapeHtmlTransazione(b.customerPhone)}
+                    ${b.billingAddress ? `<div style="margin-top: 4px;">🏠 <strong>Residenza/Fatturazione:</strong> ${escapeHtmlTransazione(b.billingAddress)}</div>` : ''}
+                </div>
+
+                <!-- PULSANTI AZIONE DI TRASFERIMENTO NELLE CARTELLE INCASSATE / RIMBORSATE -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+                    ${!isIncassata ? `
+                        <button type="button" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); padding: 10px 18px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="eseguiIncassoTransazioneTab('${b.id}')">
+                            💰 Incassa Importo (Sposta in Incassate)
+                        </button>
+                    ` : `
+                        <span style="color: #059669; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center;">✅ Importo già incassato su Stripe (€${b.amountCollected || b.total})</span>
+                    `}
+
+                    ${!isRimborsata ? `
+                        <button type="button" class="btn-secondary" style="background: #dc2626; color: white; padding: 10px 18px; font-size: 0.9rem; font-weight: bold; border-radius: 10px; border: none;" onclick="eseguiRimborsoTransazioneTab('${b.id}')">
+                            🔄 Rimborso / Sblocca Carta (Sposta in Rimborsate)
+                        </button>
+                    ` : `
+                        <span style="color: #dc2626; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center;">🔴 Transazione rimborsata / sbloccata</span>
+                    `}
+
+                    <button type="button" class="btn-primary" style="background: #25d366; padding: 10px 16px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="apriChatWhatsAppCliente('${escapeHtmlTransazione(b.customerPhone)}', '${escapeHtmlTransazione(b.customerName)}', '${escapeHtmlTransazione(b.tourTitle)}')">
+                        💬 WhatsApp
+                    </button>
+
+                    <button type="button" class="btn-danger" style="padding: 10px 16px; font-size: 0.9rem; font-weight: bold; border-radius: 10px;" onclick="eliminaTransazioneTab('${b.id}')">
+                        🗑️ Elimina
+                    </button>
+                </div>
+
+            </div>
+        `;
+    }).join('');
+}
+
+function eseguiIncassoTransazioneTab(bookingId) {
+    let list = getTransazioniAdmin();
+    const booking = list.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const intentId = booking.paymentIntentId || 'pi_test';
+    const totalAutorizzato = booking.total || '50.00';
+
+    const importoInput = prompt(`💶 Incasso Pagamento Stripe (Totale Autorizzato: €${totalAutorizzato}):\n\nInserisci l'importo esatto che desideri incassare in Euro (es. ${totalAutorizzato} per il 100%, oppure un importo minore come 30.00 se fai uno sconto parziale):\n\nL'eventuale differenza rimanente verrà rilasciata subito al cliente con 0€ commissioni.`, totalAutorizzato);
+
+    if (importoInput === null) return;
+
+    const importoVal = parseFloat(importoInput) || parseFloat(totalAutorizzato);
+
+    if (window.stripePayment) {
+        window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
+    } else {
+        alert(`✅ Importo di €${importoVal.toFixed(2)} incassato ed accreditato con successo su Stripe!`);
+    }
+
+    booking.status = 'Incassata';
+    booking.amountCollected = importoVal.toFixed(2);
+
+    saveTransazioniAdmin(list);
+    filtroStatoTransazioniTab = 'INCASSATE'; // Sposta automaticamente la vista nella cartella INCASSATE!
+    caricaSezioneTransazioni();
+}
+
+function eseguiRimborsoTransazioneTab(bookingId) {
+    let list = getTransazioniAdmin();
+    const booking = list.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const intentId = booking.paymentIntentId || 'pi_test';
+    const totalAutorizzato = booking.total || '50.00';
+
+    const importoInput = prompt(`🔄 Sblocco Carta / Rimborso Parziale Stripe:\n\nScegli quanto rimborsare o sbloccare al cliente in Euro:\n• Digita '${totalAutorizzato}' o lascia VUOTO per sbloccare/annullare al 100% (0€ commissioni per te).\n• Digita una somma (es. 20.00) per un rimborso parziale.`, totalAutorizzato);
+
+    if (importoInput === null) return;
+
+    const importoVal = parseFloat(importoInput) || 0;
+
+    if (window.stripePayment) {
+        window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
+    } else {
+        alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
+    }
+
+    booking.status = 'Rimborsata';
+
+    saveTransazioniAdmin(list);
+    filtroStatoTransazioniTab = 'RIMBORSATE'; // Sposta automaticamente la vista nella cartella RIMBORSATE!
+    caricaSezioneTransazioni();
+}
+
+function eliminaTransazioneTab(bookingId) {
+    if (confirm("Sei sicuro di voler eliminare questa transazione dall'archivio?")) {
+        let list = getTransazioniAdmin();
+        list = list.filter(b => b.id !== bookingId);
+        saveTransazioniAdmin(list);
+        caricaSezioneTransazioni();
+    }
+}
+
+function escapeHtmlTransazione(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
