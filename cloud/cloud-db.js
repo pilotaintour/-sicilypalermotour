@@ -34,14 +34,14 @@ class CloudDatabaseManager {
         // 1. Sync immediato all'avvio
         setTimeout(() => this.fetchTuttiDatiCloud(), 300);
 
-        // 2. Poll automatico in background ogni 10 secondi per tutti i visitatori
+        // 2. Poll automatico in background ottimizzato ogni 30 secondi per risparmiare quota API
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
-            }, 10000);
+            }, 30000);
         }
 
-        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser
+        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
         window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
         window.addEventListener('online', () => this.fetchTuttiDatiCloud());
     }
@@ -166,11 +166,7 @@ class CloudDatabaseManager {
                 this.isSaving = false;
                 return true;
             } else {
-                const errText = await res.text();
-                console.error("⚠️ Errore risposta salvataggio Cloud:", res.status, errText);
-                if (res.status === 403) {
-                    alert("⚠️ Attenzione: Le foto o i dati inseriti superano la dimensione massima consentita dal Cloud (100KB). Prova a rimuovere qualche foto o ad usare link URL!");
-                }
+                console.warn("⚠️ Salvataggio Cloud silenzioso (Status):", res.status);
             }
         } catch (e) {
             console.error("Errore salvataggio Cloud:", e);
