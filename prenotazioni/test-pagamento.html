@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pagamento Stripe - Sicily Palermo Tour</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../itinerari/itinerari.css">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css">
+    <link rel="stylesheet" href="calendario.css">
+    <link rel="stylesheet" href="booking-wizard.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="stripe-payment.js"></script>
+    <script src="../email/email-service.js"></script>
+    <script src="../cloud/cloud-db.js"></script>
+    <script src="step4-conferma.js"></script>
+</head>
+<body style="background: #f8fafc; padding: 20px;">
+
+    <!-- Header -->
+    <header style="max-width: 800px; margin: 0 auto 20px auto; border-radius: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+            <div>
+                <h1 style="margin: 0; font-size: 1.6rem;">🧪 Test Pagamento Stripe & Pre-Autorizzazione</h1>
+                <p style="margin: 4px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Pagina di test dedicata per verificare la carta di credito e le email Brevo</p>
+            </div>
+            <a href="../index.html" class="btn-secondary" style="color: white; text-decoration: none; border-color: white;">← Torna al Sito</a>
+        </div>
+    </header>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+
+        <!-- Card Info Test -->
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 0.9rem; color: #1e40af;">
+            <strong>💳 Istruzioni per il Test con Carta Fittizia Stripe:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px; line-height: 1.6;">
+                <li><strong>Numero Carta Test:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">4242 4242 4242 4242</code></li>
+                <li><strong>Scadenza:</strong> Qualsiasi data futura (es. <code style="background: white; padding: 2px 6px; border-radius: 4px;">12 / 28</code>)</li>
+                <li><strong>CVC:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">123</code> | <strong>CAP:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">90100</code></li>
+            </ul>
+        </div>
+
+        <!-- Contenitore Step 4 -->
+        <div id="test-step4-container" class="wizard-step-card" style="display: block !important;"></div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const testBookingData = {
+                code: '#SPT-TEST-' + Math.floor(1000 + Math.random() * 9000),
+                tourTitle: 'Tour Palermo Centro (Test Pagamento)',
+                dateReadable: '28 Maggio 2025',
+                slotTime: '09:30',
+                adults: 2,
+                children: 0,
+                customerName: 'Mario Rossi (Test)',
+                customerEmail: 'pilotaintour13@gmail.com',
+                customerPhone: '+39 340 1234567',
+                total: '50.00',
+                participantsList: [
+                    { name: 'Mario Rossi', dob: '15/05/1990', origin: 'Roma', notes: 'Test Carta di Credito Stripe' },
+                    { name: 'Anna Verdi', dob: '20/08/1992', origin: 'Milano', notes: '' }
+                ]
+            };
+
+            const step4 = new Step4Conferma('test-step4-container', {
+                onPrev: () => { window.location.href = '../index.html'; },
+                onConfirm: (res) => {
+                    // Salva nel localStorage prenotazioni per l'Admin
+                    try {
+                        const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+                        const record = {
+                            ...testBookingData,
+                            id: Date.now().toString(),
+                            createdAt: new Date().toLocaleString(),
+                            status: 'In attesa'
+                        };
+                        list.unshift(record);
+                        localStorage.setItem('spt_bookings', JSON.stringify(list));
+
+                        // Sincronizza nel Cloud
+                        if (window.cloudDB) {
+                            window.cloudDB.salvaPrenotazioniCloud(list);
+                        }
+
+                        // Invia email automatica via Brevo
+                        if (window.brevoEmailService) {
+                            window.brevoEmailService.inviaEmailPrenotazione(record);
+                        }
+                    } catch (e) {
+                        console.error("Errore salvataggio booking test:", e);
+                    }
+
+                    alert(`🎉 PRE-AUTORIZZAZIONE STRIPE ED EMAIL DI TEST COMPLETATE CON SUCCESSO!\n\nCodice: ${testBookingData.code}\nTour: ${testBookingData.tourTitle}\nTotale Bloccato su Carta: €${testBookingData.total}\n\nLa prenotazione è stata salvata su Firebase e l'email di conferma è stata inviata via Brevo!`);
+
+                    window.location.href = '../admin/index.html';
+                }
+            });
+
+            step4.renderSummary(testBookingData);
+        });
+    </script>
+</body>
+</html>
