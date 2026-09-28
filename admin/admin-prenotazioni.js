@@ -564,16 +564,14 @@ async function incassaPagamentoStripeAdmin(bookingId) {
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
 
-    const intentId = booking.paymentIntentId || 'pi_test';
-    const totalAutorizzato = booking.total || '50.00';
+    if (!confirm(`💶 Confermi l'incasso definitivo di €${booking.total || '50.00'} per la prenotazione ${booking.code}?`)) {
+        return;
+    }
 
-    const importoInput = prompt(`💶 Incasso Pagamento Stripe (Totale Autorizzato: €${totalAutorizzato}):\n\nInserisci l'importo esatto che desideri incassare in Euro (es. ${totalAutorizzato} per il 100%, oppure un importo minore come 30.00 se fai uno sconto parziale):\n\nL'eventuale differenza rimanente verrà rilasciata subito al cliente con 0€ commissioni.`, totalAutorizzato);
+    const intentId = booking.paymentIntentId || '';
+    const importoVal = parseFloat(booking.total) || 50;
 
-    if (importoInput === null) return;
-
-    const importoVal = parseFloat(importoInput) || parseFloat(totalAutorizzato);
-
-    if (window.stripePayment) {
+    if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
         await window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
     } else {
         alert(`✅ Importo di €${importoVal.toFixed(2)} incassato ed accreditato con successo su Stripe!`);
@@ -592,17 +590,14 @@ async function rimborsaPagamentoStripeAdmin(bookingId) {
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
 
-    const intentId = booking.paymentIntentId || 'pi_test';
-    const totalAutorizzato = booking.total || '50.00';
+    if (!confirm(`🔄 Confermi lo sblocco della carta ed il rimborso 100% (0€ commissioni) per la prenotazione ${booking.code}?`)) {
+        return;
+    }
 
-    const importoInput = prompt(`🔄 Sblocco Carta / Rimborso Parziale Stripe:\n\nScegli quanto rimborsare o sbloccare al cliente in Euro:\n• Digita '${totalAutorizzato}' o lascia VUOTO per sbloccare/annullare al 100% (0€ commissioni per te).\n• Digita una somma (es. 20.00) per un rimborso parziale.`, totalAutorizzato);
+    const intentId = booking.paymentIntentId || '';
 
-    if (importoInput === null) return;
-
-    const importoVal = parseFloat(importoInput) || 0;
-
-    if (window.stripePayment) {
-        await window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
+    if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
+        await window.stripePayment.sbloccaImportoCarta(intentId, null);
     } else {
         alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
     }
