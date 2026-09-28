@@ -34,11 +34,11 @@ class CloudDatabaseManager {
         // 1. Sync immediato all'avvio
         setTimeout(() => this.fetchTuttiDatiCloud(), 300);
 
-        // 2. Poll automatico in background ottimizzato ogni 30 secondi per risparmiare quota API
+        // 2. Poll automatico veloci in background ogni 12 secondi
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
-            }, 30000);
+            }, 12000);
         }
 
         // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
