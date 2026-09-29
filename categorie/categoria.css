@@ -1,57 +1,68 @@
-/* STILI GRAFICI PAGINE DEDICATE CATEGORIE - Sicily Palermo Tour */
+/* STILI GRAFICI PAGINE DEDICATE CATEGORIE - FULL PAGE BACKGROUND ART */
 
 :root {
     --primary-navy: #0b2545;
     --secondary-navy: #134074;
     --accent-gold: #d97706;
-    --bg-light: #f8fafc;
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
 }
 
-body {
+/* SFONDO FISSO A TUTTO SCHERMO PER L'INTERA PAGINA (ALLE SPALLE DI TUTTO) */
+body.full-bg-page {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f1f5f9;
     color: #0f172a;
-}
-
-/* HERO COVER CATEGORIA CON SFONDO ATMOSFERICO */
-.category-hero {
-    position: relative;
-    min-height: 420px;
+    background-color: #0b2545;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    box-sizing: border-box;
+    background-attachment: fixed; /* L'immagine rimane fissa alle spalle mentre scorri! */
+    position: relative;
 }
 
-.category-hero-overlay {
-    position: absolute;
+/* OVERLAY SFUMATO PER RENDERE L'IMMAGINE DI SFONDO ELEGANTE E LEGGIBILE */
+body.full-bg-page::before {
+    content: '';
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg, rgba(11, 37, 69, 0.75) 0%, rgba(15, 23, 42, 0.88) 100%);
-    backdrop-filter: blur(3px);
+    background: linear-gradient(180deg, rgba(11, 37, 69, 0.82) 0%, rgba(15, 23, 42, 0.88) 100%);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* HEADER E NAV TRASPARENTI CON VETRO SFUMATO */
+header, nav {
+    position: relative;
+    z-index: 10;
+}
+
+/* HERO COVER CATEGORIA */
+.category-hero {
+    position: relative;
+    z-index: 5;
+    padding: 60px 20px 30px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .category-hero-content {
     position: relative;
-    z-index: 2;
+    z-index: 5;
     max-width: 850px;
     text-align: center;
     color: #ffffff;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    padding: 35px 25px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .category-badge {
@@ -60,7 +71,7 @@ body {
     color: #ffffff;
     font-size: 0.88rem;
     font-weight: 800;
-    padding: 6px 16px;
+    padding: 6px 18px;
     border-radius: 20px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -69,18 +80,18 @@ body {
 }
 
 .category-title {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
     font-weight: 900;
     margin: 10px 0;
     letter-spacing: -0.5px;
     line-height: 1.2;
     color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
 }
 
 .category-description {
     font-size: 1.1rem;
-    line-height: 1.6;
+    line-height: 1.65;
     opacity: 0.95;
     max-width: 720px;
     margin: 14px auto 20px auto;
@@ -96,42 +107,45 @@ body {
 }
 
 .stat-pill {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: #ffffff;
-    padding: 6px 14px;
+    padding: 7px 16px;
     border-radius: 12px;
     font-size: 0.88rem;
     font-weight: 700;
 }
 
-/* SEZIONE TOUR CATEGORIA */
+/* SEZIONE PRINCIPALE CON CARDE TRASPARENTI GLASSMORPHISM */
 .category-main-container {
     max-width: 1200px;
-    margin: -40px auto 60px auto;
+    margin: 20px auto 60px auto;
     position: relative;
     z-index: 10;
     padding: 0 20px;
 }
 
 .category-section-card {
-    background: #ffffff;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
     padding: 30px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     box-shadow: var(--card-shadow);
+    backdrop-filter: blur(16px);
 }
 
 /* RESPONSIVE DESKTOP / MOBILE */
 @media (max-width: 768px) {
     .category-hero {
-        min-height: 350px;
-        padding: 40px 15px;
+        padding: 30px 15px 15px 15px;
     }
     .category-title {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
     }
     .category-description {
         font-size: 0.95rem;
+    }
+    .category-section-card {
+        padding: 20px;
     }
 }
