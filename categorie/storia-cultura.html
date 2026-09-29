@@ -9,11 +9,7 @@
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="categoria.css">
 </head>
-<body class="full-bg-page">
-
-    <!-- STRATI PER DISSOLVENZA SFONDI D'EPOCA CON PRELOADER ANTI-BUCHI -->
-    <div id="bg-layer-1" class="bg-slideshow-layer active" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg');"></div>
-    <div id="bg-layer-2" class="bg-slideshow-layer inactive" style="background-image: url('https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1920&q=80');"></div>
+<body class="full-bg-page" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg');">
 
     <!-- Header e Navigazione con Selettore Multilingua -->
     <header>
@@ -150,61 +146,6 @@
                     caricaTourStoria();
                 });
             }
-
-            // Collezione Dipinti d'Epoca del XIX Secolo (Pandolfini Fine Art Style) con Preloader Anti-Buchi
-            const sfondiQuadriStorici = [
-                'https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg',
-                'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1920&q=80',
-                'https://images.unsplash.com/photo-1578926375605-eaf7559b1458?auto=format&fit=crop&w=1920&q=80',
-                'https://images.unsplash.com/photo-1577720580479-7d839d829c73?auto=format&fit=crop&w=1920&q=80'
-            ];
-
-            const fallbackUrl = 'https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg';
-
-            let indexSfondoCurrent = 0;
-            let layerAttivoNum = 1;
-
-            function caricaSfondoConPreload(nextImgUrl) {
-                const imgPreloader = new Image();
-                imgPreloader.onload = () => {
-                    applicaSfondoSuLayer(nextImgUrl);
-                };
-                imgPreloader.onerror = () => {
-                    applicaSfondoSuLayer(fallbackUrl);
-                };
-                imgPreloader.src = nextImgUrl;
-            }
-
-            function applicaSfondoSuLayer(validUrl) {
-                const layer1 = document.getElementById('bg-layer-1');
-                const layer2 = document.getElementById('bg-layer-2');
-
-                if (layerAttivoNum === 1) {
-                    layer2.style.backgroundImage = `url('${validUrl}')`;
-                    layer2.classList.remove('inactive');
-                    layer2.classList.add('active');
-                    layer1.classList.remove('active');
-                    layer1.classList.add('inactive');
-                    layerAttivoNum = 2;
-                } else {
-                    layer1.style.backgroundImage = `url('${validUrl}')`;
-                    layer1.classList.remove('inactive');
-                    layer1.classList.add('active');
-                    layer2.classList.remove('active');
-                    layer2.classList.add('inactive');
-                    layerAttivoNum = 1;
-                }
-            }
-
-            function ruotaSfondoQuadroStorico() {
-                if (sfondiQuadriStorici.length <= 1) return;
-                indexSfondoCurrent = (indexSfondoCurrent + 1) % sfondiQuadriStorici.length;
-                const targetUrl = sfondiQuadriStorici[indexSfondoCurrent];
-                caricaSfondoConPreload(targetUrl);
-            }
-
-            // Cambia lo sfondo ad olio d'epoca ogni 9 secondi con dissolvenza lenta da 2.5s (Zero buchi neri)
-            setInterval(ruotaSfondoQuadroStorico, 9000);
         });
     </script>
 </body>
