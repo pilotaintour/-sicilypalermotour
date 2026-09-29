@@ -1,14 +1,14 @@
-/* Stili Generali CSS per Sicily Palermo Tour */
+/* STILI GENERALI CSS PER SICILY PALERMO TOUR - LUXURY EDITION */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background-color: #f9f9f9;
-    color: #333;
+    background-color: #f8fafc;
+    color: #0f172a;
     line-height: 1.6;
 }
 
@@ -16,11 +16,11 @@ body {
     display: none !important;
 }
 
-/* Header Hero con Foto Standard Istantanea Cattedrale */
+/* HEADER HERO PANORAMICA CON FOTO AD ALTA RISOLUZIONE */
 header#home {
     position: relative;
-    height: 85vh;
-    min-height: 580px;
+    height: 88vh;
+    min-height: 620px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -29,7 +29,7 @@ header#home {
     text-align: center;
     padding: 0 20px;
     overflow: hidden;
-    background: url('cattedrale.jpg') no-repeat center center / cover;
+    background: #0b2545;
 }
 
 .hero-bg-slider {
@@ -39,7 +39,7 @@ header#home {
     width: 100%;
     height: 100%;
     z-index: 1;
-    background-color: #0f172a;
+    background-color: #0b2545;
 }
 
 .hero-slide {
@@ -56,7 +56,7 @@ header#home {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 35%;
+    object-position: center 25%;
 }
 
 .hero-slide.active {
@@ -69,62 +69,89 @@ header#home {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: linear-gradient(180deg, rgba(11, 37, 69, 0.45) 0%, rgba(15, 23, 42, 0.70) 100%);
     z-index: 2;
 }
 
 .hero-content {
     position: relative;
     z-index: 3;
+    max-width: 850px;
     width: 100%;
+    padding: 35px 25px;
+    background: rgba(11, 37, 69, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    margin: 0 auto;
 }
 
 header h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    font-size: 3.4rem;
+    font-weight: 900;
+    font-family: 'Playfair Display', Georgia, serif;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #fef08a 40%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    letter-spacing: -0.5px;
 }
 
 header p {
-    font-size: 1.5rem;
-    max-width: 600px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    font-size: 1.25rem;
+    max-width: 720px;
+    margin: 0 auto 20px auto;
+    color: #f8fafc;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    font-weight: 500;
+    line-height: 1.6;
 }
 
+/* BARRA DI NAVIGAZIONE STICKY EGANTE BLU NAVY */
 nav {
-    background-color: #fff;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #0b2545;
+    padding: 14px 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.2);
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 3px solid #d97706;
 }
 
 nav ul {
     display: flex;
     justify-content: center;
+    align-items: center;
     list-style: none;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 nav ul li a {
     text-decoration: none;
-    color: #e67e22;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: color 0.3s;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
 }
 
 nav ul li a:hover {
-    color: #d35400;
+    color: #f59e0b;
+    transform: translateY(-1px);
 }
 
 nav ul li a.nav-admin {
-    color: #1b4f72;
-    background-color: #e2e8f0;
-    padding: 5px 12px;
-    border-radius: 15px;
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
 }
 
 .container {
@@ -138,92 +165,67 @@ nav ul li a.nav-admin {
     margin-bottom: 30px;
 }
 
-.intro h2 {
-    font-size: 2.2rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
+/* BOTTONI FILTRO CATEGORIA */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
 }
 
-/* Pulsanti Generici */
-.btn-tour {
-    display: inline-block;
-    background-color: #e67e22;
-    color: white;
-    padding: 11px 20px;
-    text-decoration: none;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-    font-size: 0.98rem;
-    font-weight: 600;
-    text-align: center;
-    transition: background 0.3s;
-}
-
-.btn-tour:hover {
-    background-color: #d35400;
-}
-
-.btn-secondary {
-    background-color: #64748b;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
+.filter-btn {
+    padding: 10px 20px;
+    border: 1.5px solid #cbd5e1;
+    background: #ffffff;
+    color: #0b2545;
+    font-weight: 700;
     font-size: 0.95rem;
-    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
-.btn-secondary:hover {
-    background-color: #475569;
+.filter-btn:hover, .filter-btn.active {
+    background: linear-gradient(135deg, #0b2545, #134074);
+    color: #ffffff;
+    border-color: #0b2545;
+    box-shadow: 0 4px 12px rgba(11, 37, 69, 0.25);
 }
 
-/* Sezione Contatti */
-.contact-section {
-    background-color: #fff;
-    padding: 40px 25px;
+/* BOTTONE CALL TO ACTION HERO */
+.btn-hero-cta {
+    display: inline-block;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 28px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
-    margin-top: 50px;
-    border: 1px solid #f1f5f9;
+    font-weight: 800;
+    font-size: 1.05rem;
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.form-group {
-    margin-bottom: 20px;
+.btn-hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.5);
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.form-group input, .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 1rem;
-    background-color: #f8fafc;
-}
-
-.form-group input:focus, .form-group textarea:focus {
-    outline: none;
-    border-color: #e67e22;
-    background-color: #fff;
-}
-
-.form-group textarea {
-    resize: vertical;
-    height: 120px;
-}
-
-footer {
-    background-color: #1e293b;
-    color: white;
-    text-align: center;
-    padding: 25px 0;
-    margin-top: 50px;
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
+    header#home {
+        height: 75vh;
+        min-height: 480px;
+    }
+    header h1 {
+        font-size: 2.2rem;
+    }
+    header p {
+        font-size: 1rem;
+    }
+    .hero-content {
+        padding: 22px 16px;
+    }
 }
