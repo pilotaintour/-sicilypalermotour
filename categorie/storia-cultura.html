@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="categoria.css">
 </head>
-<body class="full-bg-page" style="background-image: url('https://images.unsplash.com/photo-1548625361-18da87c93717?auto=format&fit=crop&w=1920&q=80');">
+<body class="full-bg-page" id="category-body-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg');">
 
     <!-- Header e Navigazione con Selettore Multilingua -->
     <header>
@@ -147,6 +147,25 @@
                     caricaTourStoria();
                 });
             }
+
+            // Slideshow Sfondo Quadri d'Epoca a Scorrimento
+            const sfondiQuadriStorici = [
+                'https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cattedrale_di_Palermo_2019.jpg/1280px-Cattedrale_di_Palermo_2019.jpg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Palazzo_dei_Normanni_Palermo.jpg/1280px-Palazzo_dei_Normanni_Palermo.jpg'
+            ];
+
+            let indexSfondoCurrent = 0;
+            const bodyBgEl = document.getElementById('category-body-bg');
+
+            function ruotaSfondoQuadroStorico() {
+                if (!bodyBgEl || sfondiQuadriStorici.length <= 1) return;
+                indexSfondoCurrent = (indexSfondoCurrent + 1) % sfondiQuadriStorici.length;
+                bodyBgEl.style.backgroundImage = `url('${sfondiQuadriStorici[indexSfondoCurrent]}')`;
+            }
+
+            // Cambia lo sfondo ad olio d'epoca ogni 8 secondi
+            setInterval(ruotaSfondoQuadroStorico, 8000);
         });
     </script>
 </body>
