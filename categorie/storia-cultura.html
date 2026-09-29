@@ -9,11 +9,7 @@
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="categoria.css">
 </head>
-<body class="full-bg-page">
-
-    <!-- STRATI PER DISSOLVENZA SFONDI D'EPOCA SILKY CROSSFADE -->
-    <div id="bg-layer-1" class="bg-slideshow-layer active" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg');"></div>
-    <div id="bg-layer-2" class="bg-slideshow-layer inactive" style="background-image: url('https://media.posterlounge.com/img/products/380000/374286/374286_poster.jpg');"></div>
+<body class="full-bg-page" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg');">
 
     <!-- Header e Navigazione con Selettore Multilingua -->
     <header>
@@ -38,8 +34,7 @@
     </nav>
 
     <!-- HERO BANNER DEDICATO ALLA CATEGORIA STORIA E CULTURA -->
-    <section class="category-hero" style="background-image: url('https://images.unsplash.com/photo-1548625361-18da87c93717?auto=format&fit=crop&w=1600&q=80');">
-        <div class="category-hero-overlay"></div>
+    <section class="category-hero">
         <div class="category-hero-content">
             <span class="category-badge">🏛️ Categoria Esclusiva</span>
             <h1 class="category-title">Palermo Storica, Artistica & Monumentale</h1>
@@ -151,66 +146,6 @@
                     caricaTourStoria();
                 });
             }
-
-            // Riproduttore Casuale / Random Shuffle Quadri d'Epoca & Affreschi
-            const sfondiQuadriStorici = [
-                'https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg',
-                'https://media.posterlounge.com/img/products/380000/374286/374286_poster.jpg',
-                'https://www.dipintimoderni.it/wp-content/uploads/2017/11/La-persistenza-della-memoria.jpg',
-                'https://www.melinamirenghi.it/wp-content/uploads/2021/03/4744ec7949434e952018ee265040e155.jpg',
-                'https://www.artribune.com/wp-content/uploads/2022/04/Volta-con-affreschi-di-Jacopo-Cestaro-allinterno-della-Chiesa-dei-Santi-Filippo-e-Giacomo-di-Napoli.jpg',
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cattedrale_di_Palermo_2019.jpg/1280px-Cattedrale_di_Palermo_2019.jpg',
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Palazzo_dei_Normanni_Palermo.jpg/1280px-Palazzo_dei_Normanni_Palermo.jpg'
-            ];
-
-            // Funzione di mescolamento casuale (Fisher-Yates Random Shuffle)
-            function mescolaListaCasuale(array) {
-                const arr = [...array];
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-
-            const listaMescolata = mescolaListaCasuale(sfondiQuadriStorici);
-            let indexSfondoCurrent = 0;
-            let layerAttivoNum = 1;
-
-            // Imposta subito la prima immagine casuale dello shuffle sul layer 1
-            const layer1Initial = document.getElementById('bg-layer-1');
-            if (layer1Initial && listaMescolata.length > 0) {
-                layer1Initial.style.backgroundImage = `url('${listaMescolata[0]}')`;
-            }
-
-            function ruotaSfondoQuadroStorico() {
-                if (listaMescolata.length <= 1) return;
-
-                indexSfondoCurrent = (indexSfondoCurrent + 1) % listaMescolata.length;
-                const nextImgUrl = listaMescolata[indexSfondoCurrent];
-
-                const layer1 = document.getElementById('bg-layer-1');
-                const layer2 = document.getElementById('bg-layer-2');
-
-                if (layerAttivoNum === 1) {
-                    layer2.style.backgroundImage = `url('${nextImgUrl}')`;
-                    layer2.classList.remove('inactive');
-                    layer2.classList.add('active');
-                    layer1.classList.remove('active');
-                    layer1.classList.add('inactive');
-                    layerAttivoNum = 2;
-                } else {
-                    layer1.style.backgroundImage = `url('${nextImgUrl}')`;
-                    layer1.classList.remove('inactive');
-                    layer1.classList.add('active');
-                    layer2.classList.remove('active');
-                    layer2.classList.add('inactive');
-                    layerAttivoNum = 1;
-                }
-            }
-
-            // Cambia lo sfondo casuale ogni 8 secondi con dissolvenza di 2.5 secondi
-            setInterval(ruotaSfondoQuadroStorico, 8000);
         });
     </script>
 </body>
