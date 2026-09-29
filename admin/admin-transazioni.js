@@ -313,7 +313,6 @@ async function eseguiIncassoTotale100(bookingId) {
     booking.amountCollected = importoVal.toFixed(2);
 
     saveTransazioniAdmin(list);
-    filtroStatoTransazioniTab = 'INCASSATE';
     caricaSezioneTransazioni();
 }
 window.eseguiIncassoTotale100 = eseguiIncassoTotale100;
@@ -348,7 +347,6 @@ async function eseguiIncassoPenaleParziale(bookingId) {
     booking.amountCollected = importoVal.toFixed(2);
 
     saveTransazioniAdmin(list);
-    filtroStatoTransazioniTab = 'INCASSATE';
     caricaSezioneTransazioni();
 }
 window.eseguiIncassoPenaleParziale = eseguiIncassoPenaleParziale;
@@ -374,7 +372,6 @@ async function eseguiRimborsoSblocco100(bookingId) {
     booking.status = 'Rimborsata';
 
     saveTransazioniAdmin(list);
-    filtroStatoTransazioniTab = 'RIMBORSATE';
     caricaSezioneTransazioni();
 }
 window.eseguiRimborsoSblocco100 = eseguiRimborsoSblocco100;
