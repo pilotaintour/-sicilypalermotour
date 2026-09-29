@@ -152,20 +152,42 @@
                 });
             }
 
-            // Slideshow Sfondo Quadri d'Epoca a Dissolvenza Setosa 2.5s
+            // Riproduttore Casuale / Random Shuffle Quadri d'Epoca & Affreschi
             const sfondiQuadriStorici = [
                 'https://upload.wikimedia.org/wikipedia/commons/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg',
-                'https://media.posterlounge.com/img/products/380000/374286/374286_poster.jpg'
+                'https://media.posterlounge.com/img/products/380000/374286/374286_poster.jpg',
+                'https://www.dipintimoderni.it/wp-content/uploads/2017/11/La-persistenza-della-memoria.jpg',
+                'https://www.melinamirenghi.it/wp-content/uploads/2021/03/4744ec7949434e952018ee265040e155.jpg',
+                'https://www.artribune.com/wp-content/uploads/2022/04/Volta-con-affreschi-di-Jacopo-Cestaro-allinterno-della-Chiesa-dei-Santi-Filippo-e-Giacomo-di-Napoli.jpg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Cattedrale_di_Palermo_2019.jpg/1280px-Cattedrale_di_Palermo_2019.jpg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Palazzo_dei_Normanni_Palermo.jpg/1280px-Palazzo_dei_Normanni_Palermo.jpg'
             ];
 
+            // Funzione di mescolamento casuale (Fisher-Yates Random Shuffle)
+            function mescolaListaCasuale(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            const listaMescolata = mescolaListaCasuale(sfondiQuadriStorici);
             let indexSfondoCurrent = 0;
             let layerAttivoNum = 1;
 
-            function ruotaSfondoQuadroStorico() {
-                if (sfondiQuadriStorici.length <= 1) return;
+            // Imposta subito la prima immagine casuale dello shuffle sul layer 1
+            const layer1Initial = document.getElementById('bg-layer-1');
+            if (layer1Initial && listaMescolata.length > 0) {
+                layer1Initial.style.backgroundImage = `url('${listaMescolata[0]}')`;
+            }
 
-                indexSfondoCurrent = (indexSfondoCurrent + 1) % sfondiQuadriStorici.length;
-                const nextImgUrl = sfondiQuadriStorici[indexSfondoCurrent];
+            function ruotaSfondoQuadroStorico() {
+                if (listaMescolata.length <= 1) return;
+
+                indexSfondoCurrent = (indexSfondoCurrent + 1) % listaMescolata.length;
+                const nextImgUrl = listaMescolata[indexSfondoCurrent];
 
                 const layer1 = document.getElementById('bg-layer-1');
                 const layer2 = document.getElementById('bg-layer-2');
@@ -187,8 +209,8 @@
                 }
             }
 
-            // Cambia lo sfondo ad olio d'epoca ogni 9 secondi con dissolvenza lenta da 2.5s
-            setInterval(ruotaSfondoQuadroStorico, 9000);
+            // Cambia lo sfondo casuale ogni 8 secondi con dissolvenza di 2.5 secondi
+            setInterval(ruotaSfondoQuadroStorico, 8000);
         });
     </script>
 </body>
