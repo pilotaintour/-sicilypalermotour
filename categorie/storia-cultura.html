@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storia e Cultura - Palermo Tour | Sicily Palermo Tour</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../itinerari/itinerari.css">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css">
+    <link rel="stylesheet" href="categoria.css">
+</head>
+<body>
+
+    <!-- Header e Navigazione con Selettore Multilingua -->
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 15px; flex-wrap: wrap; gap: 10px;">
+            <div style="text-align: left;">
+                <h1 style="margin: 0;">Sicily Palermo Tour</h1>
+                <p style="margin: 4px 0 0 0;">Esperienze e Tour Guidati d'Eccellenza a Palermo</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">
+                <div id="google_translate_element"></div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">← Torna alla Home</a></li>
+            <li><a href="../index.html#itinerari">Tutti i Tour</a></li>
+            <li><a href="../index.html#recensioni">Recensioni</a></li>
+            <li><a href="../index.html#contatti">Contatti</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO BANNER DEDICATO ALLA CATEGORIA STORIA E CULTURA -->
+    <section class="category-hero" style="background-image: url('https://images.unsplash.com/photo-1548625361-18da87c93717?auto=format&fit=crop&w=1600&q=80');">
+        <div class="category-hero-overlay"></div>
+        <div class="category-hero-content">
+            <span class="category-badge">🏛️ Categoria Esclusiva</span>
+            <h1 class="category-title">Palermo Storica, Artistica & Monumentale</h1>
+            <p class="category-description">
+                Immergiti nei millenni di storia di Palermo: dalle splendide Cattedrali Arabo-Normanne patrimonio UNESCO, ai Palazzi Nobiliari, i mercati antichi ed i teatri storici raccontati da guide turistiche locali certificate.
+            </p>
+
+            <div class="category-stats-pills">
+                <span class="stat-pill">✨ Patrimonio Mondiale UNESCO</span>
+                <span class="stat-pill">🚩 Guide Turistiche Autorizzate</span>
+                <span class="stat-pill">🎧 Auricolari Incluso</span>
+                <span class="stat-pill">🔄 Cancellazione Gratuita 100%</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTAINER GRIGLIA TOUR STORIA E CULTURA -->
+    <main class="category-main-container">
+        <div class="category-section-card">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h2 style="color: #0b2545; margin: 0; font-size: 1.5rem; font-weight: 800;">
+                        🏛️ Itinerari Selezionati di "Storia e Cultura"
+                    </h2>
+                    <p style="color: #64748b; font-size: 0.92rem; margin: 4px 0 0 0;">
+                        Scegli il tuo tour guidato ed inizia subito la prenotazione in pochi passaggi.
+                    </p>
+                </div>
+
+                <a href="../index.html#itinerari" class="btn-secondary btn-small" style="text-decoration: none; padding: 8px 16px;">
+                    🔍 Vedi Tutte le Categorie
+                </a>
+            </div>
+
+            <!-- Griglia dei Tour della Categoria -->
+            <div id="category-tours-grid" class="grid">
+                <!-- Popolato via JavaScript -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/393401234567" class="whatsapp-float" target="_blank" title="Scrivici su WhatsApp">
+        💬 Chatta su WhatsApp
+    </a>
+
+    <!-- Footer -->
+    <footer style="background: #0b2545; color: white; padding: 30px 20px; text-align: center; font-size: 0.9rem;">
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../cloud/cloud-db.js"></script>
+    <script src="../itinerari/itinerari-data.js"></script>
+    <script src="../translate/translator.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const containerGrid = document.getElementById('category-tours-grid');
+
+            function caricaTourStoria() {
+                const tuttiItinerari = getItinerari();
+                const tourStoria = tuttiItinerari.filter(i => i.category === 'Storia e Cultura');
+
+                if (!tourStoria || tourStoria.length === 0) {
+                    containerGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 50px 20px; background: #fafcfd; border-radius: 12px; border: 1.5px dashed #cbd5e1;">
+                            <h3 style="color: #0b2545; margin-bottom: 8px;">🏛️ Nessun Tour attualmente disponibile in "Storia e Cultura"</h3>
+                            <p style="color: #64748b; margin-bottom: 20px;">I nuovi tour di questa categoria verranno pubblicati a breve. Consulta gli altri itinerari in homepage!</p>
+                            <a href="../index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">← Torna alla Homepage</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                containerGrid.innerHTML = tourStoria.map(tour => `
+                    <div class="card">
+                        ${generaHtmlCarosello(tour, 'cat')}
+                        <div class="card-content">
+                            <div class="badges-row">
+                                <span class="badge">🏛️ Storia e Cultura</span>
+                                ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
+                                ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
+                            </div>
+                            <h3>${escapeHtml(tour.title)}</h3>
+                            <p class="card-desc">${escapeHtml(tour.shortDescription || tour.fullDescription || '')}</p>
+
+                            <div class="card-chips">
+                                <span>⏱️ ${escapeHtml(tour.duration || '3 Ore')}</span>
+                                <span>💰 ${escapeHtml(tour.price || 'Da 25€')}</span>
+                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Palermo Centro')}</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <a href="../prenotazioni/prenotazione.html?tourId=${tour.id}" class="btn-tour" style="text-decoration: none; display: block; text-align: center;">🎟️ Prenota Questo Tour</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            caricaTourStoria();
+
+            // Sincronizza anche da Firebase Cloud
+            if (window.cloudDB) {
+                window.cloudDB.fetchItinerariCloud().then(() => {
+                    caricaTourStoria();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

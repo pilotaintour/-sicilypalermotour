@@ -1,0 +1,137 @@
+/* STILI GRAFICI PAGINE DEDICATE CATEGORIE - Sicily Palermo Tour */
+
+:root {
+    --primary-navy: #0b2545;
+    --secondary-navy: #134074;
+    --accent-gold: #d97706;
+    --bg-light: #f8fafc;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+/* HERO COVER CATEGORIA CON SFONDO ATMOSFERICO */
+.category-hero {
+    position: relative;
+    min-height: 420px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    box-sizing: border-box;
+}
+
+.category-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(11, 37, 69, 0.75) 0%, rgba(15, 23, 42, 0.88) 100%);
+    backdrop-filter: blur(3px);
+}
+
+.category-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 850px;
+    text-align: center;
+    color: #ffffff;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.category-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+.category-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 10px 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.category-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.95;
+    max-width: 720px;
+    margin: 14px auto 20px auto;
+    color: #f1f5f9;
+}
+
+.category-stats-pills {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.stat-pill {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+/* SEZIONE TOUR CATEGORIA */
+.category-main-container {
+    max-width: 1200px;
+    margin: -40px auto 60px auto;
+    position: relative;
+    z-index: 10;
+    padding: 0 20px;
+}
+
+.category-section-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--card-shadow);
+}
+
+/* RESPONSIVE DESKTOP / MOBILE */
+@media (max-width: 768px) {
+    .category-hero {
+        min-height: 350px;
+        padding: 40px 15px;
+    }
+    .category-title {
+        font-size: 1.8rem;
+    }
+    .category-description {
+        font-size: 0.95rem;
+    }
+}
