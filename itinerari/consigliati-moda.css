@@ -1,0 +1,203 @@
+/**
+ * MODULO SEPARATO: Sezioni "Consigliati per Te" & "Più alla Moda / Trending"
+ * Sicily Palermo Tour - Stili Grafici Premium
+ */
+
+.consigliati-moda-section {
+    margin-top: 45px;
+    margin-bottom: 50px;
+}
+
+.consigliati-moda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 14px;
+}
+
+.consigliati-moda-title-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.consigliati-moda-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0b2545;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.3px;
+}
+
+.consigliati-moda-subtitle {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Badge Speciali */
+.badge-consigliato {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-moda {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Griglia & Card */
+.consigliati-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 22px;
+}
+
+.tour-card-special {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 8px 24px rgba(11, 37, 69, 0.06);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.tour-card-special:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(11, 37, 69, 0.12);
+    border-color: #cbd5e1;
+}
+
+.tour-card-img-box {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.tour-card-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.tour-card-special:hover .tour-card-img-box img {
+    transform: scale(1.06);
+}
+
+.tour-card-top-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+}
+
+.tour-card-price-tag {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(11, 37, 69, 0.88);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.83rem;
+    font-weight: 800;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tour-card-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tour-card-category {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #0369a1;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+}
+
+.tour-card-title {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: #0b2545;
+    margin: 0 0 8px 0;
+    line-height: 1.35;
+}
+
+.tour-card-desc {
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tour-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    margin-top: auto;
+}
+
+.tour-card-duration {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.btn-card-action {
+    background: linear-gradient(135deg, #0b2545 0%, #134074 100%);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(11, 37, 69, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-card-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(11, 37, 69, 0.3);
+}

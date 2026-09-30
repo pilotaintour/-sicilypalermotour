@@ -81,6 +81,8 @@ function caricaElencoItinerari() {
                         <span class="item-badge" style="background:#e0f2fe; color:#0369a1;">🖼️ ${totalPhotos} Foto</span>
                         <span class="item-badge" style="background:#fef3c7; color:#92400e;">⏰ ${totalOrari} Orari Attivi</span>
                         ${item.featured === 'true' ? '<span class="item-badge" style="background:#dbeafe; color:#1e40af;">⭐ Evidenza</span>' : ''}
+                        ${item.isConsigliato ? '<span class="item-badge" style="background:#fef3c7; color:#92400e;">⭐ Consigliato</span>' : ''}
+                        ${item.isAllaModa ? '<span class="item-badge" style="background:#fee2e2; color:#991b1b;">🔥 Moda</span>' : ''}
                         <div class="item-title">${escapeHtmlAdmin(item.title)}</div>
                         <div class="item-meta">⏱️ ${escapeHtmlAdmin(item.duration || 'N/D')} | 💰 ${escapeHtmlAdmin(item.price || 'N/D')}</div>
                         <div class="item-desc">${escapeHtmlAdmin(item.shortDesc)}</div>
@@ -113,6 +115,11 @@ async function salvaItinerario(event) {
     const price = document.getElementById('price').value.trim();
     const meetingPoint = document.getElementById('meeting-point').value.trim();
     const featured = document.getElementById('featured').value;
+    const isConsigliatoEl = document.getElementById('is-consigliato');
+    const isAllaModaEl = document.getElementById('is-alla-moda');
+    const isConsigliato = isConsigliatoEl ? isConsigliatoEl.checked : false;
+    const isAllaModa = isAllaModaEl ? isAllaModaEl.checked : false;
+
     const shortDesc = document.getElementById('short-desc').value.trim();
     const fullDesc = document.getElementById('full-desc').value.trim();
 
@@ -139,14 +146,14 @@ async function salvaItinerario(event) {
     if (id) {
         itinerari = itinerari.map(item => {
             if (String(item.id) === String(id)) {
-                return { id, title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
+                return { id, title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
             }
             return item;
         });
     } else {
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, imageUrl, images, tappe, servizi, shortDesc, fullDesc
+            title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
     }
@@ -171,6 +178,11 @@ function preparaModifica(id) {
     document.getElementById('price').value = item.price || '';
     document.getElementById('meeting-point').value = item.meetingPoint || '';
     document.getElementById('featured').value = item.featured || 'false';
+    const isConsigliatoEl = document.getElementById('is-consigliato');
+    const isAllaModaEl = document.getElementById('is-alla-moda');
+    if (isConsigliatoEl) isConsigliatoEl.checked = !!item.isConsigliato;
+    if (isAllaModaEl) isAllaModaEl.checked = !!item.isAllaModa;
+
     document.getElementById('short-desc').value = item.shortDesc || '';
     document.getElementById('full-desc').value = item.fullDesc || '';
 
@@ -242,6 +254,11 @@ function resetForm() {
     document.querySelectorAll('input[name="giorno-check"]').forEach(c => c.checked = true);
     const checkAll = document.getElementById('check-all-days');
     if (checkAll) checkAll.checked = true;
+
+    const isConsigliatoEl = document.getElementById('is-consigliato');
+    const isAllaModaEl = document.getElementById('is-alla-moda');
+    if (isConsigliatoEl) isConsigliatoEl.checked = false;
+    if (isAllaModaEl) isAllaModaEl.checked = false;
 
     renderGalleriaAnteprima();
     renderCampiTappe();
