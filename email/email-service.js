@@ -1,12 +1,136 @@
 /**
- * MODULO AUTONOMO INVIO EMAIL AUTOMATICHE BREVO (ex Sendinblue)
- * Sicily Palermo Tour - Conferma Prenotazioni e Avviso Admin con Testi Personalizzati
+ * MODULO AUTONOMO INVIO EMAIL AUTOMATICHE BREVO (ex Sendinblue) - MULTILINGUA (IT, EN, ES, FR, DE)
+ * Sicily Palermo Tour - Riconoscimento Automatico Lingua e Invio Conferma Personalizzata
  */
 
 const BREVO_KEY_STORAGE = 'spt_brevo_api_key';
 const BREVO_P1 = 'eGtleXNpYi1kZjE4MzNiZWFiNGZlOGM4OTgyYmQ5YmE3ZWI3YjhjYmJmMTg4MmM3ODliZDJhMzJjM2FkZmQz';
 const BREVO_P2 = 'MDM5YjlmYzQxLWJKMVRtc0JrUnJVdzZlYmQ=';
 const ADMIN_NOTIFICATION_EMAIL = 'pilotaintour13@gmail.com';
+
+// Dizionario Multilingua Completo per l'Email di Conferma Turisti
+const i18nEmail = {
+    it: {
+        badgeSuccess: "PRENOTAZIONE REGISTRATA CON SUCCESSO",
+        subject: "[Conferma Prenotazione] Il tuo Tour a Palermo è Confermato!",
+        welcome: "Grazie per aver scelto Sicily Palermo Tour! La tua prenotazione è stata ricevuta ed è confermata.",
+        codeLabel: "Codice Prenotazione:",
+        transLabel: "Riferimento Transazione (Stripe / PayPal):",
+        tourLabel: "📍 Tour:",
+        langLabel: "🌐 Lingua Guida:",
+        dateLabel: "📅 Data della Visita:",
+        timeLabel: "⏰ Orario Partenza:",
+        guestsLabel: "👥 Partecipanti:",
+        contactLabel: "👤 Referente:",
+        addressLabel: "🏠 Residenza / Fatturazione:",
+        adults: "Adulti",
+        children: "Bambini",
+        totalLabel: "Totale in Pre-Autorizzazione:",
+        instructionsTitle: "🎒 Istruzioni & Raccomandazioni Tour:",
+        instructions: "📍 Vi preghiamo di arrivare 10 minuti prima dell'orario previsto al punto d'incontro. Consigliamo scarpe comode e macchina fotografica.",
+        helpTitle: "💬 Hai domande o bisogno di assistenza in privato?",
+        helpText: "Se hai qualsiasi dubbio, comunica all'amministratore il tuo **Codice** oppure il **Riferimento Transazione**:",
+        helpBtn: "💬 Contatta l'Admin su WhatsApp (+39 340 1234567)",
+        footerText: "Siamo a tua completa disposizione per qualsiasi informazione o esigenza particolare. A presto a Palermo!",
+        subFooter: "Sicily Palermo Tour - La tua guida speciale a Palermo"
+    },
+    en: {
+        badgeSuccess: "BOOKING SUCCESSFULLY REGISTERED",
+        subject: "[Booking Confirmation] Your Tour in Palermo is Confirmed!",
+        welcome: "Thank you for choosing Sicily Palermo Tour! Your booking has been received and confirmed.",
+        codeLabel: "Booking Code:",
+        transLabel: "Transaction Reference (Stripe / PayPal):",
+        tourLabel: "📍 Tour:",
+        langLabel: "🌐 Tour Language:",
+        dateLabel: "📅 Date of Visit:",
+        timeLabel: "⏰ Departure Time:",
+        guestsLabel: "👥 Participants:",
+        contactLabel: "👤 Lead Contact:",
+        addressLabel: "🏠 Billing Address / Residence:",
+        adults: "Adults",
+        children: "Children",
+        totalLabel: "Total Pre-Authorized Amount:",
+        instructionsTitle: "🎒 Tour Instructions & Recommendations:",
+        instructions: "📍 Please arrive 10 minutes before the scheduled time at the meeting point. Comfortable walking shoes and camera recommended.",
+        helpTitle: "💬 Do you have questions or need assistance?",
+        helpText: "If you have any questions, provide the administrator with your **Booking Code** or **Transaction Reference**:",
+        helpBtn: "💬 Contact Admin on WhatsApp (+39 340 1234567)",
+        footerText: "We are at your complete disposal for any information or special requirements. See you soon in Palermo!",
+        subFooter: "Sicily Palermo Tour - Your special guide in Palermo"
+    },
+    es: {
+        badgeSuccess: "RESERVA REGISTRADA CON ÉXITO",
+        subject: "[Confirmación de Reserva] ¡Tu Tour en Palermo está Confirmado!",
+        welcome: "¡Gracias por elegir Sicily Palermo Tour! Tu reserva ha sido recibida y confirmada.",
+        codeLabel: "Código de Reserva:",
+        transLabel: "Referencia de Transacción (Stripe / PayPal):",
+        tourLabel: "📍 Tour:",
+        langLabel: "🌐 Idioma del Tour:",
+        dateLabel: "📅 Fecha de la Visita:",
+        timeLabel: "⏰ Hora de Salida:",
+        guestsLabel: "👥 Participantes:",
+        contactLabel: "👤 Persona de Contacto:",
+        addressLabel: "🏠 Dirección de Facturación / Residencia:",
+        adults: "Adultos",
+        children: "Niños",
+        totalLabel: "Monto Total Preautorizado:",
+        instructionsTitle: "🎒 Instrucciones y Recomendaciones del Tour:",
+        instructions: "📍 Por favor llegue 10 minutos antes de la hora programada al punto de encuentro. Se recomiendan zapatos cómodos y cámara.",
+        helpTitle: "💬 ¿Tienes preguntas o necesitas asistencia?",
+        helpText: "Si tienes alguna duda, comunica al administrador tu **Código de Reserva** o **Referencia de Transacción**:",
+        helpBtn: "💬 Contactar por WhatsApp (+39 340 1234567)",
+        footerText: "Estamos a tu entera disposición para cualquier información o necesidad especial. ¡Hasta pronto en Palermo!",
+        subFooter: "Sicily Palermo Tour - Tu guía especial en Palermo"
+    },
+    fr: {
+        badgeSuccess: "RÉSERVATION ENREGISTRÉE AVEC SUCCÈS",
+        subject: "[Confirmation de Réservation] Votre Visite à Palerme est Confirmée!",
+        welcome: "Merci d'avoir choisi Sicily Palermo Tour! Votre réservation a été reçue et confirmée.",
+        codeLabel: "Code de Réservation:",
+        transLabel: "Référence de Transaction (Stripe / PayPal):",
+        tourLabel: "📍 Visite:",
+        langLabel: "🌐 Langue de la Visite:",
+        dateLabel: "📅 Date de Visite:",
+        timeLabel: "⏰ Heure de Départ:",
+        guestsLabel: "👥 Participants:",
+        contactLabel: "👤 Contact Principal:",
+        addressLabel: "🏠 Adresse de Facturation / Résidence:",
+        adults: "Adultes",
+        children: "Enfants",
+        totalLabel: "Montant Total Pré-Autorisé:",
+        instructionsTitle: "🎒 Instructions et Recommandations pour la Visite:",
+        instructions: "📍 Veuillez arriver 10 minutes avant l'heure prévue au point de rendez-vous. Chaussures confortables et appareil photo recommandés.",
+        helpTitle: "💬 Vous avez des questions ou besoin d'assistance?",
+        helpText: "Si vous avez des questions, communiquez à l'administrateur votre **Code de Réservation** ou **Référence de Transaction**:",
+        helpBtn: "💬 Contacter l'Admin sur WhatsApp (+39 340 1234567)",
+        footerText: "Nous sommes à votre entière disposition pour toute information ou besoin particulier. À bientôt à Palerme!",
+        subFooter: "Sicily Palermo Tour - Votre guide spécial à Palerme"
+    },
+    de: {
+        badgeSuccess: "BUCHUNG ERFOLGREICH REGISTRIERT",
+        subject: "[Buchungsbestätigung] Ihre Tour in Palermo ist Bestätigt!",
+        welcome: "Vielen Dank, dass Sie sich für Sicily Palermo Tour entschieden haben! Ihre Buchung wurde bestätigt.",
+        codeLabel: "Buchungscode:",
+        transLabel: "Transaktionsreferenz (Stripe / PayPal):",
+        tourLabel: "📍 Tour:",
+        langLabel: "🌐 Führungssprache:",
+        dateLabel: "📅 Datum des Besuchs:",
+        timeLabel: "⏰ Abfahrtszeit:",
+        guestsLabel: "👥 Teilnehmer:",
+        contactLabel: "👤 Ansprechpartner:",
+        addressLabel: "🏠 Rechnungsadresse / Wohnsitz:",
+        adults: "Erwachsene",
+        children: "Kinder",
+        totalLabel: "Vorautorisierter Gesamtbetrag:",
+        instructionsTitle: "🎒 Anweisungen & Empfehlungen zur Tour:",
+        instructions: "📍 Bitte finden Sie sich 10 Minuten vor der vereinbarten Zeit am Treffpunkt ein. Bequeme Schuhe und Kamera empfohlen.",
+        helpTitle: "💬 Haben Sie Fragen oder benötigen Sie Hilfe?",
+        helpText: "Bei Fragen nennen Sie dem Administrator bitte Ihren **Buchungscode** oder Ihre **Transaktionsreferenz**:",
+        helpBtn: "💬 Admin über WhatsApp kontaktieren (+39 340 1234567)",
+        footerText: "Wir stehen Ihnen für weitere Informationen gerne zur Verfügung. Bis bald in Palermo!",
+        subFooter: "Sicily Palermo Tour - Ihr besonderer Reiseführer in Palermo"
+    }
+};
 
 class BrevoEmailService {
     constructor() {
@@ -140,7 +264,7 @@ class BrevoEmailService {
         return { success: false };
     }
 
-    // Invia contemporaneamente l'email di conferma al turista e la notifica all'amministratore
+    // Invia contemporaneamente l'email di conferma al turista e la notifica all'amministratore (Riconoscimento Automatico Lingua)
     async inviaEmailPrenotazione(bookingData) {
         const apiKey = this.getApiKey();
         if (!apiKey) {
@@ -162,14 +286,24 @@ class BrevoEmailService {
         const billingAddress = bookingData.billingAddress || 'N/D';
         const waNum = (localStorage.getItem('spt_wa_number') || '393401234567').replace(/[^0-9]/g, '');
 
-        // Recupera le impostazioni dei testi personalizzati dall'Admin
-        const tConf = (window.emailTemplateEditor && typeof window.emailTemplateEditor.getConfig === 'function')
+        // Riconoscimento Lingua dell'utente (it, en, es, fr, de)
+        let langKey = 'it';
+        const rawLang = String(lang).toLowerCase();
+        if (rawLang.includes('eng') || rawLang.includes('ingl') || rawLang === 'en') langKey = 'en';
+        else if (rawLang.includes('espa') || rawLang.includes('spag') || rawLang === 'es') langKey = 'es';
+        else if (rawLang.includes('fran') || rawLang === 'fr') langKey = 'fr';
+        else if (rawLang.includes('deut') || rawLang.includes('tedes') || rawLang === 'de') langKey = 'de';
+
+        const tDict = i18nEmail[langKey] || i18nEmail.it;
+
+        // Recupera eventuale personalizzazione Admin se in Italiano, altrimenti usa il dizionario tradotto
+        const tConf = (window.emailTemplateEditor && typeof window.emailTemplateEditor.getConfig === 'function' && langKey === 'it')
             ? window.emailTemplateEditor.getConfig()
             : {
-                subject: '[Conferma Prenotazione] Il tuo Tour a Palermo è Confermato!',
-                welcomeMessage: 'Grazie per aver scelto Sicily Palermo Tour! La tua prenotazione è stata ricevuta ed è confermata.',
-                instructions: '📍 Vi preghiamo di arrivare 10 minuti prima dell\'orario previsto al punto d\'incontro. Consigliamo scarpe comode e macchina fotografica.',
-                footerText: 'Siamo a tua completa disposizione per qualsiasi informazione o esigenza particolare. A presto a Palermo!'
+                subject: tDict.subject,
+                welcomeMessage: tDict.welcome,
+                instructions: tDict.instructions,
+                footerText: tDict.footerText
             };
 
         const subjectDyn = tConf.subject.replace('{NOME_TOUR}', tourTitle).replace('{CODICE_PRENOTAZIONE}', code);
@@ -179,12 +313,12 @@ class BrevoEmailService {
         if (bookingData.participantsList && Array.isArray(bookingData.participantsList) && bookingData.participantsList.length > 0) {
             partecipantiHtml = `
                 <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #cbd5e1;">
-                    <strong style="color: #0b2545; display: block; margin-bottom: 6px; font-size: 0.92rem;">🧳 Elenco Dettagliato Partecipanti (${bookingData.participantsList.length}):</strong>
+                    <strong style="color: #0b2545; display: block; margin-bottom: 6px; font-size: 0.92rem;">🧳 ${tDict.guestsLabel} (${bookingData.participantsList.length}):</strong>
                     <ul style="margin: 0; padding-left: 20px; font-size: 0.88rem; color: #334155; line-height: 1.6; word-break: break-word;">
                         ${bookingData.participantsList.map(p => `
                             <li style="margin-bottom: 4px;">
                                 <strong>${p.name}</strong>
-                                <span style="color: #64748b;">(${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - Provenienza: ' + p.origin : ''})</span>
+                                <span style="color: #64748b;">(${p.dob ? p.dob : p.type}${p.origin ? ' - ' + p.origin : ''})</span>
                                 ${p.notes ? `<div style="font-size: 0.82rem; color: #475569;">📝 <em>Note: ${p.notes}</em></div>` : ''}
                             </li>
                         `).join('')}
@@ -193,10 +327,10 @@ class BrevoEmailService {
             `;
         }
 
-        // 1. Email di Conferma Completa con LOGO IN CIMA, Responsiva e Compatibile
+        // Email Multilingua Responsiva e Compatibile
         const htmlTurista = `
             <!DOCTYPE html>
-            <html lang="it">
+            <html lang="${langKey}">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -221,7 +355,7 @@ class BrevoEmailService {
                                 Sicily Palermo Tour
                             </div>
                             <div style="color: #fef3c7; font-size: 0.88rem; font-weight: 600; margin-top: 4px;">
-                                ✨ Conferma Ufficiale di Prenotazione
+                                ✨ ${tDict.badgeSuccess}
                             </div>
                         </td>
                     </tr>
@@ -233,28 +367,28 @@ class BrevoEmailService {
                             <!-- Badge Spunta Verde di Conferma -->
                             <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; text-align: center;">
                                 <span style="font-size: 1.25rem;">✅</span>
-                                <strong style="color: #166534; font-size: 0.98rem; margin-left: 6px;">PRENOTAZIONE REGISTRATA CON SUCCESSO</strong>
+                                <strong style="color: #166534; font-size: 0.98rem; margin-left: 6px;">${tDict.badgeSuccess}</strong>
                             </div>
 
-                            <h2 style="color:#0b2545; margin-top:0; font-size:1.35rem; font-weight:800;">Gentile ${customerName},</h2>
+                            <h2 style="color:#0b2545; margin-top:0; font-size:1.35rem; font-weight:800;">Hi ${customerName},</h2>
                             <p style="font-size:0.96rem; color:#475569; line-height:1.6; margin-bottom:20px;">
                                 ${tConf.welcomeMessage}
                             </p>
 
-                            <!-- BOX RIEPILOGO DATI E CODICI IDENTIFICATIVI (Resiliente e Responsive) -->
+                            <!-- BOX RIEPILOGO DATI E CODICI IDENTIFICATIVI -->
                             <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:14px; padding:20px; margin:20px 0; box-sizing:border-box;">
 
                                 <!-- Codice Prenotazione -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:12px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;">
                                     <tr>
-                                        <td style="color:#64748b; font-weight:bold; font-size:0.9rem; padding-bottom:4px;">Codice Prenotazione:</td>
+                                        <td style="color:#64748b; font-weight:bold; font-size:0.9rem; padding-bottom:4px;">${tDict.codeLabel}</td>
                                         <td align="right" style="font-weight:bold; font-size:1.1rem; color:#0369a1; font-family:monospace;">${code}</td>
                                     </tr>
                                 </table>
 
                                 <!-- Riferimento Transazione Bancaria -->
                                 <div style="margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
-                                    <div style="color:#64748b; font-weight:bold; font-size:0.88rem; margin-bottom:6px;">Riferimento Transazione (Stripe / PayPal):</div>
+                                    <div style="color:#64748b; font-weight:bold; font-size:0.88rem; margin-bottom:6px;">${tDict.transLabel}</div>
                                     <div style="background:#e0f2fe; border:1px solid #bae6fd; border-radius:8px; padding:8px 12px; font-family:monospace; font-size:0.85rem; color:#0b2545; font-weight:bold; word-break:break-all; word-wrap:break-word; overflow-wrap:break-word; display:block;">
                                         🔒 ${stripeRef}
                                     </div>
@@ -262,13 +396,13 @@ class BrevoEmailService {
 
                                 <!-- Dettagli Tour -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:0.92rem; color:#1e293b; line-height:1.7;">
-                                    <tr><td style="padding:4px 0;"><strong>📍 Tour:</strong> ${tourTitle}</td></tr>
-                                    <tr><td style="padding:4px 0;"><strong>🌐 Lingua Guida:</strong> ${lang}</td></tr>
-                                    <tr><td style="padding:4px 0;"><strong>📅 Data della Visita:</strong> ${dateStr}</td></tr>
-                                    <tr><td style="padding:4px 0;"><strong>⏰ Orario Partenza:</strong> ${timeStr}</td></tr>
-                                    <tr><td style="padding:4px 0;"><strong>👥 Partecipanti:</strong> ${bookingData.adults} Adulti${bookingData.children > 0 ? `, ${bookingData.children} Bambini` : ''}</td></tr>
-                                    <tr><td style="padding:4px 0;"><strong>👤 Referente:</strong> ${customerName} (${phone})</td></tr>
-                                    <tr><td style="padding:4px 0; word-break:break-word;"><strong>🏠 Residenza / Fatturazione:</strong> ${billingAddress} (${country})</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.tourLabel}</strong> ${tourTitle}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.langLabel}</strong> ${lang}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.dateLabel}</strong> ${dateStr}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.timeLabel}</strong> ${timeStr}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.guestsLabel}</strong> ${bookingData.adults} ${tDict.adults}${bookingData.children > 0 ? `, ${bookingData.children} ${tDict.children}` : ''}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>${tDict.contactLabel}</strong> ${customerName} (${phone})</td></tr>
+                                    <tr><td style="padding:4px 0; word-break:break-word;"><strong>${tDict.addressLabel}</strong> ${billingAddress} (${country})</td></tr>
                                 </table>
 
                                 ${partecipantiHtml}
@@ -276,7 +410,7 @@ class BrevoEmailService {
                                 <!-- Totale -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:14px; padding-top:12px; border-top:2px dashed #cbd5e1; font-size:1.15rem; font-weight:800; color:#0b2545;">
                                     <tr>
-                                        <td>Totale in Pre-Autorizzazione:</td>
+                                        <td>${tDict.totalLabel}</td>
                                         <td align="right" style="color:#0369a1; font-size:1.3rem;">€${total}</td>
                                     </tr>
                                 </table>
@@ -284,18 +418,18 @@ class BrevoEmailService {
 
                             <!-- Istruzioni & Raccomandazioni -->
                             <div style="background:#fffbf5; border:1.5px solid #fed7aa; border-radius:12px; padding:16px; margin-bottom:20px; font-size:0.9rem; color:#9a3412; line-height:1.5;">
-                                <strong style="display:block; margin-bottom:6px; font-size:0.95rem;">🎒 Istruzioni & Raccomandazioni Tour:</strong>
+                                <strong style="display:block; margin-bottom:6px; font-size:0.95rem;">${tDict.instructionsTitle}</strong>
                                 ${tConf.instructions}
                             </div>
 
                             <!-- Assistenza e WhatsApp -->
                             <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:18px; margin-bottom:20px; text-align:center;">
-                                <strong style="color:#0369a1; font-size:0.95rem; display:block; margin-bottom:6px;">💬 Hai domande o bisogno di assistenza in privato?</strong>
+                                <strong style="color:#0369a1; font-size:0.95rem; display:block; margin-bottom:6px;">${tDict.helpTitle}</strong>
                                 <p style="font-size:0.88rem; color:#334155; margin:0 0 14px 0; line-height:1.5;">
-                                    Se hai qualsiasi dubbio, comunica all'amministratore il tuo **Codice (${code})** oppure il **Riferimento Transazione (${stripeRef})**:
+                                    ${tDict.helpText}
                                 </p>
                                 <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem; box-shadow:0 4px 12px rgba(37,211,102,0.25);">
-                                    💬 Contatta l'Admin su WhatsApp (+39 340 1234567)
+                                    ${tDict.helpBtn}
                                 </a>
                             </div>
 
@@ -308,8 +442,8 @@ class BrevoEmailService {
                     <!-- Footer Email -->
                     <tr>
                         <td align="center" style="background:#f1f5f9; padding:18px; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0; text-align:center;">
-                            <strong>Sicily Palermo Tour</strong> - La tua guida speciale a Palermo<br>
-                            <span style="font-size:0.75rem; color:#94a3b8; display:block; margin-top:4px;">&copy; 2025 Sicily Palermo Tour. Tutti i diritti riservati.</span>
+                            <strong>Sicily Palermo Tour</strong> - ${tDict.subFooter}<br>
+                            <span style="font-size:0.75rem; color:#94a3b8; display:block; margin-top:4px;">&copy; 2025 Sicily Palermo Tour. All rights reserved.</span>
                         </td>
                     </tr>
                 </table>
@@ -337,7 +471,7 @@ class BrevoEmailService {
             });
 
             if (response.ok) {
-                console.log("Email inviata con successo via Brevo!");
+                console.log(`Email multilingua (${langKey.toUpperCase()}) inviata con successo via Brevo!`);
                 return { success: true };
             } else {
                 const errData = await response.json();
