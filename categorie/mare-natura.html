@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Street Food e Mercati - Palermo Tour | Sicily Palermo Tour</title>
+    <title>Mare e Natura - Palermo Tour | Sicily Palermo Tour</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../itinerari/itinerari.css">
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="categoria.css">
 </head>
-<body class="full-bg-page" style="background-image: url('https://www.gruppofranza.it/wp-content/uploads/2022/10/fo1_2.jpg');">
+<body class="full-bg-page" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1920&q=80');">
 
     <!-- Header e Navigazione con Scritta Premium Centrata -->
     <header style="padding: 25px 15px 10px 15px;">
@@ -41,35 +41,35 @@
         </ul>
     </nav>
 
-    <!-- HERO BANNER DEDICATO ALLA CATEGORIA STREET FOOD -->
+    <!-- HERO BANNER DEDICATO ALLA CATEGORIA MARE E NATURA -->
     <section class="category-hero">
         <div class="category-hero-content">
-            <span class="category-badge">🥙 Categoria Esclusiva</span>
-            <h1 class="category-title">Palermo Street Food & Mercati Storici</h1>
+            <span class="category-badge">🌊 Categoria Esclusiva</span>
+            <h1 class="category-title">Mare, Spiagge & Riserve Naturali</h1>
             <p class="category-description">
-                Gusta le prelibatezze uniche della capitale mondiale dello Street Food: arancine dorate, pane con le panelle, sfincione, cannoli e ricette secolari dei vivaci mercati di Ballarò, Capo e Vucciria.
+                Esplora le acque cristalline ed i paesaggi naturali mozzafiato di Palermo e della Sicilia: dalla meravigliosa spiaggia di Mondello alla Riserva di Capo Gallo, Riserva dello Zingaro ed escursioni in barca.
             </p>
 
             <div class="category-stats-pills">
-                <span class="stat-pill">🥙 Street Food & Degustazioni</span>
-                <span class="stat-pill">🍋 Sapori & Ricette Tradizionali</span>
+                <span class="stat-pill">🏖️ Spiagge & Mare Cristallino</span>
+                <span class="stat-pill">🛥️ Escursioni in Barca & Costa</span>
                 <span class="stat-pill">💬 Assistenza Privata WhatsApp</span>
                 <span class="stat-pill">👨‍👩‍👧‍👦 Per Famiglie & Piccoli Gruppi</span>
             </div>
         </div>
     </section>
 
-    <!-- MAIN CONTAINER GRIGLIA TOUR STREET FOOD -->
+    <!-- MAIN CONTAINER GRIGLIA TOUR MARE E NATURA -->
     <main class="category-main-container">
         <div class="category-section-card">
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h2 style="color: #0b2545; margin: 0; font-size: 1.5rem; font-weight: 800;">
-                        🥙 Itinerari Selezionati di "Street Food"
+                        🌊 Itinerari Selezionati di "Mare e Natura"
                     </h2>
                     <p style="color: #64748b; font-size: 0.92rem; margin: 4px 0 0 0;">
-                        Scegli il tuo tour enogastronomico ed inizia subito la prenotazione in pochi passaggi.
+                        Scegli il tuo tour naturalistico ed inizia subito la prenotazione in pochi passaggi.
                     </p>
                 </div>
 
@@ -105,14 +105,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             const containerGrid = document.getElementById('category-tours-grid');
 
-            function caricaTourFood() {
+            function caricaTourMare() {
                 const tuttiItinerari = getItinerari();
-                const tourFood = tuttiItinerari.filter(i => i.category === 'Street Food');
+                const tourMare = tuttiItinerari.filter(i => i.category === 'Mare e Natura');
 
-                if (!tourFood || tourFood.length === 0) {
+                if (!tourMare || tourMare.length === 0) {
                     containerGrid.innerHTML = `
                         <div style="grid-column: 1/-1; text-align: center; padding: 50px 20px; background: #fafcfd; border-radius: 12px; border: 1.5px dashed #cbd5e1;">
-                            <h3 style="color: #0b2545; margin-bottom: 8px;">🥙 Nessun Tour attualmente disponibile in "Street Food"</h3>
+                            <h3 style="color: #0b2545; margin-bottom: 8px;">🌊 Nessun Tour attualmente disponibile in "Mare e Natura"</h3>
                             <p style="color: #64748b; margin-bottom: 20px;">I nuovi tour di questa categoria verranno pubblicati a breve. Consulta gli altri itinerari in homepage!</p>
                             <a href="../index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">← Torna alla Homepage</a>
                         </div>
@@ -120,12 +120,12 @@
                     return;
                 }
 
-                containerGrid.innerHTML = tourFood.map(tour => `
+                containerGrid.innerHTML = tourMare.map(tour => `
                     <div class="card">
                         ${generaHtmlCarosello(tour, 'cat')}
                         <div class="card-content">
                             <div class="badges-row">
-                                <span class="badge">🥙 Street Food</span>
+                                <span class="badge">🌊 Mare e Natura</span>
                                 ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
                                 ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
                             </div>
@@ -135,7 +135,7 @@
                             <div class="card-chips">
                                 <span>⏱️ ${escapeHtml(tour.duration || '3 Ore')}</span>
                                 <span>💰 ${escapeHtml(tour.price || 'Da 25€')}</span>
-                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Mercato di Ballarò')}</span>
+                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Mondello / Porto')}</span>
                             </div>
 
                             <div class="card-footer">
@@ -146,12 +146,11 @@
                 `).join('');
             }
 
-            caricaTourFood();
+            caricaTourMare();
 
-            // Sincronizza anche da Firebase Cloud
             if (window.cloudDB) {
                 window.cloudDB.fetchItinerariCloud().then(() => {
-                    caricaTourFood();
+                    caricaTourMare();
                 });
             }
         });

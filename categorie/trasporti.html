@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Street Food e Mercati - Palermo Tour | Sicily Palermo Tour</title>
+    <title>Trasporti e Transfer - Palermo Tour | Sicily Palermo Tour</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../itinerari/itinerari.css">
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
     <link rel="stylesheet" href="categoria.css">
 </head>
-<body class="full-bg-page" style="background-image: url('https://www.gruppofranza.it/wp-content/uploads/2022/10/fo1_2.jpg');">
+<body class="full-bg-page" style="background-image: url('https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1920&q=80');">
 
     <!-- Header e Navigazione con Scritta Premium Centrata -->
     <header style="padding: 25px 15px 10px 15px;">
@@ -41,35 +41,35 @@
         </ul>
     </nav>
 
-    <!-- HERO BANNER DEDICATO ALLA CATEGORIA STREET FOOD -->
+    <!-- HERO BANNER DEDICATO ALLA CATEGORIA TRASPORTI -->
     <section class="category-hero">
         <div class="category-hero-content">
-            <span class="category-badge">🥙 Categoria Esclusiva</span>
-            <h1 class="category-title">Palermo Street Food & Mercati Storici</h1>
+            <span class="category-badge">🚌 Categoria Esclusiva</span>
+            <h1 class="category-title">Trasporti, Navette & Transfer Privati</h1>
             <p class="category-description">
-                Gusta le prelibatezze uniche della capitale mondiale dello Street Food: arancine dorate, pane con le panelle, sfincione, cannoli e ricette secolari dei vivaci mercati di Ballarò, Capo e Vucciria.
+                Muoviti con il massimo del comfort e della puntualità in tutta Palermo e la Sicilia: transfer privati Aeroporto Falcone Borsellino, navette per le spiagge e collegamenti per i principali siti turistici.
             </p>
 
             <div class="category-stats-pills">
-                <span class="stat-pill">🥙 Street Food & Degustazioni</span>
-                <span class="stat-pill">🍋 Sapori & Ricette Tradizionali</span>
+                <span class="stat-pill">✈️ Transfer Aeroporto Falcone Borsellino</span>
+                <span class="stat-pill">🚌 Navette e NCC Privati</span>
                 <span class="stat-pill">💬 Assistenza Privata WhatsApp</span>
                 <span class="stat-pill">👨‍👩‍👧‍👦 Per Famiglie & Piccoli Gruppi</span>
             </div>
         </div>
     </section>
 
-    <!-- MAIN CONTAINER GRIGLIA TOUR STREET FOOD -->
+    <!-- MAIN CONTAINER GRIGLIA TOUR TRASPORTI -->
     <main class="category-main-container">
         <div class="category-section-card">
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h2 style="color: #0b2545; margin: 0; font-size: 1.5rem; font-weight: 800;">
-                        🥙 Itinerari Selezionati di "Street Food"
+                        🚌 Servizi Selezionati di "Trasporti & Transfer"
                     </h2>
                     <p style="color: #64748b; font-size: 0.92rem; margin: 4px 0 0 0;">
-                        Scegli il tuo tour enogastronomico ed inizia subito la prenotazione in pochi passaggi.
+                        Scegli il tuo servizio di trasporto e prenota in pochi passaggi.
                     </p>
                 </div>
 
@@ -105,27 +105,27 @@
         document.addEventListener('DOMContentLoaded', () => {
             const containerGrid = document.getElementById('category-tours-grid');
 
-            function caricaTourFood() {
+            function caricaTourTrasporti() {
                 const tuttiItinerari = getItinerari();
-                const tourFood = tuttiItinerari.filter(i => i.category === 'Street Food');
+                const tourTrasporti = tuttiItinerari.filter(i => i.category === 'Trasporti');
 
-                if (!tourFood || tourFood.length === 0) {
+                if (!tourTrasporti || tourTrasporti.length === 0) {
                     containerGrid.innerHTML = `
                         <div style="grid-column: 1/-1; text-align: center; padding: 50px 20px; background: #fafcfd; border-radius: 12px; border: 1.5px dashed #cbd5e1;">
-                            <h3 style="color: #0b2545; margin-bottom: 8px;">🥙 Nessun Tour attualmente disponibile in "Street Food"</h3>
-                            <p style="color: #64748b; margin-bottom: 20px;">I nuovi tour di questa categoria verranno pubblicati a breve. Consulta gli altri itinerari in homepage!</p>
+                            <h3 style="color: #0b2545; margin-bottom: 8px;">🚌 Nessun Servizio attualmente disponibile in "Trasporti & Transfer"</h3>
+                            <p style="color: #64748b; margin-bottom: 20px;">I nuovi servizi di questa categoria verranno pubblicati a breve. Consulta gli altri itinerari in homepage!</p>
                             <a href="../index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">← Torna alla Homepage</a>
                         </div>
                     `;
                     return;
                 }
 
-                containerGrid.innerHTML = tourFood.map(tour => `
+                containerGrid.innerHTML = tourTrasporti.map(tour => `
                     <div class="card">
                         ${generaHtmlCarosello(tour, 'cat')}
                         <div class="card-content">
                             <div class="badges-row">
-                                <span class="badge">🥙 Street Food</span>
+                                <span class="badge">🚌 Trasporti & Transfer</span>
                                 ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
                                 ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
                             </div>
@@ -135,23 +135,22 @@
                             <div class="card-chips">
                                 <span>⏱️ ${escapeHtml(tour.duration || '3 Ore')}</span>
                                 <span>💰 ${escapeHtml(tour.price || 'Da 25€')}</span>
-                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Mercato di Ballarò')}</span>
+                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Aeroporto / Hotel')}</span>
                             </div>
 
                             <div class="card-footer">
-                                <a href="../prenotazioni/prenotazione.html?tourId=${tour.id}" class="btn-tour" style="text-decoration: none; display: block; text-align: center;">🎟️ Prenota Questo Tour</a>
+                                <a href="../prenotazioni/prenotazione.html?tourId=${tour.id}" class="btn-tour" style="text-decoration: none; display: block; text-align: center;">🎟️ Prenota Questo Servizio</a>
                             </div>
                         </div>
                     </div>
                 `).join('');
             }
 
-            caricaTourFood();
+            caricaTourTrasporti();
 
-            // Sincronizza anche da Firebase Cloud
             if (window.cloudDB) {
                 window.cloudDB.fetchItinerariCloud().then(() => {
-                    caricaTourFood();
+                    caricaTourTrasporti();
                 });
             }
         });
