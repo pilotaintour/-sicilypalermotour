@@ -9,51 +9,67 @@ class ConsigliatiModaManager {
     }
 
     init() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.renderSezioni();
-        });
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(() => this.renderSezioni(), 50);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => this.renderSezioni());
+        }
     }
 
     // Carica gli itinerari dal localStorage / Cloud
     getItinerari() {
-        if (typeof window.getItinerari === 'function') {
-            return window.getItinerari();
-        }
         try {
-            const saved = localStorage.getItem('spt_itineraries') || '[]';
-            return JSON.parse(saved);
+            const saved = localStorage.getItem('spt_itineraries');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
         } catch (e) {
             console.error("Errore lettura itinerari in ConsigliatiModaManager:", e);
-            return [];
         }
+        return [];
     }
 
     renderSezioni() {
         const list = this.getItinerari();
-        if (!list || list.length === 0) return;
+
+        const containerConsigliati = document.getElementById('sezione-consigliati-container');
+        const containerModa = document.getElementById('sezione-moda-container');
+
+        if (!containerConsigliati && !containerModa) return;
+
+        if (!list || list.length === 0) {
+            if (containerConsigliati) containerConsigliati.style.display = 'none';
+            if (containerModa) containerModa.style.display = 'none';
+            return;
+        }
 
         // 1. Filtro "Consigliati per Te"
         let consigliatiList = list.filter(item => item.isConsigliato === true || item.isConsigliato === 'true');
         if (consigliatiList.length === 0) {
-            // Fallback automatico: primo tour e tour in evidenza
-            consigliatiList = list.filter(i => i.featured === 'true' || i.featured === true).slice(0, 3);
+            consigliatiList = list.filter(i => String(i.featured) === 'true').slice(0, 3);
             if (consigliatiList.length === 0) consigliatiList = list.slice(0, 3);
         }
 
         // 2. Filtro "Più alla Moda / Trending"
         let modaList = list.filter(item => item.isAllaModa === true || item.isAllaModa === 'true');
         if (modaList.length === 0) {
-            // Fallback automatico: street food ed esperienze trendy
             modaList = list.filter(i => (i.category || '').includes('Street') || (i.category || '').includes('Esperienz')).slice(0, 3);
             if (modaList.length === 0) modaList = list.slice(Math.max(0, list.length - 3));
         }
 
-        this.renderConsigliatiSection(consigliatiList);
-        this.renderModaSection(modaList);
+        if (containerConsigliati) {
+            containerConsigliati.style.display = 'block';
+            this.renderConsigliatiSection(containerConsigliati, consigliatiList);
+        }
+
+        if (containerModa) {
+            containerModa.style.display = 'block';
+            this.renderModaSection(containerModa, modaList);
+        }
     }
 
-    renderConsigliatiSection(tours) {
-        const container = document.getElementById('sezione-consigliati-container');
+    renderConsigliatiSection(container, tours) {
         if (!container || tours.length === 0) return;
 
         container.innerHTML = `
@@ -62,7 +78,7 @@ class ConsigliatiModaManager {
                     <h2 class="consigliati-moda-title">
                         ⭐ Consigliati per Te
                     </h2>
-                    <p class="consigliati-moda-subtitle">I tour e gli itinerari più amati dai viaggiatori scelti per te dalle nostre guide esperti.</p>
+                    <p class="consigliati-moda-subtitle">I tour e gli itinerari più amati dai viaggiatori scelti per te dalle nostre guide esperte.</p>
                 </div>
                 <span class="badge-consigliato">⭐ Selezione Esclusiva</span>
             </div>
@@ -73,8 +89,7 @@ class ConsigliatiModaManager {
         `;
     }
 
-    renderModaSection(tours) {
-        const container = document.getElementById('sezione-moda-container');
+    renderModaSection(container, tours) {
         if (!container || tours.length === 0) return;
 
         container.innerHTML = `
@@ -128,12 +143,12 @@ class ConsigliatiModaManager {
     }
 
     apriDettaglioTour(tourId) {
-        if (typeof window.mostraDettaglio === 'function') {
+        if (typeof window.apriDettagliModal === 'function') {
+            window.apriDettagliModal(tourId);
+        } else if (typeof window.mostraDettaglio === 'function') {
             window.mostraDettaglio(tourId);
-        } else if (typeof window.apriModalDettaglio === 'function') {
-            window.apriModalDettaglio(tourId);
         } else {
-            window.location.href = `prenotazioni/prenotazione.html?tourId=${tourId}`;
+            window.location.href = `prenotazioni/prenotazione.html?tourId=${encodeURIComponent(tourId)}`;
         }
     }
 

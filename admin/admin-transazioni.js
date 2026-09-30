@@ -66,6 +66,12 @@ function saveTransazioniAdmin(list) {
     }
 }
 
+function selezionaTabStatoTransazioni(stato) {
+    filtroStatoTransazioniTab = stato;
+    caricaSezioneTransazioni();
+}
+window.selezionaTabStatoTransazioni = selezionaTabStatoTransazioni;
+
 function caricaSezioneTransazioni() {
     const container = document.getElementById('sezione-transazioni');
     if (!container) return;
@@ -162,25 +168,25 @@ function caricaSezioneTransazioni() {
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px;">
 
-                <div onclick="filtroStatoTransazioniTab = 'IN_ATTESA'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? 'linear-gradient(135deg, #0b2545, #134074)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? '#ffffff' : '#0f172a'}; border: 2px solid #0b2545; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <div onclick="selezionaTabStatoTransazioni('IN_ATTESA')" style="touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; background: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? 'linear-gradient(135deg, #0b2545, #134074)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'IN_ATTESA' ? '#ffffff' : '#0f172a'}; border: 2px solid #0b2545; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                     <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">⏳ IN ATTESA (Sospese)</div>
                     <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countInAttesa} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
                     <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Pre-Autorizzazioni bloccate su carta</div>
                 </div>
 
-                <div onclick="filtroStatoTransazioniTab = 'INCASSATE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'INCASSATE' ? 'linear-gradient(135deg, #059669, #10b981)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'INCASSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #059669; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <div onclick="selezionaTabStatoTransazioni('INCASSATE')" style="touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; background: ${filtroStatoTransazioniTab === 'INCASSATE' ? 'linear-gradient(135deg, #059669, #10b981)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'INCASSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #059669; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                     <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">🟢 INCASSATE (Accreditate)</div>
                     <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countIncassate} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
                     <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Transazioni accreditate su Stripe</div>
                 </div>
 
-                <div onclick="filtroStatoTransazioniTab = 'RIMBORSATE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? 'linear-gradient(135deg, #dc2626, #ef4444)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #dc2626; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <div onclick="selezionaTabStatoTransazioni('RIMBORSATE')" style="touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; background: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? 'linear-gradient(135deg, #dc2626, #ef4444)' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'RIMBORSATE' ? '#ffffff' : '#0f172a'}; border: 2px solid #dc2626; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                     <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">🔴 RIMBORSATE / SBLOCCATE</div>
                     <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${countRimborsate} <span style="font-size: 0.9rem; font-weight: normal;">schede</span></div>
                     <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Sbloccate al 100% (0€ commissioni)</div>
                 </div>
 
-                <div onclick="filtroStatoTransazioniTab = 'TUTTE'; caricaSezioneTransazioni();" style="background: ${filtroStatoTransazioniTab === 'TUTTE' ? '#334155' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'TUTTE' ? '#ffffff' : '#0f172a'}; border: 2px solid #334155; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <div onclick="selezionaTabStatoTransazioni('TUTTE')" style="touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; background: ${filtroStatoTransazioniTab === 'TUTTE' ? '#334155' : '#ffffff'}; color: ${filtroStatoTransazioniTab === 'TUTTE' ? '#ffffff' : '#0f172a'}; border: 2px solid #334155; border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                     <div style="font-size: 0.85rem; font-weight: 700; opacity: 0.9;">📊 TUTTE LE TRANSAZIONI</div>
                     <div style="font-size: 1.8rem; font-weight: 900; margin-top: 4px;">${list.length} <span style="font-size: 0.9rem; font-weight: normal;">totali</span></div>
                     <div style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;">Archivio completo transazioni</div>
