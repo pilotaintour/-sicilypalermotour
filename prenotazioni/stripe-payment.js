@@ -257,6 +257,7 @@ class StripePaymentManager {
         if (window.paypal && window.paypal.Buttons) {
             try {
                 window.paypal.Buttons({
+                    fundingSource: window.paypal.FUNDING.PAYPAL,
                     style: {
                         layout: 'vertical',
                         color: 'gold',
