@@ -106,6 +106,7 @@ class Step4Conferma {
 
     renderSummary(data) {
         this.lastData = data;
+        window.stripePaymentCurrentAmount = data.total || '25.00';
         const box = this.container.querySelector('#step4-summary-box');
         if (!box) return;
 

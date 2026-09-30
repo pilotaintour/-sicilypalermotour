@@ -43,6 +43,10 @@ function selezionaMetodoPagamento(tipo) {
             labelPaypal.style.background = '#f0f9ff';
             labelPaypal.style.boxShadow = '0 4px 14px rgba(0, 112, 186, 0.08)';
         }
+
+        if (window.stripePayment) {
+            window.stripePayment.renderPayPalSmartButtons();
+        }
     }
 }
 window.selezionaMetodoPagamento = selezionaMetodoPagamento;
@@ -175,16 +179,14 @@ class StripePaymentManager {
                     <div id="stripe-card-errors" role="alert" style="color: #dc2626; font-size: 0.88rem; margin-top: 12px; font-weight: 700; display: none; background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px;"></div>
                 </div>
 
-                <!-- Box PayPal -->
+                <!-- Box PayPal Smart Buttons -->
                 <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 26px; text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 8px;">🔵</div>
+                    <div style="font-size: 2.2rem; margin-bottom: 6px;">🔵</div>
                     <strong style="font-size: 1.1rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
                     <p style="font-size: 0.9rem; color: #0369a1; margin: 0 0 18px 0; line-height: 1.5;">
-                        Conferma in modo semplice e veloce accedendo al tuo conto PayPal o utilizzando una carta salvata.
+                        Accedi in totale sicurezza al tuo conto PayPal per autorizzare il pagamento:
                     </p>
-                    <button type="button" onclick="const btn = document.getElementById('btn-step4-confirm'); if (btn) btn.click();" style="background: #ffc439; color: #003087; border: none; padding: 14px 34px; border-radius: 12px; font-weight: 800; font-size: 1.05rem; cursor: pointer; box-shadow: 0 4px 14px rgba(255, 196, 57, 0.35); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                        Paga con <i>PayPal</i>
-                    </button>
+                    <div id="paypal-smart-button-container" style="max-width: 340px; margin: 0 auto; min-height: 50px;"></div>
                 </div>
             </div>
         `;
@@ -243,6 +245,63 @@ class StripePaymentManager {
             } catch (err) {
                 console.error("Errore mount card element:", err);
             }
+        }
+    }
+
+    renderPayPalSmartButtons() {
+        const container = document.getElementById('paypal-smart-button-container');
+        if (!container) return;
+
+        if (container.children.length > 0) return; // Già montato
+
+        if (window.paypal && window.paypal.Buttons) {
+            try {
+                window.paypal.Buttons({
+                    style: {
+                        layout: 'vertical',
+                        color: 'gold',
+                        shape: 'rect',
+                        label: 'paypal',
+                        height: 48
+                    },
+                    createOrder: (data, actions) => {
+                        const amountStr = window.stripePaymentCurrentAmount || '25.00';
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: 'Pre-Autorizzazione Tour Palermo - Sicily Palermo Tour',
+                                amount: {
+                                    currency_code: 'EUR',
+                                    value: parseFloat(amountStr).toFixed(2)
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: async (data, actions) => {
+                        try {
+                            const details = await actions.order.capture();
+                            console.log('✅ Pagamento PayPal approvato da:', details.payer);
+                            window.paypalPayerDetails = details;
+
+                            const btnConfirm = document.getElementById('btn-step4-confirm');
+                            if (btnConfirm) btnConfirm.click();
+                        } catch (err) {
+                            console.error("Errore approvazione PayPal:", err);
+                            alert("⚠️ Errore durante l'approvazione del pagamento con PayPal.");
+                        }
+                    },
+                    onError: (err) => {
+                        console.error("Errore PayPal Smart Buttons:", err);
+                    }
+                }).render('#paypal-smart-button-container');
+            } catch (e) {
+                console.error("Errore rendering PayPal Smart Buttons:", e);
+            }
+        } else {
+            container.innerHTML = `
+                <button type="button" onclick="const btn = document.getElementById('btn-step4-confirm'); if (btn) btn.click();" style="background: #ffc439; color: #003087; border: none; padding: 14px 34px; border-radius: 12px; font-weight: 800; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(255, 196, 57, 0.35);">
+                    Paga con <i>PayPal</i>
+                </button>
+            `;
         }
     }
 
