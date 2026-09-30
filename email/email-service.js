@@ -42,20 +42,23 @@ class BrevoEmailService {
 
         const htmlContattoAdmin = `
             <!DOCTYPE html>
-            <html>
+            <html lang="it">
             <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-            <body style="font-family:sans-serif; padding:15px; color:#1e293b; background:#f8fafc; margin:0;">
-                <div style="max-width:550px; margin:0 auto; background:#ffffff; border-radius:12px; padding:20px; border:1px solid #cbd5e1; box-sizing:border-box;">
-                    <h2 style="color:#0b2545; margin-top:0;">📩 Nuovo Messaggio dal Form Contatti</h2>
-                    <p><strong>Nome Mittente:</strong> ${nome}</p>
-                    <p><strong>Email Cliente:</strong> <a href="mailto:${emailCliente}" style="color:#0369a1; word-break:break-all;">${emailCliente}</a></p>
+            <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; padding:15px; color:#1e293b; background:#f8fafc; margin:0;">
+                <div style="max-width:560px; margin:0 auto; background:#ffffff; border-radius:16px; padding:24px; border:1px solid #cbd5e1; box-sizing:border-box; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="text-align:center; margin-bottom:18px;">
+                        <img src="https://pilotaintour.github.io/-sicilypalermotour/logo.svg" alt="Sicily Palermo Tour" width="220" style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto 10px auto;">
+                        <h2 style="color:#0b2545; margin:0; font-size:1.3rem;">📩 Nuovo Messaggio dal Form Contatti</h2>
+                    </div>
+                    <p style="font-size:0.95rem;"><strong>Nome Mittente:</strong> ${nome}</p>
+                    <p style="font-size:0.95rem;"><strong>Email Cliente:</strong> <a href="mailto:${emailCliente}" style="color:#0369a1; word-break:break-all;">${emailCliente}</a></p>
                     <hr style="border:none; border-top:1px solid #cbd5e1; margin:15px 0;">
-                    <p><strong>Messaggio:</strong></p>
-                    <blockquote style="background:#f1f5f9; padding:12px 16px; border-left:4px solid #0b2545; margin:0; font-style:italic; word-break:break-word;">
+                    <p style="font-size:0.95rem;"><strong>Messaggio:</strong></p>
+                    <blockquote style="background:#f1f5f9; padding:14px 18px; border-left:4px solid #0b2545; border-radius:8px; margin:0; font-style:italic; font-size:0.92rem; color:#334155; word-break:break-word;">
                         "${messaggio}"
                     </blockquote>
                     <hr style="border:none; border-top:1px solid #cbd5e1; margin:20px 0 15px 0;">
-                    <p style="font-size:0.85rem; color:#64748b;">Puoi rispondere direttamente al cliente a questa email: ${emailCliente}</p>
+                    <p style="font-size:0.85rem; color:#64748b; text-align:center;">Puoi rispondere direttamente al cliente a questa email: ${emailCliente}</p>
                 </div>
             </body>
             </html>
@@ -63,16 +66,16 @@ class BrevoEmailService {
 
         const htmlCopiaCortesiaCliente = `
             <!DOCTYPE html>
-            <html>
+            <html lang="it">
             <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
             <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; padding:15px; color:#1e293b; background:#f8fafc; margin:0;">
-                <div style="max-width:550px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 6px 18px rgba(0,0,0,0.05); box-sizing:border-box;">
-                    <div style="background:linear-gradient(135deg, #0b2545, #134074); padding:22px; text-align:center; color:#ffffff;">
-                        <h2 style="margin:0; font-size:1.4rem;">🏛️ Sicily Palermo Tour</h2>
-                        <p style="margin:4px 0 0 0; font-size:0.9rem; opacity:0.9;">Messaggio Ricevuto con Successo</p>
+                <div style="max-width:560px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 6px 18px rgba(0,0,0,0.05); box-sizing:border-box;">
+                    <div style="background:linear-gradient(135deg, #0b2545, #134074); padding:26px 20px; text-align:center; color:#ffffff; border-bottom:3px solid #d97706;">
+                        <img src="https://pilotaintour.github.io/-sicilypalermotour/logo.svg" alt="Sicily Palermo Tour" width="240" style="max-width:240px; width:100%; height:auto; display:block; margin:0 auto 10px auto; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));">
+                        <p style="margin:4px 0 0 0; font-size:0.9rem; opacity:0.9; font-weight:600;">Messaggio Ricevuto con Successo</p>
                     </div>
-                    <div style="padding:22px;">
-                        <h3 style="color:#0b2545; margin-top:0;">Ciao ${nome}!</h3>
+                    <div style="padding:24px;">
+                        <h3 style="color:#0b2545; margin-top:0; font-size:1.2rem;">Ciao ${nome}!</h3>
                         <p style="font-size:0.95rem; color:#475569; line-height:1.6;">
                             Grazie per averci contattato! Abbiamo ricevuto il tuo messaggio e un nostro operatore ti risponderà al più presto.
                         </p>
@@ -84,10 +87,10 @@ class BrevoEmailService {
                             Per richieste urgenti o informazioni immediate sui nostri tour, puoi scriverci direttamente anche su WhatsApp.
                         </p>
                         <div style="margin-top:20px; text-align:center;">
-                            <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 22px; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block; font-size:0.9rem;">💬 Scrivici in Privato su WhatsApp</a>
+                            <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem; box-shadow:0 4px 12px rgba(37,211,102,0.25);">💬 Scrivici in Privato su WhatsApp</a>
                         </div>
                     </div>
-                    <div style="background:#f1f5f9; padding:12px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
+                    <div style="background:#f1f5f9; padding:14px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
                         Sicily Palermo Tour - La tua guida speciale a Palermo
                     </div>
                 </div>
@@ -176,7 +179,7 @@ class BrevoEmailService {
         if (bookingData.participantsList && Array.isArray(bookingData.participantsList) && bookingData.participantsList.length > 0) {
             partecipantiHtml = `
                 <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #cbd5e1;">
-                    <strong style="color: #0b2545; display: block; margin-bottom: 6px;">🧳 Elenco Dettagliato Partecipanti (${bookingData.participantsList.length}):</strong>
+                    <strong style="color: #0b2545; display: block; margin-bottom: 6px; font-size: 0.92rem;">🧳 Elenco Dettagliato Partecipanti (${bookingData.participantsList.length}):</strong>
                     <ul style="margin: 0; padding-left: 20px; font-size: 0.88rem; color: #334155; line-height: 1.6; word-break: break-word;">
                         ${bookingData.participantsList.map(p => `
                             <li style="margin-bottom: 4px;">
@@ -190,7 +193,7 @@ class BrevoEmailService {
             `;
         }
 
-        // 1. Email di Conferma Completa, Responsiva e Compatibile con tutti i client email
+        // 1. Email di Conferma Completa con LOGO IN CIMA, Responsiva e Compatibile
         const htmlTurista = `
             <!DOCTYPE html>
             <html lang="it">
@@ -206,25 +209,39 @@ class BrevoEmailService {
                 </style>
             </head>
             <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; background-color:#f4f7f9; margin:0; padding:20px 10px; color:#0f172a;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed; max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout:fixed; max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:18px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 10px 30px rgba(11,37,69,0.08);">
 
-                    <!-- Header -->
+                    <!-- Header Banner con LOGO UFFICIALE in primo piano -->
                     <tr>
-                        <td align="center" style="background:linear-gradient(135deg, #0b2545, #134074); padding:25px 20px; color:#ffffff;">
-                            <h1 style="margin:0; font-size:1.6rem; font-weight:800; letter-spacing:-0.5px;">🏛️ Sicily Palermo Tour</h1>
-                            <p style="margin:6px 0 0 0; font-size:0.95rem; opacity:0.9;">Conferma di Prenotazione Ufficiale</p>
+                        <td align="center" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); padding: 30px 20px; text-align: center; border-bottom: 3px solid #d97706;">
+                            <a href="https://pilotaintour.github.io/-sicilypalermotour/" target="_blank" style="text-decoration: none; display: inline-block;">
+                                <img src="https://pilotaintour.github.io/-sicilypalermotour/logo.svg" alt="Sicily Palermo Tour Logo" width="280" style="max-width: 280px; width: 100%; height: auto; display: block; margin: 0 auto 12px auto; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
+                            </a>
+                            <div style="color: #ffffff; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px;">
+                                Sicily Palermo Tour
+                            </div>
+                            <div style="color: #fef3c7; font-size: 0.88rem; font-weight: 600; margin-top: 4px;">
+                                ✨ Conferma Ufficiale di Prenotazione
+                            </div>
                         </td>
                     </tr>
 
                     <!-- Body Content -->
                     <tr>
-                        <td style="padding:28px 20px;">
-                            <h2 style="color:#0b2545; margin-top:0; font-size:1.3rem;">Ciao ${customerName}!</h2>
-                            <p style="font-size:0.95rem; color:#475569; line-height:1.6; margin-bottom:20px;">
+                        <td style="padding:28px 22px;">
+
+                            <!-- Badge Spunta Verde di Conferma -->
+                            <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; text-align: center;">
+                                <span style="font-size: 1.25rem;">✅</span>
+                                <strong style="color: #166534; font-size: 0.98rem; margin-left: 6px;">PRENOTAZIONE REGISTRATA CON SUCCESSO</strong>
+                            </div>
+
+                            <h2 style="color:#0b2545; margin-top:0; font-size:1.35rem; font-weight:800;">Gentile ${customerName},</h2>
+                            <p style="font-size:0.96rem; color:#475569; line-height:1.6; margin-bottom:20px;">
                                 ${tConf.welcomeMessage}
                             </p>
 
-                            <!-- BOX RIEPILOGO DATI E CODICI IDENTIFICATIVI (Resiliente al Break Word) -->
+                            <!-- BOX RIEPILOGO DATI E CODICI IDENTIFICATIVI (Resiliente e Responsive) -->
                             <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:14px; padding:20px; margin:20px 0; box-sizing:border-box;">
 
                                 <!-- Codice Prenotazione -->
@@ -239,19 +256,19 @@ class BrevoEmailService {
                                 <div style="margin-bottom:14px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
                                     <div style="color:#64748b; font-weight:bold; font-size:0.88rem; margin-bottom:6px;">Riferimento Transazione (Stripe / PayPal):</div>
                                     <div style="background:#e0f2fe; border:1px solid #bae6fd; border-radius:8px; padding:8px 12px; font-family:monospace; font-size:0.85rem; color:#0b2545; font-weight:bold; word-break:break-all; word-wrap:break-word; overflow-wrap:break-word; display:block;">
-                                        ${stripeRef}
+                                        🔒 ${stripeRef}
                                     </div>
                                 </div>
 
                                 <!-- Dettagli Tour -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:0.92rem; color:#1e293b; line-height:1.7;">
-                                    <tr><td style="padding:3px 0;"><strong>📍 Tour:</strong> ${tourTitle}</td></tr>
-                                    <tr><td style="padding:3px 0;"><strong>🌐 Lingua Guida:</strong> ${lang}</td></tr>
-                                    <tr><td style="padding:3px 0;"><strong>📅 Data della Visita:</strong> ${dateStr}</td></tr>
-                                    <tr><td style="padding:3px 0;"><strong>⏰ Orario Partenza:</strong> ${timeStr}</td></tr>
-                                    <tr><td style="padding:3px 0;"><strong>👥 Partecipanti:</strong> ${bookingData.adults} Adulti${bookingData.children > 0 ? `, ${bookingData.children} Bambini` : ''}</td></tr>
-                                    <tr><td style="padding:3px 0;"><strong>👤 Referente:</strong> ${customerName} (${phone})</td></tr>
-                                    <tr><td style="padding:3px 0; word-break:break-word;"><strong>🏠 Residenza / Fatturazione:</strong> ${billingAddress} (${country})</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>📍 Tour:</strong> ${tourTitle}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>🌐 Lingua Guida:</strong> ${lang}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>📅 Data della Visita:</strong> ${dateStr}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>⏰ Orario Partenza:</strong> ${timeStr}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>👥 Partecipanti:</strong> ${bookingData.adults} Adulti${bookingData.children > 0 ? `, ${bookingData.children} Bambini` : ''}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>👤 Referente:</strong> ${customerName} (${phone})</td></tr>
+                                    <tr><td style="padding:4px 0; word-break:break-word;"><strong>🏠 Residenza / Fatturazione:</strong> ${billingAddress} (${country})</td></tr>
                                 </table>
 
                                 ${partecipantiHtml}
@@ -259,15 +276,15 @@ class BrevoEmailService {
                                 <!-- Totale -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:14px; padding-top:12px; border-top:2px dashed #cbd5e1; font-size:1.15rem; font-weight:800; color:#0b2545;">
                                     <tr>
-                                        <td>Totale Pre-Autorizzato:</td>
-                                        <td align="right" style="color:#0369a1; font-size:1.25rem;">€${total}</td>
+                                        <td>Totale in Pre-Autorizzazione:</td>
+                                        <td align="right" style="color:#0369a1; font-size:1.3rem;">€${total}</td>
                                     </tr>
                                 </table>
                             </div>
 
                             <!-- Istruzioni & Raccomandazioni -->
                             <div style="background:#fffbf5; border:1.5px solid #fed7aa; border-radius:12px; padding:16px; margin-bottom:20px; font-size:0.9rem; color:#9a3412; line-height:1.5;">
-                                <strong style="display:block; margin-bottom:4px;">🎒 Istruzioni & Raccomandazioni Tour:</strong>
+                                <strong style="display:block; margin-bottom:6px; font-size:0.95rem;">🎒 Istruzioni & Raccomandazioni Tour:</strong>
                                 ${tConf.instructions}
                             </div>
 
@@ -277,7 +294,7 @@ class BrevoEmailService {
                                 <p style="font-size:0.88rem; color:#334155; margin:0 0 14px 0; line-height:1.5;">
                                     Se hai qualsiasi dubbio, comunica all'amministratore il tuo **Codice (${code})** oppure il **Riferimento Transazione (${stripeRef})**:
                                 </p>
-                                <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 22px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem;">
+                                <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem; box-shadow:0 4px 12px rgba(37,211,102,0.25);">
                                     💬 Contatta l'Admin su WhatsApp (+39 340 1234567)
                                 </a>
                             </div>
@@ -290,8 +307,9 @@ class BrevoEmailService {
 
                     <!-- Footer Email -->
                     <tr>
-                        <td align="center" style="background:#f1f5f9; padding:15px; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
-                            Sicily Palermo Tour - La tua guida speciale a Palermo
+                        <td align="center" style="background:#f1f5f9; padding:18px; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0; text-align:center;">
+                            <strong>Sicily Palermo Tour</strong> - La tua guida speciale a Palermo<br>
+                            <span style="font-size:0.75rem; color:#94a3b8; display:block; margin-top:4px;">&copy; 2025 Sicily Palermo Tour. Tutti i diritti riservati.</span>
                         </td>
                     </tr>
                 </table>
