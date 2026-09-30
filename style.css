@@ -19,8 +19,8 @@ body {
 /* HEADER HERO PANORAMICA LIMPIDA SENZA SCATOLE CHE COPRONO L'IMMAGINE */
 header#home {
     position: relative;
-    height: 100vh;
-    min-height: 750px;
+    height: 85vh;
+    min-height: 650px;
     color: white;
     display: flex;
     flex-direction: column;

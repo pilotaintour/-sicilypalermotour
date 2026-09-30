@@ -1,5 +1,5 @@
 /* ==========================================================================
-   STILI SPECIFICI PER GLI ITINERARI & CAROSELLO - Sicily Palermo Tour
+   STILI GETYOURGUIDE - CAROSELLO SCORREVOLE ORIZZONTALE & CARD COMPATTE
    ========================================================================== */
 
 /* Filtri Categoria */
@@ -8,7 +8,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .filter-btn {
@@ -17,79 +17,171 @@
     color: #475569;
     padding: 8px 18px;
     border-radius: 20px;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
 
 .filter-btn:hover {
-    border-color: #e67e22;
-    color: #e67e22;
+    border-color: #f59e0b;
+    color: #d97706;
 }
 
 .filter-btn.active {
-    background-color: #e67e22;
+    background-color: #0b2545;
     color: white;
-    border-color: #e67e22;
-    box-shadow: 0 3px 8px rgba(230, 126, 34, 0.3);
+    border-color: #0b2545;
+    box-shadow: 0 3px 10px rgba(11, 37, 69, 0.25);
 }
 
-/* Griglia Card Tour */
+/* Contenitore Wrapper dello Slider Orizzontale Stile GetYourGuide */
+.grid-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 45px; /* Spazio laterale dedicato affinché le frecce restino completamente ALL'ESTERNO delle card! */
+}
+
+/* Griglia / Row Scorrevole Orizzontale */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-    gap: 30px;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 10px 4px 25px 4px;
+    -webkit-overflow-scrolling: touch;
 }
 
+/* Custom Scrollbar Sottile ed Elegante */
+.grid::-webkit-scrollbar {
+    height: 7px;
+}
+.grid::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+.grid::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.grid::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Frecce Fluttuanti di Navigazione Orizzontale Posizionate all'Esterno */
+.slider-nav-btn {
+    position: absolute;
+    top: 48%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0b2545;
+    border: 1.5px solid #cbd5e1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.slider-nav-btn:hover {
+    background: #0b2545;
+    color: #ffffff;
+    border-color: #0b2545;
+    box-shadow: 0 6px 18px rgba(11, 37, 69, 0.35);
+}
+
+.slider-nav-btn.left {
+    left: 0;
+}
+
+.slider-nav-btn.right {
+    right: 0;
+}
+
+@media (max-width: 768px) {
+    .grid-wrapper {
+        padding: 0 5px;
+    }
+    .slider-nav-btn {
+        display: none; /* Su cellulare si usa lo scorrimento touch fluido nativo */
+    }
+}
+
+/* Card Compatte Rettangolari Stile GetYourGuide */
 .card {
-    background: white;
-    border-radius: 12px;
+    flex: 0 0 290px;
+    width: 290px;
+    max-width: 290px;
+    scroll-snap-align: start;
+    background: #ffffff;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid #f1f5f9;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border: 1px solid #e2e8f0;
+    position: relative;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(11, 37, 69, 0.15);
+    border-color: #f59e0b;
 }
 
-/* Carosello Foto Scorrevoli */
+/* Immagine Copertina Card (Rettangolare 195px) */
 .card-img-container {
     position: relative;
-    height: 220px;
+    height: 195px;
     overflow: hidden;
-    background-color: #1e293b;
+    background-color: #0b2545;
+    border-radius: 16px 16px 0 0;
 }
 
 .carousel-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.4s ease-in-out;
+    transition: transform 0.4s ease, opacity 0.3s ease;
 }
 
+.card:hover .carousel-img {
+    transform: scale(1.05);
+}
+
+/* Pulsanti Frecce Interni per le Foto del Carosello (Visibili solo al passaggio del mouse) */
 .carousel-nav-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.65);
     color: white;
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     z-index: 5;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.2s ease;
+}
+
+.card-img-container:hover .carousel-nav-btn {
+    opacity: 1;
 }
 
 .carousel-nav-btn:hover {
@@ -97,27 +189,27 @@
 }
 
 .carousel-nav-btn.prev {
-    left: 10px;
+    left: 8px;
 }
 
 .carousel-nav-btn.next {
-    right: 10px;
+    right: 8px;
 }
 
 .carousel-dots {
     position: absolute;
-    bottom: 10px;
+    bottom: 8px;
     left: 0;
     right: 0;
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     z-index: 5;
 }
 
 .carousel-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
@@ -125,12 +217,13 @@
 }
 
 .carousel-dot.active {
-    background: #e67e22;
+    background: #f59e0b;
     transform: scale(1.3);
 }
 
+/* Contenuto Testuale Card GetYourGuide */
 .card-content {
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -138,20 +231,20 @@
 
 .badges-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .badge {
     display: inline-block;
     padding: 3px 10px;
     border-radius: 12px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    background-color: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #ffedd5;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
 }
 
 .badge-star {
@@ -161,25 +254,74 @@
 }
 
 .card h3 {
-    margin-bottom: 8px;
-    color: #1e293b;
-    font-size: 1.25rem;
-}
-
-.card-meta {
-    font-size: 0.88rem;
-    color: #64748b;
-    margin-bottom: 12px;
-    display: flex;
-    gap: 15px;
+    margin: 0 0 6px 0;
+    color: #0b2545;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.7em;
 }
 
 .card-desc {
-    color: #475569;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
     flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.6em;
+}
+
+/* Dettagli Pratici / Chips GetYourGuide */
+.card-chips {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 12px;
+    border: 1px solid #f1f5f9;
+}
+
+/* Bottone Call To Action Stile GetYourGuide */
+.btn-tour {
+    background: linear-gradient(135deg, #0b2545 0%, #134074 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 10px rgba(11, 37, 69, 0.2);
+    width: 100%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.btn-tour:hover {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    color: #ffffff;
+    box-shadow: 0 5px 14px rgba(217, 119, 6, 0.35);
+    transform: translateY(-1px);
+}
+
+.card-footer {
+    margin-top: auto;
 }
 
 /* Modal Dettagli Tour Ridisegnato */
@@ -200,14 +342,14 @@
 
 .modal-content {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     max-width: 680px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
 .modal-close {
@@ -239,14 +381,14 @@
 
 .modal-header-info h2 {
     font-size: 1.8rem;
-    color: #1b4f72;
+    color: #0b2545;
     margin-top: 6px;
     margin-bottom: 14px;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
-/* Box Dettagli Pratici */
+/* Box Dettagli Pratici Modale */
 .tour-highlights-box {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -275,7 +417,7 @@
 
 .modal-body h3 {
     font-size: 1.2rem;
-    color: #1b4f72;
+    color: #0b2545;
     margin-top: 22px;
     margin-bottom: 12px;
     display: flex;
@@ -283,10 +425,10 @@
     gap: 8px;
 }
 
-/* Riquadro Panoramica del Tour (Scritta sempre in lungo, mai in largo!) */
+/* Riquadro Panoramica del Tour */
 #modal-description-text {
     background-color: #f8fafc;
-    border-left: 4px solid #1b4f72;
+    border-left: 4px solid #0b2545;
     padding: 14px 18px;
     border-radius: 0 8px 8px 0;
     font-size: 0.95rem;
@@ -314,7 +456,7 @@
     gap: 14px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-left: 4px solid #e67e22;
+    border-left: 4px solid #f59e0b;
     border-radius: 8px;
     padding: 12px 16px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
@@ -323,7 +465,7 @@
 }
 
 .step-number {
-    background-color: #e67e22;
+    background-color: #0b2545;
     color: white;
     font-weight: 700;
     font-size: 0.85rem;
@@ -367,10 +509,6 @@
     font-weight: 600;
     line-height: 1.3;
     margin-bottom: 4px;
-}
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
 }
 
 .btn-whatsapp-modal {

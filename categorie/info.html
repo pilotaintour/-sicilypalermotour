@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informazioni, Chi Siamo & Regolamento Rimborsi - Sicily Palermo Tour</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../itinerari/itinerari.css">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css">
+    <link rel="stylesheet" href="categoria.css">
+    <style>
+        .info-card-block {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 25px rgba(11, 37, 69, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .info-card-block:hover {
+            box-shadow: 0 12px 30px rgba(11, 37, 69, 0.12);
+        }
+        .info-block-title {
+            color: #0b2545;
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .info-block-text {
+            color: #334155;
+            font-size: 0.98rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        .info-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .info-item-box {
+            background: #f8fafc;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 0 12px 12px 0;
+        }
+        .info-item-box h4 {
+            margin: 0 0 6px 0;
+            color: #0b2545;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .info-item-box p {
+            margin: 0;
+            color: #475569;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+        .badge-info-tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body class="full-bg-page" style="background-image: url('https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1920&q=80'); background-position: center;">
+
+    <!-- Header e Navigazione con Logo Ufficiale Centrato -->
+    <header style="padding: 20px 15px 10px 15px;">
+        <div style="max-width: 850px; margin: 0 auto; text-align: center; background: rgba(11, 37, 69, 0.82); border: 1.5px solid rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 18px 20px; backdrop-filter: blur(12px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); position: relative;">
+            <a href="../index.html" style="text-decoration: none; display: inline-block;">
+                <img src="../logo.svg" alt="Sicily Palermo Tour Logo" style="max-width: 460px; width: 92%; height: auto; filter: drop-shadow(0 4px 15px rgba(0,0,0,0.6)); display: block; margin: 0 auto;">
+            </a>
+        </div>
+    </header>
+
+    <nav style="background: rgba(11, 37, 69, 0.75); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.15); margin-top: 10px; width: 100%; text-align: center;">
+        <ul style="display: flex; justify-content: center; align-items: center; gap: 30px; list-style: none; margin: 0 auto; padding: 14px 15px; flex-wrap: wrap; text-align: center;">
+            <li><a href="../index.html" style="color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1rem;">← Torna alla Home</a></li>
+            <li><a href="../index.html#itinerari" style="color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1rem;">Itinerari</a></li>
+            <li><a href="../index.html#recensioni" style="color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1rem;">Recensioni</a></li>
+            <li><a href="../index.html#contatti" style="color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1rem;">Contatti</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO BANNER DEDICATO ALLA CATEGORIA INFO -->
+    <section class="category-hero">
+        <div class="category-hero-content">
+            <span class="category-badge">ℹ️ Centro Informazioni & Guida</span>
+            <h1 class="category-title">Chi Siamo, I Nostri Servizi & Rimborsi</h1>
+            <p class="category-description">
+                Scopri la nostra agenzia di tour guidati ed escursioni d'eccellenza a Palermo, i servizi esclusivi che offriamo ed il regolamento di cancellazione e rimborso 100% garantito.
+            </p>
+
+            <div class="category-stats-pills">
+                <span class="stat-pill">🏛️ Agenzia Tour Ufficiale & NCC</span>
+                <span class="stat-pill">🚩 Guide Turistiche Abilitate</span>
+                <span class="stat-pill">🔄 Cancellazione Gratuita H24</span>
+                <span class="stat-pill">💬 Assistenza Diretta WhatsApp</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTAINER INFO UTILI -->
+    <main class="category-main-container">
+        <div class="category-section-card">
+
+            <!-- SEZIONE 1: CHI SIAMO & LA NOSTRA AGENZIA -->
+            <div class="info-card-block">
+                <h2 class="info-block-title">
+                    🏛️ Chi Siamo & La Nostra Agenzia
+                </h2>
+                <p class="info-block-text">
+                    <strong>Sicily Palermo Tour</strong> è un'agenzia turistica specializzata nell'organizzazione di tour guidati d'eccellenza, esperienze enogastronomiche, escursioni naturalistiche e servizi di trasporto privato in tutta la Sicilia e nell'area metropolitana di Palermo.
+                </p>
+                <p class="info-block-text">
+                    Nata dalla passione per la nostra terra, la nostra missione è far vivere ai turisti ed ai visitatori un'esperienza autentica, sicura e memorabile. Lavoriamo esclusivamente con <strong>guide turistiche autorizzate</strong>, accompagnatori esperti e driver professionisti (NCC) con veicoli moderni e sanificati.
+                </p>
+
+                <div class="info-list-grid">
+                    <div class="info-item-box" style="border-left-color: #0b2545;">
+                        <span class="badge-info-tag">🚩 Professionalità Garantita</span>
+                        <h4>Guide Locali Autorizzate</h4>
+                        <p>Tutti i nostri itinerari storici e culturali sono condotti da guide abilitate iscritte all'albo regionale.</p>
+                    </div>
+
+                    <div class="info-item-box" style="border-left-color: #f59e0b;">
+                        <span class="badge-info-tag">⭐ Gruppi Ridotti & VIP</span>
+                        <h4>Esperienze Su Misura</h4>
+                        <p>Offriamo sia tour in piccoli gruppi che itinerari completamente privati personalizzabili per famiglie e coppie.</p>
+                    </div>
+
+                    <div class="info-item-box" style="border-left-color: #10b981;">
+                        <span class="badge-info-tag">🌐 Multilingua</span>
+                        <h4>Supporto in Più Lingue</h4>
+                        <p>Forniamo assistenza e tour guidati in Italiano, Inglese, Spagnolo, Francese e Tedesco.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 2: COSA OFFRIAMO & I NOSTRI SERVIZI -->
+            <div class="info-card-block">
+                <h2 class="info-block-title">
+                    ✨ Cosa Offriamo: I Nostri Servizi
+                </h2>
+                <p class="info-block-text">
+                    Mettiamo a disposizione un catalogo completo di servizi turistici integrati per soddisfare ogni esigenza durante la tua permanenza a Palermo:
+                </p>
+
+                <div class="info-list-grid">
+                    <div class="info-item-box">
+                        <h4>🏛️ Tour Storici & Monumentali</h4>
+                        <p>Visite guidate alla Cattedrale UNESCO, Palazzo dei Normanni, Cappella Palatina, Monreale, mercati antichi e palazzi nobiliari.</p>
+                    </div>
+
+                    <div class="info-item-box">
+                        <h4>🥙 Street Food & Degustazioni</h4>
+                        <p>Passeggiate enogastronomiche nei vivaci mercati di Ballarò, Capo e Vucciria assaporando arancine, panelle, sfincione, cannoli e vini locali.</p>
+                    </div>
+
+                    <div class="info-item-box">
+                        <h4>🌊 Mare, Barche & Riserve Naturali</h4>
+                        <p>Escursioni in barca lungo la costa di Palermo, gite a Mondello, Cefalù, Riserva di Capo Gallo e Riserva dello Zingaro.</p>
+                    </div>
+
+                    <div class="info-item-box">
+                        <h4>🚌 Trasporti & Transfer Privati (NCC)</h4>
+                        <p>Transfer esclusivi da/per l'Aeroporto Falcone Borsellino (PMO), stazioni, porto ed accompagnamento per le principali mete siciliane.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 3: REGOLAMENTO CANCELLAZIONE E RIMBORSI -->
+            <div class="info-card-block" style="border: 1.5px solid #cbd5e1; background: #fafcfd;">
+                <h2 class="info-block-title" style="color: #b91c1c;">
+                    🔄 Regolamento Cancellazione & Rimborsi 100% Garantiti
+                </h2>
+                <p class="info-block-text">
+                    Per garantire la massima tranquillità ai nostri ospiti, la politica di cancellazione di <strong>Sicily Palermo Tour</strong> è trasparente, flessibile e tutela il turista in ogni situazione:
+                </p>
+
+                <div class="info-list-grid">
+                    <div class="info-item-box" style="border-left-color: #10b981; background: #ffffff;">
+                        <span class="badge-info-tag" style="background:#dcfce7; color:#15803d;">✅ Cancellazione Gratuita H24/H48</span>
+                        <h4>Rimborso Integrale del 100%</h4>
+                        <p>Puoi annullare la tua prenotazione gratuitamente fino a <strong>24 o 48 ore prima</strong> dall'orario di inizio del tour, senza alcuna penale ed ottenendo il rimborso totale.</p>
+                    </div>
+
+                    <div class="info-item-box" style="border-left-color: #3b82f6; background: #ffffff;">
+                        <span class="badge-info-tag" style="background:#dbeafe; color:#1d4ed8;">⚡ Riaccredito Istantaneo</span>
+                        <h4>Tempi di Rimborso Rapidi</h4>
+                        <p>In caso di annullamento nei termini, l'importo viene riaccreditato istantaneamente sullo stesso metodo di pagamento utilizzato (Carta di Credito / Stripe / PayPal).</p>
+                    </div>
+
+                    <div class="info-item-box" style="border-left-color: #f59e0b; background: #ffffff;">
+                        <span class="badge-info-tag" style="background:#fef3c7; color:#b45309;">🌧️ Tutela Meteo & Forza Maggiore</span>
+                        <h4>Annullamento per Maltempo</h4>
+                        <p>Qualora un tour in barca o un'escursione all'aperto venga cancellato per avverse condizioni meteo o per sicurezza, potrai scegliere tra il <strong>cambio data gratuito</strong> o il <strong>rimborso immediato al 100%</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Come Richiedere un Rimborso -->
+                <div style="margin-top: 22px; padding: 18px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <h4 style="margin: 0 0 8px 0; color: #0b2545; font-size: 1.1rem; font-weight: 800;">📲 Come richiedere la cancellazione o il rimborso:</h4>
+                    <p style="margin: 0; color: #475569; font-size: 0.93rem; line-height: 1.6;">
+                        Ti basta inviarci un messaggio su WhatsApp al nostro numero di assistenza ufficiale specificando il tuo <strong>Nome, Cognome e Codice Prenotazione</strong>. Il nostro team prenderà in carico la richiesta ed effettuerà il rimborso istantaneamente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SEZIONE 4: CONTATTI E ASSISTENZA -->
+            <div class="info-card-block" style="background: linear-gradient(135deg, #0b2545 0%, #134074 100%); color: #ffffff;">
+                <h2 class="info-block-title" style="color: #ffffff; border-bottom-color: rgba(255,255,255,0.2);">
+                    💬 Hai domande o desideri un Tour Personalizzato?
+                </h2>
+                <p style="color: #f1f5f9; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
+                    Il nostro servizio clienti è attivo tutti i giorni per fornirti informazioni sui monumenti, orari, itinerari su misura e prenotazioni di gruppo.
+                </p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                    <a href="https://wa.me/393401234567" target="_blank" class="btn-primary" style="background: #25d366; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;">
+                        💬 Parla con noi su WhatsApp
+                    </a>
+                    <a href="../index.html#contatti" class="btn-secondary" style="color: #ffffff; border-color: rgba(255,255,255,0.4); padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 10px;">
+                        ✉️ Invia una Messaggio Email
+                    </a>
+                </div>
+            </div>
+
+            <!-- Griglia dei Tour/Info aggiuntivi se pubblicati da Admin -->
+            <div id="category-tours-grid" class="grid" style="margin-top: 30px;">
+                <!-- Popolato via JavaScript se ci sono tour nella categoria Info -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/393401234567" class="whatsapp-float" target="_blank" title="Scrivici su WhatsApp">
+        💬 Chatta su WhatsApp
+    </a>
+
+    <!-- Footer -->
+    <footer style="background: #0b2545; color: white; padding: 30px 20px; text-align: center; font-size: 0.9rem;">
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../cloud/cloud-db.js"></script>
+    <script src="../itinerari/itinerari-data.js"></script>
+    <script src="../translate/translator.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const containerGrid = document.getElementById('category-tours-grid');
+
+            function caricaTourInfo() {
+                const tuttiItinerari = getItinerari();
+                const tourInfo = tuttiItinerari.filter(i => i.category === 'Info' || i.category === 'Info Utili' || i.category === 'Info & Consigli');
+
+                if (!tourInfo || tourInfo.length === 0) {
+                    // Se non ci sono schede extra nell'admin, non mostrare blocchi vuoti
+                    containerGrid.innerHTML = '';
+                    return;
+                }
+
+                containerGrid.innerHTML = tourInfo.map(tour => `
+                    <div class="card">
+                        ${generaHtmlCarosello(tour, 'cat')}
+                        <div class="card-content">
+                            <div class="badges-row">
+                                <span class="badge">ℹ️ Info & Consigli</span>
+                                ${tour.images && tour.images.length > 1 ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">📷 ${tour.images.length} Foto</span>` : ''}
+                                ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
+                            </div>
+                            <h3>${escapeHtml(tour.title)}</h3>
+                            <p class="card-desc">${escapeHtml(tour.shortDescription || tour.fullDescription || '')}</p>
+
+                            <div class="card-chips">
+                                <span>⏱️ ${escapeHtml(tour.duration || 'Guida')}</span>
+                                <span>💰 ${escapeHtml(tour.price || 'Gratuito / Info')}</span>
+                                <span>📍 ${escapeHtml(tour.meetingPoint || 'Palermo')}</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <a href="../prenotazioni/prenotazione.html?tourId=${tour.id}" class="btn-tour" style="text-decoration: none; display: block; text-align: center;">ℹ️ Dettagli & Info</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            caricaTourInfo();
+
+            if (window.cloudDB) {
+                window.cloudDB.fetchItinerariCloud().then(() => {
+                    caricaTourInfo();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

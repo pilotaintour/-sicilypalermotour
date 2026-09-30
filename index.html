@@ -24,11 +24,8 @@
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
-            <span style="display: inline-block; font-size: 0.78rem; font-weight: 800; color: #f59e0b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">
-                ⭐ OFFICIAL GUIDED TOURS & EXPERIENCES ⭐
-            </span>
-            <h1>Sicily Palermo Tour</h1>
-            <p>Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
+            <img src="logo.svg" alt="Sicily Palermo Tour Logo" style="max-width: 520px; width: 92%; height: auto; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.7)); display: block; margin: 0 auto;">
+            <p style="margin-top: 10px; font-size: 1.1rem; color: #f1f5f9; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">Scopri la storia, l'arte e i sapori unici della capitale della cultura siciliana.</p>
         </div>
     </header>
 
@@ -36,6 +33,7 @@
     <nav>
         <ul>
             <li><a href="#itinerari">Itinerari</a></li>
+            <li><a href="categorie/info.html">Info</a></li>
             <li><a href="#recensioni">Recensioni</a></li>
             <li><a href="#contatti">Contatti</a></li>
             <li><div id="google_translate_element" style="display:inline-block; vertical-align:middle;"></div></li>
@@ -63,9 +61,13 @@
                 <a href="categorie/trasporti.html" class="filter-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🚌 Trasporti & Transfer</a>
             </div>
 
-            <!-- Griglia dinamica Itinerari (Popolata da js/itinerari-data.js) -->
-            <div id="itinerari-grid" class="grid">
-                <!-- Verrà popolato dinamicamente via JavaScript -->
+            <!-- Slider Orizzontale Itinerari Stile GetYourGuide -->
+            <div class="grid-wrapper">
+                <button type="button" class="slider-nav-btn left" onclick="scorriSliderOrizzontale('itinerari-grid', -310)" title="Scorri a sinistra">❮</button>
+                <div id="itinerari-grid" class="grid">
+                    <!-- Verrà popolato dinamicamente via JavaScript -->
+                </div>
+                <button type="button" class="slider-nav-btn right" onclick="scorriSliderOrizzontale('itinerari-grid', 310)" title="Scorri a destra">❯</button>
             </div>
         </section>
 

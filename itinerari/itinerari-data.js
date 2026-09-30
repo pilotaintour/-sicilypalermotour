@@ -151,6 +151,14 @@ function caricaItinerari(categoria = 'Tutti') {
     }
 }
 
+// Scorre lo slider orizzontale della griglia tour GetYourGuide
+function scorriSliderOrizzontale(containerId, offset) {
+    const el = document.getElementById(containerId);
+    if (el) {
+        el.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+}
+
 function renderItinerariGrid(itinerariList, categoria) {
     const grid = document.getElementById('itinerari-grid');
     if (!grid) return;
@@ -179,13 +187,13 @@ function renderItinerariGrid(itinerariList, categoria) {
                     ${String(tour.featured) === 'true' ? '<span class="badge badge-star">⭐ In Evidenza</span>' : ''}
                 </div>
                 <h3>${escapeHtml(tour.title)}</h3>
-                <div class="card-meta">
+                <p class="card-desc">${escapeHtml(tour.shortDesc || tour.shortDescription || tour.fullDescription || '')}</p>
+                <div class="card-chips">
                     <span>⏱️ ${escapeHtml(tour.duration || 'Flessibile')}</span>
                     <span>💰 ${escapeHtml(tour.price || 'Su richiesta')}</span>
                 </div>
-                <div class="card-desc">${escapeHtml(tour.shortDesc)}</div>
-                <div style="margin-top: 12px;">
-                    <button type="button" class="btn-tour" style="width: 100%; text-align: center; display: flex; align-items: center; justify-content: center;" onclick="apriDettagliModal('${tour.id}')">Dettagli & Tappe →</button>
+                <div class="card-footer">
+                    <button type="button" class="btn-tour" onclick="apriDettagliModal('${tour.id}')">🎟️ Dettagli &amp; Prenota</button>
                 </div>
             </div>
         </div>
