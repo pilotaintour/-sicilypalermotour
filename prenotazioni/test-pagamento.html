@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Pagamento Stripe - Sicily Palermo Tour</title>
+    <title>Conferma Prenotazione e Pagamento - Sicily Palermo Tour</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../itinerari/itinerari.css">
     <link rel="stylesheet" href="../whatsapp/whatsapp.css">
@@ -15,46 +15,45 @@
     <script src="../cloud/cloud-db.js"></script>
     <script src="step4-conferma.js"></script>
 </head>
-<body style="background: #f8fafc; padding: 20px;">
+<body style="background: #f4f7f9; padding: 20px 10px;">
 
-    <!-- Header -->
-    <header style="max-width: 800px; margin: 0 auto 20px auto; border-radius: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-            <div>
-                <h1 style="margin: 0; font-size: 1.6rem;">🧪 Test Pagamento Stripe & Pre-Autorizzazione</h1>
-                <p style="margin: 4px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Pagina di test dedicata per verificare la carta di credito e le email Brevo</p>
+    <!-- Header Logo & Navigazione Premium -->
+    <header style="max-width: 860px; margin: 0 auto 20px auto; border-radius: 16px; padding: 18px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <a href="../index.html" style="text-decoration: none; display: flex; align-items: center;">
+                <img src="../logo.svg" alt="Sicily Palermo Tour" style="max-width: 280px; width: 100%; height: auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
+            </a>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 0.85rem; background: rgba(255,255,255,0.15); color: white; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); font-weight: bold;">
+                    🔒 Checkout Sicuro SSL
+                </span>
+                <a href="../index.html" class="btn-secondary" style="color: white; text-decoration: none; border-color: rgba(255,255,255,0.5); font-size: 0.88rem; padding: 8px 14px;">← Torna al Sito</a>
             </div>
-            <a href="../index.html" class="btn-secondary" style="color: white; text-decoration: none; border-color: white;">← Torna al Sito</a>
         </div>
     </header>
 
-    <div style="max-width: 800px; margin: 0 auto;">
+    <div style="max-width: 860px; margin: 0 auto;">
 
-        <!-- Card Info Test -->
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 0.9rem; color: #1e40af;">
-            <strong>💳 Istruzioni per il Test con Carta Fittizia Stripe:</strong>
-            <ul style="margin: 8px 0 0 0; padding-left: 20px; line-height: 1.6;">
-                <li><strong>Numero Carta Test:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">4242 4242 4242 4242</code></li>
-                <li><strong>Scadenza:</strong> Qualsiasi data futura (es. <code style="background: white; padding: 2px 6px; border-radius: 4px;">12 / 28</code>)</li>
-                <li><strong>CVC:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">123</code> | <strong>CAP:</strong> <code style="background: white; padding: 2px 6px; border-radius: 4px;">90100</code></li>
-            </ul>
-        </div>
-
-        <!-- Contenitore Step 4 -->
+        <!-- Contenitore Step 4 Premium -->
         <div id="test-step4-container" class="wizard-step-card" style="display: block !important;"></div>
 
     </div>
 
+    <!-- Footer -->
+    <footer style="text-align: center; margin-top: 30px; font-size: 0.85rem; color: #64748b;">
+        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const testBookingData = {
-                code: '#SPT-TEST-' + Math.floor(1000 + Math.random() * 9000),
-                tourTitle: 'Tour Palermo Centro (Test Pagamento)',
+            const demoBookingData = {
+                code: '#SPT-' + Math.floor(1000 + Math.random() * 9000),
+                tourTitle: 'Tour Palermo Centro Storico & I Miti del Capo',
                 dateReadable: '28 Maggio 2025',
                 slotTime: '09:30',
                 adults: 2,
                 children: 0,
-                customerName: 'Mario Rossi (Test)',
+                customerName: 'Mario Rossi',
                 customerEmail: 'pilotaintour13@gmail.com',
                 customerPhone: '+39 340 1234567',
                 language: 'Italiano',
@@ -62,7 +61,7 @@
                 billingAddress: 'Via Cavour 12, Palermo 90133',
                 total: '50.00',
                 participantsList: [
-                    { name: 'Mario Rossi', dob: '15/05/1990', origin: 'Roma', notes: 'Test Carta di Credito Stripe' },
+                    { name: 'Mario Rossi', dob: '15/05/1990', origin: 'Roma', notes: 'Visita guidata in italiano' },
                     { name: 'Anna Verdi', dob: '20/08/1992', origin: 'Milano', notes: '' }
                 ]
             };
@@ -74,7 +73,7 @@
                     try {
                         const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                         const record = {
-                            ...testBookingData,
+                            ...demoBookingData,
                             paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                             id: Date.now().toString(),
                             createdAt: new Date().toLocaleString('it-IT'),
@@ -93,18 +92,16 @@
                             window.brevoEmailService.inviaEmailPrenotazione(record);
                         }
                     } catch (e) {
-                        console.error("Errore salvataggio booking test:", e);
+                        console.error("Errore salvataggio booking:", e);
                     }
 
-                    alert(`🎉 PRE-AUTORIZZAZIONE STRIPE ED EMAIL DI TEST COMPLETATE CON SUCCESSO!\n\nCodice: ${testBookingData.code}\nTour: ${testBookingData.tourTitle}\nTotale Bloccato su Carta: €${testBookingData.total}\n\nLa prenotazione è stata salvata su Firebase e l'email di conferma è stata inviata via Brevo! Puoi effettuare subito un altro test.`);
+                    alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${demoBookingData.code}\nTour: ${demoBookingData.tourTitle}\nTotale Pre-Autorizzato: €${demoBookingData.total}\n\nLa prenotazione è stata ricevuta. Ti invieremo un'email di conferma con tutte le informazioni per il punto di incontro!`);
 
-                    // Rigenera codice per il prossimo test mantenendo la pagina aperta
-                    testBookingData.code = '#SPT-TEST-' + Math.floor(1000 + Math.random() * 9000);
-                    step4.renderSummary(testBookingData);
+                    window.location.href = '../index.html';
                 }
             });
 
-            step4.renderSummary(testBookingData);
+            step4.renderSummary(demoBookingData);
         });
     </script>
 </body>

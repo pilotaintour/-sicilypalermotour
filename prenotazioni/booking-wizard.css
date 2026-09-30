@@ -5,6 +5,7 @@
 
 :root {
     --brand-navy: #0b2545;
+    --brand-navy-dark: #081c38;
     --brand-navy-light: #134074;
     --brand-gold: #d97706;
     --brand-gold-light: #fef3c7;
@@ -350,4 +351,138 @@ textarea:focus {
 .btn-nav-confirm:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(5, 150, 105, 0.4);
+}
+
+/* ==========================================================================
+   STILI PREMIUM PER VIRTUAL CREDIT CARD & STEP 4 PAYMENT SCREEN
+   ========================================================================== */
+
+/* Visual Credit Card Widget */
+.virtual-card-preview {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0b2545 100%);
+    color: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.virtual-card-preview:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.32);
+}
+
+.virtual-card-preview::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.22) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+
+.virtual-card-chip {
+    width: 44px;
+    height: 32px;
+    background: linear-gradient(135deg, #fef08a 0%, #d97706 100%);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    position: relative;
+}
+
+.virtual-card-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.virtual-card-number {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.35rem;
+    letter-spacing: 3px;
+    font-weight: 700;
+    margin: 18px 0 14px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    color: #f8fafc;
+}
+
+.virtual-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.virtual-card-holder {
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.virtual-card-holder-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.virtual-card-brands {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.brand-badge-pill {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* Scontrino / Receipt Card */
+.receipt-card-container {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(11, 37, 69, 0.04);
+    position: relative;
+}
+
+.receipt-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+}
+
+.receipt-code-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
 }

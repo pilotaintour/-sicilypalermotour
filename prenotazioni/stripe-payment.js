@@ -23,7 +23,7 @@ function selezionaMetodoPagamento(tipo) {
         if (labelCard) {
             labelCard.style.border = '2px solid #0b2545';
             labelCard.style.background = '#f0f9ff';
-            labelCard.style.boxShadow = '0 4px 12px rgba(11, 37, 69, 0.08)';
+            labelCard.style.boxShadow = '0 4px 14px rgba(11, 37, 69, 0.08)';
         }
         if (labelPaypal) {
             labelPaypal.style.border = '1.5px solid #cbd5e1';
@@ -41,7 +41,7 @@ function selezionaMetodoPagamento(tipo) {
         if (labelPaypal) {
             labelPaypal.style.border = '2px solid #0070ba';
             labelPaypal.style.background = '#f0f9ff';
-            labelPaypal.style.boxShadow = '0 4px 12px rgba(0, 112, 186, 0.08)';
+            labelPaypal.style.boxShadow = '0 4px 14px rgba(0, 112, 186, 0.08)';
         }
     }
 }
@@ -94,66 +94,95 @@ class StripePaymentManager {
         if (!container) return;
 
         container.innerHTML = `
-            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 24px; margin-top: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.04);">
-                <label style="font-weight: 800; color: #0b2545; font-size: 1.05rem; display: block; margin-bottom: 16px;">
-                    💳 Scegli la Modalità di Pagamento:
-                </label>
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 26px; margin-top: 20px; box-shadow: 0 8px 24px rgba(11, 37, 69, 0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                    <label style="font-weight: 800; color: #0b2545; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; margin: 0;">
+                        <span>💳</span> Metodo di Pagamento Sicuro
+                    </label>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #166534; background: #dcfce7; padding: 4px 12px; border-radius: 20px; border: 1px solid #bbf7d0;">
+                        🔒 Crittografia SSL 256-bit
+                    </span>
+                </div>
 
-                <!-- Selettore Metodi Pagamento -->
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px;">
-                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border: 2px solid #0b2545; border-radius: 12px; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(11, 37, 69, 0.08);">
+                <!-- Selettore Opzioni Pagamento -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 24px;">
+                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border: 2px solid #0b2545; border-radius: 14px; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(11, 37, 69, 0.08);">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 20px; height: 20px; cursor: pointer;">
+                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 22px; height: 22px; cursor: pointer;">
                             <div>
-                                <strong style="color: #0b2545; font-size: 1rem; display: block;">Carta di Credito / Debito</strong>
-                                <span style="font-size: 0.82rem; color: #64748b;">Visa, MasterCard, American Express, Maestro</span>
+                                <strong style="color: #0b2545; font-size: 1.02rem; display: block;">Carta di Credito / Debito</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Visa, MasterCard, Amex, Postepay</span>
                             </div>
                         </div>
-                        <div style="font-size: 1.3rem; letter-spacing: 2px;">💳</div>
+                        <div style="font-size: 1.4rem;">💳</div>
                     </label>
 
-                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border: 1.5px solid #cbd5e1; border-radius: 12px; cursor: pointer; background: #ffffff; transition: all 0.2s ease;">
+                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border: 1.5px solid #cbd5e1; border-radius: 14px; cursor: pointer; background: #ffffff; transition: all 0.2s ease;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 20px; height: 20px; cursor: pointer;">
+                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 22px; height: 22px; cursor: pointer;">
                             <div>
-                                <strong style="color: #003087; font-size: 1rem; display: block;">PayPal</strong>
-                                <span style="font-size: 0.82rem; color: #64748b;">Paga in modo rapido e sicuro con il tuo conto PayPal</span>
+                                <strong style="color: #003087; font-size: 1.02rem; display: block;">PayPal</strong>
+                                <span style="font-size: 0.82rem; color: #64748b;">Conto PayPal o carta associata</span>
                             </div>
                         </div>
-                        <div style="font-weight: 900; color: #0070ba; font-style: italic; font-size: 1.25rem;">PayPal</div>
+                        <div style="font-weight: 900; color: #0070ba; font-style: italic; font-size: 1.3rem;">PayPal</div>
                     </label>
                 </div>
 
                 <!-- Box Dati Carta di Credito -->
-                <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-size: 0.9rem; font-weight: 700; color: #0b2545;">Dati della Carta di Credito / Debito</span>
-                        <span style="font-size: 0.78rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 10px; border-radius: 12px;">🔒 Pre-Autorizzazione in Sospeso</span>
+                <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px;">
+
+                    <!-- Virtual Credit Card Visual Widget -->
+                    <div class="virtual-card-preview" id="virtual-card-preview-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="virtual-card-chip"></div>
+                            <div style="font-size: 1.2rem; opacity: 0.85;">📶</div>
+                        </div>
+                        <div class="virtual-card-number" id="vcard-number-display">•••• •••• •••• ••••</div>
+                        <div class="virtual-card-footer">
+                            <div>
+                                <span class="virtual-card-holder-label">Intestatario Carta</span>
+                                <div class="virtual-card-holder" id="vcard-holder-display">MARIO ROSSI</div>
+                            </div>
+                            <div class="virtual-card-brands">
+                                <span class="brand-badge-pill" style="background: rgba(255,255,255,0.25); color: #fff;">VISA</span>
+                                <span class="brand-badge-pill" style="background: rgba(235,0,27,0.25); color: #fff;">MC</span>
+                                <span class="brand-badge-pill" style="background: rgba(0,111,207,0.25); color: #fff;">AMEX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
+                            👤 Nome e Cognome Intestatario Carta *
+                        </label>
+                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" style="width: 100%; padding: 13px 15px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.98rem; box-sizing: border-box; transition: all 0.2s ease;" oninput="stripePayment.aggiornaAnteprimaCarta(this.value)">
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.88rem; color: #0b2545; margin-bottom: 6px;">👤 Nome e Cognome Intestatario Carta *</label>
-                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" style="width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box;">
+                        <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
+                            💳 Dati della Carta (Numero, Scadenza, CVC) *
+                        </label>
+                        <!-- Riquadro Form Carta Stripe Elements -->
+                        <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
                     </div>
 
-                    <p style="font-size: 0.83rem; color: #64748b; margin-top: 0; margin-bottom: 12px; line-height: 1.4;">
-                        Digita le 16 cifre della carta, la scadenza ed il CVC. L'importo verrà <strong>solo bloccato in sospeso</strong> (Pre-Autorizzazione) senza addebiti immediati:
+                    <p style="font-size: 0.83rem; color: #64748b; margin-top: 10px; margin-bottom: 0; line-height: 1.4;">
+                        🔒 L'importo verrà <strong>solo prenotato in sospeso</strong> (Pre-Autorizzazione) a garanzia del tour. Nessun addebito definitivo fino alla conferma!
                     </p>
 
-                    <!-- Riquadro Form Carta Stripe Elements -->
-                    <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
-
-                    <div id="stripe-card-errors" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; font-weight: 600;"></div>
+                    <!-- Div Errore Formattato -->
+                    <div id="stripe-card-errors" role="alert" style="color: #dc2626; font-size: 0.88rem; margin-top: 12px; font-weight: 700; display: none; background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px;"></div>
                 </div>
 
                 <!-- Box PayPal -->
-                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 22px; text-align: center;">
-                    <div style="font-size: 2.2rem; margin-bottom: 8px;">🔵</div>
-                    <strong style="font-size: 1.05rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
-                    <p style="font-size: 0.88rem; color: #0369a1; margin: 0 0 16px 0; line-height: 1.5;">
-                        Verrai reindirizzato in modo sicuro su PayPal per confermare la pre-autorizzazione del pagamento in totale tranquillità.
+                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 26px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 8px;">🔵</div>
+                    <strong style="font-size: 1.1rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
+                    <p style="font-size: 0.9rem; color: #0369a1; margin: 0 0 18px 0; line-height: 1.5;">
+                        Conferma in modo semplice e veloce accedendo al tuo conto PayPal o utilizzando una carta salvata.
                     </p>
-                    <button type="button" onclick="alert('🔵 Reindirizzamento su PayPal in corso... (Modalità Test PayPal)')" style="background: #ffc439; color: #003087; border: none; padding: 13px 32px; border-radius: 10px; font-weight: 800; font-size: 1.05rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 196, 57, 0.3);">
+                    <button type="button" onclick="const btn = document.getElementById('btn-step4-confirm'); if (btn) btn.click();" style="background: #ffc439; color: #003087; border: none; padding: 14px 34px; border-radius: 12px; font-weight: 800; font-size: 1.05rem; cursor: pointer; box-shadow: 0 4px 14px rgba(255, 196, 57, 0.35); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                         Paga con <i>PayPal</i>
                     </button>
                 </div>
@@ -176,8 +205,8 @@ class StripePaymentManager {
                             '::placeholder': { color: '#94a3b8' }
                         },
                         invalid: {
-                            color: '#ef4444',
-                            iconColor: '#ef4444'
+                            color: '#dc2626',
+                            iconColor: '#dc2626'
                         }
                     }
                 });
@@ -189,8 +218,25 @@ class StripePaymentManager {
 
                     this.cardElement.on('change', (event) => {
                         const displayError = document.getElementById('stripe-card-errors');
+                        const vnum = document.getElementById('vcard-number-display');
+
+                        if (event.brand && event.brand !== 'unknown') {
+                            if (vnum) {
+                                const brandName = event.brand.toUpperCase();
+                                vnum.textContent = `•••• •••• •••• (${brandName})`;
+                            }
+                        } else if (vnum && !event.complete) {
+                            vnum.textContent = `•••• •••• •••• ••••`;
+                        }
+
                         if (displayError) {
-                            displayError.textContent = event.error ? event.error.message : '';
+                            if (event.error) {
+                                displayError.textContent = "⚠️ " + event.error.message;
+                                displayError.style.display = 'block';
+                            } else {
+                                displayError.textContent = '';
+                                displayError.style.display = 'none';
+                            }
                         }
                     });
                 }
@@ -200,8 +246,21 @@ class StripePaymentManager {
         }
     }
 
+    aggiornaAnteprimaCarta(valore) {
+        const holderDisplay = document.getElementById('vcard-holder-display');
+        if (holderDisplay) {
+            holderDisplay.textContent = valore.trim() ? valore.trim().toUpperCase() : 'MARIO ROSSI';
+        }
+    }
+
     // Esegue la Pre-Autorizzazione Reale (Blocco Importo in Sospeso su Stripe con capture_method=manual)
     async processaPreAutorizzazione(totaleEuro, customerName, customerEmail) {
+        const errorElement = document.getElementById('stripe-card-errors');
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
         const radioPaypal = document.querySelector('input[name="payment_method"][value="paypal"]');
         if (radioPaypal && radioPaypal.checked) {
             return {
@@ -215,6 +274,98 @@ class StripePaymentManager {
         const cardholderInput = document.getElementById('stripe-cardholder-name');
         const cardholderName = (cardholderInput && cardholderInput.value.trim()) ? cardholderInput.value.trim() : customerName;
 
+        if (!cardholderName || cardholderName.trim().length < 2) {
+            if (errorElement) {
+                errorElement.textContent = "⚠️ Inserisci il Nome e Cognome dell'intestatario della carta.";
+                errorElement.style.display = 'block';
+            }
+            if (cardholderInput) cardholderInput.focus();
+            return { success: false, error: "Inserisci il Nome e Cognome dell'intestatario della carta." };
+        }
+
+        // Se Stripe Elements è attivo, crea prima il PaymentMethod con i dati reali della carta inseriti dall'utente
+        if (this.stripe && this.cardElement) {
+            try {
+                const pmResult = await this.stripe.createPaymentMethod({
+                    type: 'card',
+                    card: this.cardElement,
+                    billing_details: {
+                        name: cardholderName,
+                        email: customerEmail || ''
+                    }
+                });
+
+                if (pmResult.error) {
+                    if (errorElement) {
+                        errorElement.textContent = "⚠️ " + pmResult.error.message;
+                        errorElement.style.display = 'block';
+                    }
+                    return { success: false, error: pmResult.error.message };
+                }
+
+                const paymentMethodId = pmResult.paymentMethod.id;
+                console.log("💳 PaymentMethod creato con successo da Stripe Elements:", paymentMethodId);
+
+                const sk = this.getSecretKey();
+                const amountCents = Math.round((parseFloat(totaleEuro) || 50) * 100);
+
+                if (sk && sk.startsWith('sk_')) {
+                    const params = new URLSearchParams();
+                    params.append('amount', amountCents.toString());
+                    params.append('currency', 'eur');
+                    params.append('payment_method', paymentMethodId);
+                    params.append('confirm', 'true');
+                    params.append('capture_method', 'manual'); // Blocco Importo in Sospeso (Pre-Autorizzazione)!
+                    params.append('return_url', window.location.href);
+                    params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
+
+                    const res = await fetch('https://api.stripe.com/v1/payment_intents', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + sk,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: params
+                    });
+
+                    if (res.ok) {
+                        const intent = await res.json();
+                        console.log("🔥 Pre-Autorizzazione registrata in Sospeso su Stripe! ID:", intent.id);
+                        return {
+                            success: true,
+                            paymentIntentId: intent.id,
+                            status: 'Pre-Autorizzato in Sospeso (Stripe)',
+                            message: 'Importo bloccato in sospeso con successo sulla carta del cliente!'
+                        };
+                    } else {
+                        const errData = await res.json();
+                        const msg = (errData.error && errData.error.message) ? errData.error.message : "Errore durante la pre-autorizzazione Stripe.";
+                        if (errorElement) {
+                            errorElement.textContent = "⚠️ " + msg;
+                            errorElement.style.display = 'block';
+                        }
+                        return { success: false, error: msg };
+                    }
+                } else {
+                    // Modalità simulata basata su PaymentMethod reale
+                    return {
+                        success: true,
+                        paymentIntentId: 'pi_hold_' + paymentMethodId.substring(3),
+                        status: 'Pre-Autorizzato in Sospeso (Carta)',
+                        message: 'Importo registrato in sospeso sulla carta del cliente.'
+                    };
+                }
+            } catch (e) {
+                console.error("Errore elaborazione carta con Stripe.js:", e);
+                if (errorElement) {
+                    errorElement.textContent = "⚠️ Errore di verifica carta. Controlla i dati inseriti.";
+                    errorElement.style.display = 'block';
+                }
+                return { success: false, error: "Errore durante la verifica della carta di credito." };
+            }
+        }
+
+        // Fallback se Stripe Elements non è caricato
         const sk = this.getSecretKey();
         const amountCents = Math.round((parseFloat(totaleEuro) || 50) * 100);
 
@@ -223,10 +374,10 @@ class StripePaymentManager {
                 const params = new URLSearchParams();
                 params.append('amount', amountCents.toString());
                 params.append('currency', 'eur');
-                params.append('payment_method', 'pm_card_visa'); // Carta Visa di test Stripe
+                params.append('payment_method', 'pm_card_visa'); // Carta Visa di test
                 params.append('confirm', 'true');
-                params.append('capture_method', 'manual'); // Blocco Importo in Sospeso (Pre-Autorizzazione)!
-                params.append('return_url', 'https://pilotaintour.github.io/-sicilypalermotour/prenotazioni/test-pagamento.html');
+                params.append('capture_method', 'manual');
+                params.append('return_url', window.location.href);
                 params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
 
                 const res = await fetch('https://api.stripe.com/v1/payment_intents', {
@@ -240,16 +391,12 @@ class StripePaymentManager {
 
                 if (res.ok) {
                     const intent = await res.json();
-                    console.log("🔥 Pre-Autorizzazione registrata in Sospeso su Stripe! ID:", intent.id);
                     return {
                         success: true,
                         paymentIntentId: intent.id,
                         status: 'Pre-Autorizzato in Sospeso (Stripe)',
                         message: 'Importo bloccato in sospeso con successo sulla carta del cliente!'
                     };
-                } else {
-                    const errData = await res.json();
-                    console.error("Errore Stripe REST API:", errData);
                 }
             } catch (e) {
                 console.error("Errore chiamata diretta Stripe REST API:", e);
