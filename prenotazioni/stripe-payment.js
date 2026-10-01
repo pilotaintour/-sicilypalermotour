@@ -370,13 +370,18 @@ class StripePaymentManager {
                 const amountCents = Math.round((parseFloat(totaleEuro) || 50) * 100);
 
                 if (sk && sk.startsWith('sk_')) {
+                    let returnUrl = window.location.href;
+                    if (!returnUrl || !returnUrl.startsWith('http')) {
+                        returnUrl = 'https://sicilypalermotour.com/prenotazioni/test-pagamento.html';
+                    }
+
                     const params = new URLSearchParams();
                     params.append('amount', amountCents.toString());
                     params.append('currency', 'eur');
                     params.append('payment_method', paymentMethodId);
                     params.append('confirm', 'true');
                     params.append('capture_method', 'manual'); // Blocco Importo in Sospeso (Pre-Autorizzazione)!
-                    params.append('return_url', window.location.href);
+                    params.append('return_url', returnUrl);
                     params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
 
                     const res = await fetch('https://api.stripe.com/v1/payment_intents', {
@@ -431,13 +436,18 @@ class StripePaymentManager {
 
         if (sk && sk.startsWith('sk_')) {
             try {
+                let returnUrl = window.location.href;
+                if (!returnUrl || !returnUrl.startsWith('http')) {
+                    returnUrl = 'https://sicilypalermotour.com/prenotazioni/test-pagamento.html';
+                }
+
                 const params = new URLSearchParams();
                 params.append('amount', amountCents.toString());
                 params.append('currency', 'eur');
                 params.append('payment_method', 'pm_card_visa'); // Carta Visa di test
                 params.append('confirm', 'true');
                 params.append('capture_method', 'manual');
-                params.append('return_url', window.location.href);
+                params.append('return_url', returnUrl);
                 params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
 
                 const res = await fetch('https://api.stripe.com/v1/payment_intents', {
