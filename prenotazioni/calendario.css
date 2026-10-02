@@ -107,8 +107,14 @@
     -webkit-tap-highlight-color: transparent;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    padding: 2px;
+    padding: 0;
     box-sizing: border-box;
+    overflow: hidden;
+}
+
+.day-cell span:first-child {
+    line-height: 1;
+    margin: 0;
 }
 
 .day-cell:hover:not(.day-disabled):not(.empty-cell) {
@@ -131,10 +137,10 @@
 .day-cell.day-today::after {
     content: '';
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 6px;
-    height: 6px;
+    top: 3px;
+    right: 3px;
+    width: 5px;
+    height: 5px;
     background-color: var(--cal-accent);
     border-radius: 50%;
 }
@@ -155,10 +161,13 @@
 }
 
 .day-status-indicator {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    margin-top: 2px;
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .status-dot-available { background-color: var(--cal-success); }
@@ -266,32 +275,71 @@
 .fill-danger { background-color: var(--cal-danger); }
 
 /* ==========================================================================
-   OTTIMIZZAZIONE CALENDARIO SU SMARTPHONE (MOBILE)
+   OTTIMIZZAZIONE PERFETTA CALENDARIO SU SMARTPHONE (MOBILE)
    ========================================================================== */
 @media (max-width: 640px) {
+    .wizard-step-card {
+        padding: 16px 10px !important;
+        border-radius: 16px !important;
+    }
+
     .custom-calendar-widget {
-        padding: 16px 12px !important;
+        padding: 12px 6px !important;
         border-radius: 14px !important;
     }
 
+    .calendar-header {
+        margin-bottom: 12px !important;
+        padding-bottom: 8px !important;
+    }
+
     .calendar-header h4 {
-        font-size: 1.1rem !important;
+        font-size: 1.05rem !important;
     }
 
     .calendar-nav-btn {
         width: 36px !important;
         height: 36px !important;
-        font-size: 0.95rem !important;
+        font-size: 0.92rem !important;
+    }
+
+    .calendar-weekdays {
+        font-size: 0.75rem !important;
+        margin-bottom: 6px !important;
     }
 
     .calendar-days-grid {
-        gap: 4px !important;
+        gap: 3px !important;
     }
 
     .day-cell {
+        font-size: 0.82rem !important;
+        border-radius: 8px !important;
+        padding: 0 !important;
+        min-height: 36px !important;
+        height: 38px !important;
+        aspect-ratio: auto !important;
+    }
+
+    .day-cell span:first-child {
+        line-height: 1 !important;
+        font-size: 0.85rem !important;
+    }
+
+    .day-status-indicator {
+        width: 4px !important;
+        height: 4px !important;
+        bottom: 2px !important;
+    }
+
+    .slots-container {
+        margin-top: 16px !important;
+        padding-top: 12px !important;
+    }
+
+    .slots-title {
         font-size: 0.88rem !important;
-        border-radius: 10px !important;
-        padding: 1px !important;
+        margin-bottom: 10px !important;
     }
 
     .slots-grid {
@@ -300,16 +348,16 @@
     }
 
     .slot-card {
-        padding: 10px 8px !important;
+        padding: 9px 6px !important;
         border-radius: 10px !important;
     }
 
     .slot-time {
-        font-size: 1rem !important;
+        font-size: 0.98rem !important;
     }
 
     .slot-status-badge {
-        font-size: 0.72rem !important;
-        padding: 2px 6px !important;
+        font-size: 0.7rem !important;
+        padding: 1px 5px !important;
     }
 }
