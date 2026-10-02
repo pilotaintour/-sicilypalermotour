@@ -4,34 +4,17 @@
  */
 
 /* ==========================================================================
-   1. OTTIMIZZAZIONE LOGO & HEADER SU CELLULARE
+   1. LOGO SU CELLULARE
    ========================================================================== */
 @media (max-width: 640px) {
-    header {
-        padding: 16px 12px !important;
-        min-height: auto !important;
-    }
-
-    .hero-content {
-        padding: 10px 8px !important;
-    }
-
-    /* Logo perfettamente centrato, ridimensionato e nitido su mobile */
+    /* Logo ben visibile su mobile */
     .hero-content img,
     header img {
-        max-width: 280px !important;
-        width: 90% !important;
+        max-width: 320px !important;
+        width: 92% !important;
         height: auto !important;
         margin: 0 auto !important;
         display: block !important;
-        filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5)) !important;
-    }
-
-    .hero-content p {
-        font-size: 0.88rem !important;
-        line-height: 1.4 !important;
-        margin-top: 8px !important;
-        padding: 0 10px !important;
     }
 
     /* Barra di Navigazione Mobile */

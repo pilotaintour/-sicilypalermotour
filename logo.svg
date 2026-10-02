@@ -1,72 +1,57 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 170" width="100%" height="100%">
     <defs>
-        <!-- SFUMATURA GIALLO ORO BRILLANTE ED SULTRALUMINOSA -->
-        <linearGradient id="brightGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#FFFFFF" />
-            <stop offset="35%" stop-color="#FFEE55" />
-            <stop offset="70%" stop-color="#FFC700" />
-            <stop offset="100%" stop-color="#E59400" />
-        </linearGradient>
-
-        <linearGradient id="vibrantYellowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#FFFFFF" />
-            <stop offset="40%" stop-color="#FFF066" />
-            <stop offset="100%" stop-color="#FFD700" />
-        </linearGradient>
-
-        <!-- BAGLIORE ORO BRILLANTE -->
-        <filter id="goldGlowBright" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.8" />
+        <filter id="crispShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.85" />
         </filter>
     </defs>
 
-    <!-- STEMMA EMBLEMA SICILIANO ORO BRILLANTE -->
+    <!-- STEMMA EMBLEMA SICILIANO GIALLO SOLARE PURISSIMO -->
     <g transform="translate(12, 16) scale(1.18)">
-        <!-- Cerchio di Sfondo Scura con Bordo Oro Brillante -->
-        <circle cx="55" cy="55" r="50" fill="#0b2545" stroke="url(#brightGoldGradient)" stroke-width="3.5" filter="url(#goldGlowBright)" />
+        <!-- Cerchio Sfondo Scura -->
+        <circle cx="55" cy="55" r="50" fill="#0b2545" stroke="#FFD700" stroke-width="3.5" filter="url(#crispShadow)" />
         <circle cx="55" cy="55" r="44" fill="none" stroke="#FFE033" stroke-width="1.5" stroke-dasharray="4,2" />
 
         <!-- Stella Imperiale -->
-        <path d="M55,18 L58,32 L72,32 L60,40 L65,54 L55,45 L45,54 L50,40 L38,32 L52,32 Z" fill="#FFF066" opacity="0.3" />
+        <path d="M55,18 L58,32 L72,32 L60,40 L65,54 L55,45 L45,54 L50,40 L38,32 L52,32 Z" fill="#FFEA00" opacity="0.35" />
 
-        <!-- Tempio Arabo-Normanno -->
-        <path d="M35,46 L55,28 L75,46 Z" fill="url(#vibrantYellowGradient)" />
-        <rect x="37" y="47" width="36" height="3" fill="#FFEE55" />
+        <!-- Tempio Arabo-Normanno Giallo Brillante -->
+        <path d="M35,46 L55,28 L75,46 Z" fill="#FFD700" />
+        <rect x="37" y="47" width="36" height="3" fill="#FFF066" />
         <!-- Colonne Tempio -->
-        <rect x="39" y="52" width="4" height="22" rx="1" fill="url(#vibrantYellowGradient)" />
-        <rect x="47" y="52" width="4" height="22" rx="1" fill="url(#vibrantYellowGradient)" />
-        <rect x="55" y="52" width="4" height="22" rx="1" fill="url(#vibrantYellowGradient)" />
-        <rect x="63" y="52" width="4" height="22" rx="1" fill="url(#vibrantYellowGradient)" />
-        <rect x="71" y="52" width="4" height="22" rx="1" fill="url(#vibrantYellowGradient)" />
+        <rect x="39" y="52" width="4" height="22" rx="1" fill="#FFD700" />
+        <rect x="47" y="52" width="4" height="22" rx="1" fill="#FFD700" />
+        <rect x="55" y="52" width="4" height="22" rx="1" fill="#FFD700" />
+        <rect x="63" y="52" width="4" height="22" rx="1" fill="#FFD700" />
+        <rect x="71" y="52" width="4" height="22" rx="1" fill="#FFD700" />
         <!-- Base Tempio -->
-        <rect x="35" y="75" width="40" height="5" rx="1" fill="url(#brightGoldGradient)" />
+        <rect x="35" y="75" width="40" height="5" rx="1" fill="#FFD700" />
 
         <!-- Corona d'Alloro Laterale -->
-        <path d="M22,55 C22,72 34,84 52,86" fill="none" stroke="url(#brightGoldGradient)" stroke-width="2.8" stroke-linecap="round" />
-        <path d="M88,55 C88,72 76,84 58,86" fill="none" stroke="url(#brightGoldGradient)" stroke-width="2.8" stroke-linecap="round" />
+        <path d="M22,55 C22,72 34,84 52,86" fill="none" stroke="#FFD700" stroke-width="2.8" stroke-linecap="round" />
+        <path d="M88,55 C88,72 76,84 58,86" fill="none" stroke="#FFD700" stroke-width="2.8" stroke-linecap="round" />
 
         <!-- Foglie Alloro -->
-        <circle cx="21" cy="52" r="2.8" fill="#FFF066" />
-        <circle cx="23" cy="64" r="2.8" fill="#FFF066" />
-        <circle cx="29" cy="74" r="2.8" fill="#FFF066" />
-        <circle cx="89" cy="52" r="2.8" fill="#FFF066" />
-        <circle cx="87" cy="64" r="2.8" fill="#FFF066" />
-        <circle cx="81" cy="74" r="2.8" fill="#FFF066" />
+        <circle cx="21" cy="52" r="2.8" fill="#FFEA00" />
+        <circle cx="23" cy="64" r="2.8" fill="#FFEA00" />
+        <circle cx="29" cy="74" r="2.8" fill="#FFEA00" />
+        <circle cx="89" cy="52" r="2.8" fill="#FFEA00" />
+        <circle cx="87" cy="64" r="2.8" fill="#FFEA00" />
+        <circle cx="81" cy="74" r="2.8" fill="#FFEA00" />
     </g>
 
-    <!-- TESTO LOGO SICILY PALERMO TOUR GIALLO ORO VIBRANTE -->
+    <!-- TESTO LOGO SICILY PALERMO TOUR GIALLO SOLARE E SOLIDO -->
     <!-- Sottotitolo Superiore -->
-    <text x="150" y="28" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="22" font-weight="800" fill="#FFEB3B" letter-spacing="5.1" filter="url(#goldGlowBright)">
+    <text x="150" y="28" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="22" font-weight="800" fill="#FFEA00" letter-spacing="5.1" filter="url(#crispShadow)">
         ⭐ OFFICIAL LUXURY GUIDED TOURS ⭐
     </text>
 
     <!-- Nome Principale -->
-    <text x="150" y="88" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="58" font-weight="900" fill="url(#vibrantYellowGradient)" filter="url(#goldGlowBright)" letter-spacing="0.5">
+    <text x="150" y="88" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="58" font-weight="900" fill="#FFD700" filter="url(#crispShadow)" letter-spacing="0.5">
         Sicily Palermo Tour
     </text>
 
     <!-- Sottotitolo Descrizione -->
-    <text x="150" y="142" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="23.5" font-weight="700" fill="#FFFFFF" letter-spacing="2.85" filter="url(#goldGlowBright)">
+    <text x="150" y="142" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="23.5" font-weight="700" fill="#FFFFFF" letter-spacing="2.85" filter="url(#crispShadow)">
         Esperienze &amp; Itinerari Guidati d'Eccellenza
     </text>
 </svg>
