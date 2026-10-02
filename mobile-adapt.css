@@ -58,14 +58,14 @@
         padding: 0 10px !important;
     }
 
-    /* Logo solo per l'immagine del contenuto */
+    /* Logo solo per l'immagine del contenuto su mobile: brightness aumentata solo su smartphone */
     .hero-content img {
         max-width: 320px !important;
         width: 95% !important;
         height: auto !important;
         margin: 0 auto !important;
         display: block !important;
-        filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.85)) !important;
+        filter: brightness(1.35) contrast(1.15) drop-shadow(0 4px 15px rgba(0, 0, 0, 0.85)) !important;
     }
 
     /* Barra di Navigazione Mobile */
