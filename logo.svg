@@ -1,52 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 170" width="100%" height="100%">
     <defs>
         <filter id="crispShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.85" />
+            <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.9" />
         </filter>
     </defs>
 
-    <!-- STEMMA EMBLEMA SICILIANO GIALLO SOLARE PURISSIMO -->
+    <!-- STEMMA EMBLEMA SICILIANO GIALLO CANARINO SOLARE -->
     <g transform="translate(12, 16) scale(1.18)">
         <!-- Cerchio Sfondo Scura -->
-        <circle cx="55" cy="55" r="50" fill="#0b2545" stroke="#FFD700" stroke-width="3.5" filter="url(#crispShadow)" />
-        <circle cx="55" cy="55" r="44" fill="none" stroke="#FFE033" stroke-width="1.5" stroke-dasharray="4,2" />
+        <circle cx="55" cy="55" r="50" fill="#0b2545" stroke="#FFEA00" stroke-width="3.5" filter="url(#crispShadow)" />
+        <circle cx="55" cy="55" r="44" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,2" />
 
         <!-- Stella Imperiale -->
-        <path d="M55,18 L58,32 L72,32 L60,40 L65,54 L55,45 L45,54 L50,40 L38,32 L52,32 Z" fill="#FFEA00" opacity="0.35" />
+        <path d="M55,18 L58,32 L72,32 L60,40 L65,54 L55,45 L45,54 L50,40 L38,32 L52,32 Z" fill="#FFEA00" opacity="0.4" />
 
-        <!-- Tempio Arabo-Normanno Giallo Brillante -->
-        <path d="M35,46 L55,28 L75,46 Z" fill="#FFD700" />
-        <rect x="37" y="47" width="36" height="3" fill="#FFF066" />
+        <!-- Tempio Arabo-Normanno Giallo Pieno -->
+        <path d="M35,46 L55,28 L75,46 Z" fill="#FFEA00" stroke="#000000" stroke-width="0.5" />
+        <rect x="37" y="47" width="36" height="3" fill="#FFFFFF" />
         <!-- Colonne Tempio -->
-        <rect x="39" y="52" width="4" height="22" rx="1" fill="#FFD700" />
-        <rect x="47" y="52" width="4" height="22" rx="1" fill="#FFD700" />
-        <rect x="55" y="52" width="4" height="22" rx="1" fill="#FFD700" />
-        <rect x="63" y="52" width="4" height="22" rx="1" fill="#FFD700" />
-        <rect x="71" y="52" width="4" height="22" rx="1" fill="#FFD700" />
+        <rect x="39" y="52" width="4" height="22" rx="1" fill="#FFEA00" />
+        <rect x="47" y="52" width="4" height="22" rx="1" fill="#FFEA00" />
+        <rect x="55" y="52" width="4" height="22" rx="1" fill="#FFEA00" />
+        <rect x="63" y="52" width="4" height="22" rx="1" fill="#FFEA00" />
+        <rect x="71" y="52" width="4" height="22" rx="1" fill="#FFEA00" />
         <!-- Base Tempio -->
-        <rect x="35" y="75" width="40" height="5" rx="1" fill="#FFD700" />
+        <rect x="35" y="75" width="40" height="5" rx="1" fill="#FFEA00" />
 
         <!-- Corona d'Alloro Laterale -->
-        <path d="M22,55 C22,72 34,84 52,86" fill="none" stroke="#FFD700" stroke-width="2.8" stroke-linecap="round" />
-        <path d="M88,55 C88,72 76,84 58,86" fill="none" stroke="#FFD700" stroke-width="2.8" stroke-linecap="round" />
+        <path d="M22,55 C22,72 34,84 52,86" fill="none" stroke="#FFEA00" stroke-width="3" stroke-linecap="round" />
+        <path d="M88,55 C88,72 76,84 58,86" fill="none" stroke="#FFEA00" stroke-width="3" stroke-linecap="round" />
 
         <!-- Foglie Alloro -->
-        <circle cx="21" cy="52" r="2.8" fill="#FFEA00" />
-        <circle cx="23" cy="64" r="2.8" fill="#FFEA00" />
-        <circle cx="29" cy="74" r="2.8" fill="#FFEA00" />
-        <circle cx="89" cy="52" r="2.8" fill="#FFEA00" />
-        <circle cx="87" cy="64" r="2.8" fill="#FFEA00" />
-        <circle cx="81" cy="74" r="2.8" fill="#FFEA00" />
+        <circle cx="21" cy="52" r="3" fill="#FFEA00" />
+        <circle cx="23" cy="64" r="3" fill="#FFEA00" />
+        <circle cx="29" cy="74" r="3" fill="#FFEA00" />
+        <circle cx="89" cy="52" r="3" fill="#FFEA00" />
+        <circle cx="87" cy="64" r="3" fill="#FFEA00" />
+        <circle cx="81" cy="74" r="3" fill="#FFEA00" />
     </g>
 
-    <!-- TESTO LOGO SICILY PALERMO TOUR GIALLO SOLARE E SOLIDO -->
+    <!-- TESTO LOGO SICILY PALERMO TOUR GIALLO CANARINO SOLIDO -->
     <!-- Sottotitolo Superiore -->
     <text x="150" y="28" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="22" font-weight="800" fill="#FFEA00" letter-spacing="5.1" filter="url(#crispShadow)">
         ⭐ OFFICIAL LUXURY GUIDED TOURS ⭐
     </text>
 
-    <!-- Nome Principale -->
-    <text x="150" y="88" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="58" font-weight="900" fill="#FFD700" filter="url(#crispShadow)" letter-spacing="0.5">
+    <!-- Nome Principale in Giallo Puro Brillante -->
+    <text x="150" y="88" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="58" font-weight="900" fill="#FFEA00" stroke="#0b2545" stroke-width="1.2" filter="url(#crispShadow)" letter-spacing="0.5">
         Sicily Palermo Tour
     </text>
 

@@ -4,17 +4,68 @@
  */
 
 /* ==========================================================================
-   1. LOGO SU CELLULARE
+   1. COPERTINA SFONDO FULLSCREEN & LOGO SU CELLULARE
    ========================================================================== */
 @media (max-width: 640px) {
-    /* Logo ben visibile su mobile */
-    .hero-content img,
-    header img {
+    /* Mantiene lo Sfondo Foto Fullscreen della Copertina */
+    header#home {
+        height: 75vh !important;
+        min-height: 480px !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+
+    .hero-bg-slider {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1 !important;
+    }
+
+    .hero-slide {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* La Foto Copertina Copre Sempre l'Intera Schermata */
+    .hero-slide img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 25% !important;
+        max-width: none !important;
+        margin: 0 !important;
+    }
+
+    .hero-overlay {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.28) !important;
+        z-index: 2 !important;
+    }
+
+    .hero-content {
+        position: relative !important;
+        z-index: 3 !important;
+        padding: 0 10px !important;
+    }
+
+    /* Logo solo per l'immagine del contenuto */
+    .hero-content img {
         max-width: 320px !important;
-        width: 92% !important;
+        width: 95% !important;
         height: auto !important;
         margin: 0 auto !important;
         display: block !important;
+        filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.85)) !important;
     }
 
     /* Barra di Navigazione Mobile */
