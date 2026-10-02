@@ -82,7 +82,7 @@ class Step3Dati {
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
-                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong> per la lista passeggiati ed assicurazione tour.
+                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong> per la lista passeggeri ed assicurazione tour.
             </div>
 
             <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE (PREMIUM GOLD & NAVY CARD) -->
@@ -228,6 +228,16 @@ class Step3Dati {
         }
 
         html += `
+            <!-- ACCETTAZIONE TERMINI E CONDIZIONI & REGOLAMENTO PENALI -->
+            <div style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.92rem; color: #0b2545; font-weight: 700;">
+                    <input type="checkbox" id="step3-terms-check" style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;" required>
+                    <span style="line-height: 1.5;">
+                        Dichiaro di aver letto ed accetto integralmente i <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #0369a1; text-decoration: underline; font-weight: 800;">Termini e Condizioni di Servizio</a>, il <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #d97706; text-decoration: underline; font-weight: 800;">Regolamento Penali di Cancellazione</a> e l'Informativa sulla Privacy *
+                    </span>
+                </label>
+            </div>
+
             <div class="step-nav-bar" style="margin-top: 25px;">
                 <button type="button" class="btn-nav-prev" id="btn-step3-prev">
                     ← Indietro
@@ -261,6 +271,13 @@ class Step3Dati {
             return;
         }
 
+        const termsCheck = this.container.querySelector('#step3-terms-check');
+        if (termsCheck && !termsCheck.checked) {
+            alert('⚠️ Attenzione: Per proseguire con la prenotazione è necessario accettare i Termini e Condizioni di Servizio.');
+            termsCheck.focus();
+            return;
+        }
+
         const totalePartecipanti = this.adults + this.children;
         const listaPartecipanti = [];
 
@@ -275,9 +292,9 @@ class Step3Dati {
             const nameVal = nameEl ? nameEl.value.trim() : '';
             const dayVal = dayEl ? dayEl.value : '';
             const monthVal = monthEl ? monthEl.value : '';
-            const yearVal = yearEl ? yearEl.value : '';
+            const yearVal = yearEl ? yearVal.value : '';
             const originVal = originEl ? originEl.value.trim() : '';
-            const notesVal = notesEl ? notesEl.value.trim() : '';
+            const notesVal = notesEl ? notesVal.value.trim() : '';
 
             if (!nameVal) {
                 alert(`⚠️ Attenzione: è obbligatorio inserire il Nome e Cognome per il Partecipante ${i}.`);
