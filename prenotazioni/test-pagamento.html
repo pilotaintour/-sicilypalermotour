@@ -75,6 +75,7 @@
                         const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                         const record = {
                             ...demoBookingData,
+                            time: demoBookingData.slotTime || '09:30',
                             paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                             id: Date.now().toString(),
                             createdAt: new Date().toLocaleString('it-IT'),
@@ -83,7 +84,7 @@
                         list.unshift(record);
                         localStorage.setItem('spt_bookings', JSON.stringify(list));
 
-                        // Sincronizza nel Cloud
+                        // Sincronizza nel Cloud Firebase
                         if (window.cloudDB) {
                             window.cloudDB.salvaPrenotazioniCloud(list);
                         }

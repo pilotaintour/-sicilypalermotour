@@ -282,11 +282,12 @@
             }
 
             confermaDefinitiva(res) {
-                // Salva nel localStorage delle prenotazioni per l'Admin
+                // 1. Salva nel localStorage ed allinea sia time che slotTime
                 try {
                     const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                     const record = {
                         ...this.bookingData,
+                        time: this.bookingData.slotTime || '09:30',
                         paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                         id: Date.now().toString(),
                         createdAt: new Date().toLocaleString('it-IT'),
@@ -295,7 +296,15 @@
                     list.unshift(record);
                     localStorage.setItem('spt_bookings', JSON.stringify(list));
 
-                    // Invia email automatica via Brevo al cliente e all'amministratore
+                    // 2. Sincronizza subito la nuova prenotazione ed il pagamento nel Cloud Firebase
+                    if (window.cloudDB) {
+                        window.cloudDB.salvaPrenotazioniCloud(list);
+                    }
+
+                    // 3. Scala i posti disponibili dal Tour ed aggiorna la capienza nel Cloud
+                    this.scalaCapienzaPostiTour();
+
+                    // 4. Invia email automatica via Brevo al cliente e all'amministratore
                     if (window.brevoEmailService) {
                         window.brevoEmailService.inviaEmailPrenotazione(record);
                     }
@@ -306,6 +315,46 @@
                 alert(`🎉 PRENOTAZIONE CONFERMATA CON SUCCESSO!\n\nCodice: ${this.bookingData.code}\nTour: ${this.bookingData.tourTitle}\nData: ${this.bookingData.dateReadable} - Orario: ${this.bookingData.slotTime}\nOspiti: ${this.bookingData.adults} Adulti${this.bookingData.children > 0 ? `, ${this.bookingData.children} Bambini` : ''}\nTotale: €${this.bookingData.total}\n\nGrazie ${this.bookingData.customerName}, la tua prenotazione è stata ricevuta. Ti risponderemo a breve!`);
 
                 window.location.href = '../index.html';
+            }
+
+            scalaCapienzaPostiTour() {
+                if (!this.tourCorrente) return;
+
+                const totalePasseggeri = (parseInt(this.bookingData.adults, 10) || 1) + (parseInt(this.bookingData.children, 10) || 0);
+                const targetSlot = this.bookingData.slotTime || '09:30';
+
+                try {
+                    let itinerari = [];
+                    const saved = localStorage.getItem('spt_itineraries');
+                    if (saved) itinerari = JSON.parse(saved);
+
+                    if (!Array.isArray(itinerari) || itinerari.length === 0) return;
+
+                    let modif = false;
+                    itinerari = itinerari.map(tour => {
+                        if (String(tour.id) === String(this.tourCorrente.id) || tour.title === this.tourCorrente.title) {
+                            if (tour.timeSlots && Array.isArray(tour.timeSlots)) {
+                                tour.timeSlots = tour.timeSlots.map(s => {
+                                    if (typeof s === 'object' && s.time === targetSlot) {
+                                        s.booked = (parseInt(s.booked, 10) || 0) + totalePasseggeri;
+                                        modif = true;
+                                    }
+                                    return s;
+                                });
+                            }
+                        }
+                        return tour;
+                    });
+
+                    if (modif) {
+                        localStorage.setItem('spt_itineraries', JSON.stringify(itinerari));
+                        if (window.cloudDB) {
+                            window.cloudDB.salvaItinerariCloud(itinerari);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Errore decremento capienza posti tour:", e);
+                }
             }
         }
     </script>
