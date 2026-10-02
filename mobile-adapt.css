@@ -1,71 +1,19 @@
 /**
  * MODULO SEPARATO: Adattabilità Mobile & Stile GetYourGuide per Smartphone
- * Sicily Palermo Tour - Ottimizzazione Touch, Logo & Card
+ * Sicily Palermo Tour - Ottimizzazione Touch & Card
  */
 
 /* ==========================================================================
-   1. COPERTINA SFONDO FULLSCREEN & LOGO SU CELLULARE
+   1. REGOLAZIONE LOGO PER IL CELLULARE (SENZA TOCCARE L'HEADER O LO SFONDO FOTO)
    ========================================================================== */
 @media (max-width: 640px) {
-    /* Mantiene lo Sfondo Foto Fullscreen della Copertina */
-    header#home {
-        height: 75vh !important;
-        min-height: 480px !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-
-    .hero-bg-slider {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 1 !important;
-    }
-
-    .hero-slide {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    /* La Foto Copertina Copre Sempre l'Intera Schermata */
-    .hero-slide img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        object-position: center 25% !important;
-        max-width: none !important;
-        margin: 0 !important;
-    }
-
-    .hero-overlay {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: rgba(0, 0, 0, 0.28) !important;
-        z-index: 2 !important;
-    }
-
-    .hero-content {
-        position: relative !important;
-        z-index: 3 !important;
-        padding: 0 10px !important;
-    }
-
-    /* Logo solo per l'immagine del contenuto su mobile: brightness aumentata solo su smartphone */
+    /* Mantiene le dimensioni del logo ben proporzionate solo su schermi piccoli */
     .hero-content img {
         max-width: 320px !important;
         width: 95% !important;
         height: auto !important;
         margin: 0 auto !important;
         display: block !important;
-        filter: brightness(1.35) contrast(1.15) drop-shadow(0 4px 15px rgba(0, 0, 0, 0.85)) !important;
     }
 
     /* Barra di Navigazione Mobile */
