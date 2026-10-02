@@ -372,7 +372,7 @@ class StripePaymentManager {
                 if (sk && sk.startsWith('sk_')) {
                     let returnUrl = window.location.href;
                     if (!returnUrl || !returnUrl.startsWith('http')) {
-                        returnUrl = 'https://sicilypalermotour.com/prenotazioni/test-pagamento.html';
+                        returnUrl = 'https://sicilypalermotours.com/prenotazioni/prenotazione.html';
                     }
 
                     const params = new URLSearchParams();
@@ -438,7 +438,7 @@ class StripePaymentManager {
             try {
                 let returnUrl = window.location.href;
                 if (!returnUrl || !returnUrl.startsWith('http')) {
-                    returnUrl = 'https://sicilypalermotour.com/prenotazioni/test-pagamento.html';
+                    returnUrl = 'https://sicilypalermotours.com/prenotazioni/prenotazione.html';
                 }
 
                 const params = new URLSearchParams();
