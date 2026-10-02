@@ -1,0 +1,230 @@
+/**
+ * MODULO SEPARATO: Adattabilità Mobile & Stile GetYourGuide per Smartphone
+ * Sicily Palermo Tour - Ottimizzazione Touch, Logo & Card
+ */
+
+/* ==========================================================================
+   1. OTTIMIZZAZIONE LOGO & HEADER SU CELLULARE
+   ========================================================================== */
+@media (max-width: 640px) {
+    header {
+        padding: 16px 12px !important;
+        min-height: auto !important;
+    }
+
+    .hero-content {
+        padding: 10px 8px !important;
+    }
+
+    /* Logo perfettamente centrato, ridimensionato e nitido su mobile */
+    .hero-content img,
+    header img {
+        max-width: 270px !important;
+        width: 88% !important;
+        height: auto !important;
+        margin: 0 auto !important;
+        display: block !important;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.75)) !important;
+    }
+
+    .hero-content p {
+        font-size: 0.88rem !important;
+        line-height: 1.4 !important;
+        margin-top: 8px !important;
+        padding: 0 10px !important;
+    }
+
+    /* Barra di Navigazione Mobile */
+    nav {
+        padding: 8px 10px !important;
+    }
+
+    nav ul {
+        gap: 10px !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+
+    nav a {
+        font-size: 0.82rem !important;
+        padding: 4px 8px !important;
+    }
+}
+
+/* ==========================================================================
+   2. SELEZIONE ITINERARI STILE GETYOURGUIDE SU CELLULARE (2 CARD / SWIPE)
+   ========================================================================== */
+@media (max-width: 640px) {
+    /* Filtri Categoria a Scorrimento Orizzontale Fluido */
+    .filter-container {
+        display: flex !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        scroll-behavior: smooth !important;
+        padding: 4px 8px 12px 8px !important;
+        gap: 8px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+    }
+
+    .filter-container::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .filter-btn {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        font-size: 0.82rem !important;
+        padding: 7px 14px !important;
+        border-radius: 18px !important;
+    }
+
+    /* Wrapper Slider Orizzontale */
+    .grid-wrapper {
+        padding: 0 !important;
+        margin-bottom: 25px !important;
+    }
+
+    /* Row Scorrevole Orizzontale: mostra 1 Card Intera + Anteprima della Seconda Card */
+    .grid {
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        padding: 8px 12px 20px 12px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Card Compatte Stile GetYourGuide (Larghezza 220px) */
+    .card {
+        flex: 0 0 220px !important;
+        width: 220px !important;
+        max-width: 220px !important;
+        scroll-snap-align: start !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 18px rgba(11, 37, 69, 0.08) !important;
+    }
+
+    /* Immagine Card Mobile */
+    .card-img-container {
+        height: 135px !important;
+        border-radius: 14px 14px 0 0 !important;
+    }
+
+    .card-content {
+        padding: 12px !important;
+    }
+
+    .card h3 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        height: 2.6em !important;
+        margin-bottom: 4px !important;
+    }
+
+    .card-desc {
+        font-size: 0.8rem !important;
+        line-height: 1.35 !important;
+        height: 2.7em !important;
+        margin-bottom: 8px !important;
+    }
+
+    .card-chips {
+        padding: 6px 8px !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    .btn-tour {
+        padding: 9px 12px !important;
+        font-size: 0.82rem !important;
+        border-radius: 8px !important;
+    }
+
+    /* Griglie Sezioni Speciali (Consigliati & Più alla Moda) su Mobile */
+    .consigliati-grid {
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        padding: 8px 4px 20px 4px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .tour-card-special {
+        flex: 0 0 220px !important;
+        width: 220px !important;
+        max-width: 220px !important;
+        scroll-snap-align: start !important;
+        border-radius: 14px !important;
+    }
+
+    .tour-card-img-box {
+        height: 135px !important;
+    }
+
+    .tour-card-body {
+        padding: 12px !important;
+    }
+
+    .tour-card-title {
+        font-size: 0.95rem !important;
+    }
+
+    .tour-card-desc {
+        font-size: 0.8rem !important;
+    }
+
+    .consigliati-moda-title {
+        font-size: 1.25rem !important;
+    }
+
+    .consigliati-moda-subtitle {
+        font-size: 0.82rem !important;
+    }
+}
+
+/* ==========================================================================
+   3. POPUP MODALE DETTAGLI TOUR PERFETTAMENTO MOBILE
+   ========================================================================== */
+@media (max-width: 640px) {
+    .modal-overlay {
+        padding: 10px !important;
+    }
+
+    .modal-content {
+        max-height: 94vh !important;
+        border-radius: 16px !important;
+    }
+
+    .modal-header-info {
+        padding: 16px 16px 8px 16px !important;
+    }
+
+    .modal-header-info h2 {
+        font-size: 1.25rem !important;
+    }
+
+    .modal-body {
+        padding: 0 16px 16px 16px !important;
+    }
+
+    .tour-highlights-box {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+
+    .highlight-item {
+        font-size: 0.8rem !important;
+    }
+
+    .modal-footer {
+        padding: 12px 16px 18px 16px !important;
+        position: sticky !important;
+        bottom: 0 !important;
+        background: #ffffff !important;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08) !important;
+        z-index: 20 !important;
+    }
+}
