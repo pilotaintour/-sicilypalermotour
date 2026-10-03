@@ -1,6 +1,6 @@
 /**
  * Modulo Calendario Interattivo Avanzato - Sicily Palermo Tour
- * Gestisce la visualizzazione mensile, giorni di chiusura, e disponibilità slot con capienza.
+ * Gestisce la visualizzazione mensile, giorni di chiusura, e disponibilità slot dinamica per specifica data.
  */
 
 class TourCalendar {
@@ -18,15 +18,13 @@ class TourCalendar {
         this.selectedDate = new Date();
         this.selectedSlot = null;
 
-        // Giorni di chiusura (es. 0 = Domenica, 1 = Lunedì se il tour non si tiene)
-        this.closedDays = options.closedDays || []; // Array es. [0] per Domenica chiusa
+        this.closedDays = options.closedDays || [];
 
-        // Slot orari e capienza per la data selezionata
         this.defaultSlots = options.defaultSlots || [
-            { time: '09:30', maxCapacity: 15, booked: 4 },
-            { time: '11:30', maxCapacity: 15, booked: 12 },
-            { time: '15:30', maxCapacity: 15, booked: 15 }, // Esaurito
-            { time: '18:00', maxCapacity: 15, booked: 2 }
+            { time: '09:30', maxCapacity: 15, booked: 0 },
+            { time: '11:30', maxCapacity: 15, booked: 0 },
+            { time: '15:30', maxCapacity: 15, booked: 0 },
+            { time: '18:00', maxCapacity: 15, booked: 0 }
         ];
 
         this.weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
@@ -53,7 +51,6 @@ class TourCalendar {
     }
 
     init() {
-        // Seleziona il primo slot disponibile all'avvio
         const primoLibero = this.defaultSlots.find(s => (s.maxCapacity - s.booked) > 0);
         this.selectedSlot = primoLibero ? primoLibero.time : (this.defaultSlots[0] ? this.defaultSlots[0].time : '09:30');
 
@@ -95,12 +92,10 @@ class TourCalendar {
                 <div class="calendar-days-grid">
         `;
 
-        // Celle vuote prima del 1 del mese
         for (let i = 0; i < startingDay; i++) {
             html += `<div class="day-cell empty-cell"></div>`;
         }
 
-        // Genera i giorni
         for (let day = 1; day <= totalDays; day++) {
             const dateObj = new Date(year, month, day);
             dateObj.setHours(0, 0, 0, 0);
@@ -133,7 +128,7 @@ class TourCalendar {
         html += `
                 </div>
 
-                <!-- Sezione Slot Orari e Capienza -->
+                <!-- Sezione Slot Orari e Capienza Calcolata Dinamicamente per la Data Selezionata -->
                 <div class="slots-container">
                     <div class="slots-title">
                         ⏰ Orari e Disponibilità Posti per <u>${this.formatDateReadable(this.selectedDate)}</u>:
@@ -147,7 +142,6 @@ class TourCalendar {
 
         this.container.innerHTML = html;
 
-        // Gestione bottoni cambio mese
         const prevBtn = this.container.querySelector('#cal-prev-btn');
         const nextBtn = this.container.querySelector('#cal-next-btn');
 
@@ -169,11 +163,39 @@ class TourCalendar {
     }
 
     renderSlotsHtml() {
+        const selectedDateISO = this.formatDateISO(this.selectedDate);
+        const selectedDateReadable = this.formatDateReadable(this.selectedDate);
+
+        let bookings = [];
+        try {
+            bookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
+        } catch (e) {}
+
         return this.defaultSlots.map(slot => {
-            const postiRimanenti = slot.maxCapacity - slot.booked;
-            const percentualeOccupata = Math.min(100, Math.round((slot.booked / slot.maxCapacity) * 100));
+            const timeSlotStr = slot.time;
+            const maxCap = parseInt(slot.maxCapacity, 10) || 15;
+
+            // Calcola dinamicamente il totale dei passeggeri prenotati PER QUESTA SPECIFICA DATA ed ORARIO
+            let realBookedForThisDateAndSlot = 0;
+
+            if (Array.isArray(bookings)) {
+                bookings.forEach(b => {
+                    const matchDate = (b.dateISO === selectedDateISO) || (b.dateReadable === selectedDateReadable);
+                    const matchTime = (b.time === timeSlotStr) || (b.slotTime === timeSlotStr);
+
+                    if (matchDate && matchTime && b.status !== 'Cancellata' && b.status !== 'Rimborsata') {
+                        const numPasseggeri = (b.participantsList && b.participantsList.length > 0)
+                            ? b.participantsList.length
+                            : ((parseInt(b.adults, 10) || 1) + (parseInt(b.children, 10) || 0));
+                        realBookedForThisDateAndSlot += numPasseggeri;
+                    }
+                });
+            }
+
+            const postiRimanenti = Math.max(0, maxCap - realBookedForThisDateAndSlot);
+            const percentualeOccupata = Math.min(100, Math.round((realBookedForThisDateAndSlot / maxCap) * 100));
             const isFull = postiRimanenti <= 0;
-            const isSelected = this.selectedSlot === slot.time;
+            const isSelected = this.selectedSlot === timeSlotStr;
 
             let slotClasses = ['slot-card'];
             if (isFull) slotClasses.push('slot-full');
@@ -189,10 +211,10 @@ class TourCalendar {
 
             return `
                 <div class="${slotClasses.join(' ')}"
-                     ${isFull ? '' : `onclick="window.tourCalendarInstance.selectSlot('${slot.time}')"`}>
-                    <div class="slot-time">${slot.time}</div>
+                     ${isFull ? '' : `onclick="window.tourCalendarInstance.selectSlot('${timeSlotStr}')"`}>
+                    <div class="slot-time">${timeSlotStr}</div>
                     <div class="slot-status-badge">${statusText}</div>
-                    <div class="capacity-progress-bg" title="${slot.booked}/${slot.maxCapacity} posti prenotati">
+                    <div class="capacity-progress-bg" title="${realBookedForThisDateAndSlot}/${maxCap} posti prenotati per il ${selectedDateReadable}">
                         <div class="capacity-progress-fill ${fillClass}" style="width: ${percentualeOccupata}%;"></div>
                     </div>
                 </div>
