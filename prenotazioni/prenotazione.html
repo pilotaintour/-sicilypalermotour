@@ -108,6 +108,7 @@
     <script>
         class BookingWizardManager {
             constructor() {
+                window.wizardManager = this;
                 this.currentStep = 1;
                 this.maxStepReached = 1;
                 this.tourCorrente = null;

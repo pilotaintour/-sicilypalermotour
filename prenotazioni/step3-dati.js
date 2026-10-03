@@ -242,7 +242,7 @@ class Step3Dati {
                 <button type="button" class="btn-nav-prev" id="btn-step3-prev">
                     ← Indietro
                 </button>
-                <button type="button" class="btn-nav-next" id="btn-step3-next" onclick="if(window.wizardManager){ window.wizardManager.step3Module.validaEProsegui(); window.wizardManager.goToStep(4); }">
+                <button type="button" class="btn-nav-next" id="btn-step3-next">
                     Avanti: Riepilogo & Conferma →
                 </button>
             </div>
@@ -254,10 +254,7 @@ class Step3Dati {
             if (typeof this.onPrev === 'function') this.onPrev();
         };
 
-        this.container.querySelector('#btn-step3-next').onclick = () => {
-            this.validaEProsegui();
-            if (window.wizardManager) window.wizardManager.goToStep(4);
-        };
+        this.container.querySelector('#btn-step3-next').onclick = () => this.validaEProsegui();
     }
 
     validaEProsegui() {
@@ -265,10 +262,38 @@ class Step3Dati {
             const leadNameEl = this.container.querySelector('#step3-name-1');
             const leadEmailEl = this.container.querySelector('#step3-lead-email');
             const leadPhoneEl = this.container.querySelector('#step3-lead-phone');
+            const termsCheck = this.container.querySelector('#step3-terms-check');
 
             let leadName = leadNameEl ? leadNameEl.value.trim() : '';
             let leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
             let leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
+
+            if (!leadName) {
+                alert('⚠️ Per favore inserisci il Nome e Cognome del Referente Principale.');
+                if (leadNameEl) { leadNameEl.focus(); leadNameEl.style.borderColor = '#dc2626'; }
+                return;
+            }
+            if (leadNameEl) leadNameEl.style.borderColor = '#cbd5e1';
+
+            if (!leadEmail || !leadEmail.includes('@')) {
+                alert('⚠️ Per favore inserisci un indirizzo Email valido per ricevere i biglietti.');
+                if (leadEmailEl) { leadEmailEl.focus(); leadEmailEl.style.borderColor = '#dc2626'; }
+                return;
+            }
+            if (leadEmailEl) leadEmailEl.style.borderColor = '#cbd5e1';
+
+            if (!leadPhone) {
+                alert('⚠️ Per favore inserisci un numero di Telefono o WhatsApp.');
+                if (leadPhoneEl) { leadPhoneEl.focus(); leadPhoneEl.style.borderColor = '#dc2626'; }
+                return;
+            }
+            if (leadPhoneEl) leadPhoneEl.style.borderColor = '#cbd5e1';
+
+            if (termsCheck && !termsCheck.checked) {
+                alert('⚠️ Per favore accetta i Termini e Condizioni di Servizio per proseguire.');
+                termsCheck.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
 
             const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
             const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
