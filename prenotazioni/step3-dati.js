@@ -1,6 +1,6 @@
 /**
  * STEP 3: Dati Personali Completi, Lingua e Indirizzo di Fatturazione / Residenza
- * Sicily Palermo Tour - Raccolta Dati Professionale per Tour Operator (Con Fallback Anti-Blocco Totalmente Sicuro)
+ * Sicily Palermo Tour - Raccolta Dati Ufficiali con Validazione Reale Email e Nome
  */
 
 class Step3Dati {
@@ -82,7 +82,7 @@ class Step3Dati {
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
-                📋 Compila i dati del referente principale per i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) per la conferma della prenotazione.
+                📋 Inserisci i dati del referente principale ed i nomi dei ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) per la lista passeggeri e la conferma della prenotazione.
             </div>
 
             <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE -->
@@ -95,7 +95,7 @@ class Step3Dati {
                 </div>
 
                 <div class="form-group" style="margin-bottom: 14px;">
-                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo *</label>
+                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo Referente *</label>
                     <input type="text" id="step3-name-1" required placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                 </div>
 
@@ -112,8 +112,8 @@ class Step3Dati {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
                     <div>
-                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📧 Email di Conferma *</label>
-                        <input type="email" id="step3-lead-email" required placeholder="mario@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📧 Email di Conferma (Dove ricevere i biglietti) *</label>
+                        <input type="email" id="step3-lead-email" required placeholder="mario.rossi@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                     <div>
                         <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #0f172a;">📞 Telefono / WhatsApp (con Prefisso) *</label>
@@ -164,12 +164,12 @@ class Step3Dati {
                 <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
                         <span style="background: #f1f5f9; color: #334155; padding: 4px 12px; border-radius: 16px; font-size: 0.83rem; font-weight: 800;">
-                            🧑 PASSEGGERO ${partCounter} - ADULTO (Opzionale)
+                            🧑 PASSEGGERO ${partCounter} - ADULTO
                         </span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo</label>
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo *</label>
                         <input type="text" id="step3-name-${partCounter}" placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
@@ -203,7 +203,7 @@ class Step3Dati {
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo</label>
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo *</label>
                         <input type="text" id="step3-name-${partCounter}" placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
@@ -267,9 +267,33 @@ class Step3Dati {
             let leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
             let leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
 
-            if (!leadName) leadName = 'Cliente';
-            if (!leadEmail) leadEmail = 'cliente@example.com';
-            if (!leadPhone) leadPhone = '+39 340 0000000';
+            // Validazione Reale: Il cliente DEVE inserire il suo Nome e la sua vera Email per ricevere la conferma!
+            if (!leadName) {
+                alert("⚠️ Per favore inserisci il Nome e Cognome del Referente nello Step 3.");
+                if (leadNameEl) {
+                    leadNameEl.style.borderColor = '#ef4444';
+                    leadNameEl.focus();
+                }
+                return;
+            }
+
+            if (!leadEmail || !leadEmail.includes('@') || !leadEmail.includes('.')) {
+                alert("⚠️ Per favore inserisci un'Email valida nello Step 3 per ricevere l'email di conferma del tour.");
+                if (leadEmailEl) {
+                    leadEmailEl.style.borderColor = '#ef4444';
+                    leadEmailEl.focus();
+                }
+                return;
+            }
+
+            if (!leadPhone) {
+                alert("⚠️ Per favore inserisci un numero di Telefono / WhatsApp di contatto nello Step 3.");
+                if (leadPhoneEl) {
+                    leadPhoneEl.style.borderColor = '#ef4444';
+                    leadPhoneEl.focus();
+                }
+                return;
+            }
 
             const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
             const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
@@ -335,18 +359,6 @@ class Step3Dati {
             }
         } catch (e) {
             console.error("Errore in Step3Dati.validaEProsegui:", e);
-            if (typeof this.onComplete === 'function') {
-                this.onComplete({
-                    customerName: 'Cliente',
-                    customerEmail: 'cliente@example.com',
-                    customerPhone: '+39',
-                    language: 'Italiano',
-                    country: 'Italia',
-                    billingAddress: 'Italia',
-                    notes: '',
-                    participantsList: []
-                });
-            }
         }
     }
 }
