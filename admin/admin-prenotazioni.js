@@ -1,6 +1,6 @@
 /**
  * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri
- * Sicily Palermo Tour - Admin
+ * Sicily Palermo Tour - Admin (Senza Demo o Dati Fittizi)
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
@@ -30,35 +30,6 @@ function savePrenotazioniAdmin(list) {
     if (window.cloudDB) {
         window.cloudDB.salvaPrenotazioniCloud(list);
     }
-}
-
-// Genera una prenotazione di prova 1-click per testare il sistema
-function aggiungiPrenotazioneDemoProva() {
-    let list = getPrenotazioniAdmin();
-    const demoBooking = {
-        id: Date.now().toString(),
-        code: '#SPT-' + Math.floor(1000 + Math.random() * 9000),
-        tourTitle: 'Palermo Arabo-Normanna',
-        dateISO: new Date().toISOString().slice(0, 10),
-        dateReadable: new Date().toLocaleDateString('it-IT'),
-        slotTime: '09:30',
-        time: '09:30',
-        adults: 2,
-        children: 0,
-        customerName: 'Mario Rossi',
-        customerEmail: 'mario@example.com',
-        customerPhone: '+39 340 1234567',
-        notes: 'Prima volta a Palermo, desideriamo la guida in italiano.',
-        total: '50.00',
-        status: 'In attesa',
-        participantsList: [
-            { number: 1, name: 'Mario Rossi', dob: '12/04/1985', origin: 'Milano', notes: 'Capogruppo', type: 'Referente Principale' },
-            { number: 2, name: 'Laura Bianchi', dob: '05/08/1988', origin: 'Roma', notes: '', type: 'Adulto' }
-        ]
-    };
-    list.unshift(demoBooking);
-    savePrenotazioniAdmin(list);
-    caricaPrenotazioniAdmin();
 }
 
 // Apre la cartella prenotazioni di un determinato itinerario
@@ -189,14 +160,9 @@ function caricaPrenotazioniAdmin() {
 
             listContainer.innerHTML = htmlBarraArchivioToggle + `
                 <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1.5px solid #cbd5e1;">
-                    <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna prenotazione attiva al momento</h3>
-                    <p style="font-size: 0.9rem;">Le nuove prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
+                    <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna nuova prenotazione attiva al momento</h3>
+                    <p style="font-size: 0.9rem;">Le prenotazioni inviate dai turisti dal sito web appariranno qui automaticamente in tempo reale.</p>
                     ${msgExtra}
-                    <div style="margin-top: 15px;">
-                        <button type="button" class="btn-primary btn-small" style="background:#0b2545; padding: 10px 18px; font-weight: bold;" onclick="aggiungiPrenotazioneDemoProva()">
-                            🧪 Genera Prenotazione di Prova (1-Click Test)
-                        </button>
-                    </div>
                 </div>
             `;
             return;
@@ -209,12 +175,11 @@ function caricaPrenotazioniAdmin() {
         }
 
         // SCENARIO B: Tour Selezionato -> Mostra la Vista Dettagliata per quell'Itinerario
-        const bookingsDelTour = attive.filter(b => b.tourTitle === tourSelezionatoCartella);
+        const bookingsDelTour = attive.filter(b => b.tourTitle === tourSelezionatoCartella || String(b.tourId) === String(tourSelezionatoCartella));
         listContainer.innerHTML = htmlBarraArchivioToggle + renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
     } catch (err) {
         console.error("Errore in caricaPrenotazioniAdmin:", err);
     }
-}
 }
 
 // Renderizza la Griglia di Cartelle degli Itinerari
@@ -240,9 +205,9 @@ function renderGrigliaCartelleItinerari(allBookings) {
             };
         }
         tourMappa[title].countBookings++;
-        const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+        const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : ((parseInt(b.adults, 10) || 1) + (parseInt(b.children, 10) || 0));
         tourMappa[title].totalPassengers += numPasseggeri;
-        if (b.time) tourMappa[title].timeSlotsSet.add(b.time);
+        if (b.time || b.slotTime) tourMappa[title].timeSlotsSet.add(b.time || b.slotTime);
         tourMappa[title].bookings.push(b);
     });
 
@@ -254,9 +219,6 @@ function renderGrigliaCartelleItinerari(allBookings) {
                 <h3 style="color: #0b2545; margin: 0; font-size: 1.25rem;">📂 Cartelle Prenotazioni per Itinerario</h3>
                 <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">Clicca su un itinerario per accedere alla lista passeggeri e filtrare per orario prenotato.</p>
             </div>
-            <button type="button" class="btn-primary btn-small" style="background:#0b2545;" onclick="aggiungiPrenotazioneDemoProva()">
-                🧪 + Aggiungi Prenotazione di Prova
-            </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
@@ -264,7 +226,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
 
     titoliMappa.forEach(title => {
         const itemTour = tourMappa[title];
-        const config = itinerariConfig.find(i => i.title === title) || {};
+        const config = itinerariConfig.find(i => i.title === title || String(i.id) === String(itemTour.bookings[0]?.tourId)) || {};
         const coverImg = (config.images && config.images.length > 0) ? config.images[0] : (config.imageUrl || 'https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=600');
         const orariArray = Array.from(itemTour.timeSlotsSet).sort();
 
@@ -305,8 +267,9 @@ function renderGrigliaCartelleItinerari(allBookings) {
 function getConteggioPasseggeriOrario(bookingsList, timeStr) {
     let cnt = 0;
     bookingsList.forEach(b => {
-        if (timeStr === 'TUTTI' || b.time === timeStr) {
-            cnt += (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+        const slot = b.time || b.slotTime || '09:30';
+        if (timeStr === 'TUTTI' || slot === timeStr) {
+            cnt += (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : ((parseInt(b.adults, 10) || 1) + (parseInt(b.children, 10) || 0));
         }
     });
     return cnt;
@@ -326,7 +289,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     if (tourConfig.timeSlots && Array.isArray(tourConfig.timeSlots)) {
         configTimeSlots = tourConfig.timeSlots.map(t => typeof t === 'string' ? t : (t && t.time)).filter(Boolean);
     }
-    const bookingTimeSlots = bookingsOfTour.map(b => b.time).filter(Boolean);
+    const bookingTimeSlots = bookingsOfTour.map(b => b.time || b.slotTime).filter(Boolean);
 
     const orariUnici = [...new Set([...configTimeSlots, ...bookingTimeSlots])].sort();
     const dateUniche = [...new Set(bookingsOfTour.map(b => b.dateReadable || b.dateISO).filter(Boolean))];
@@ -336,7 +299,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     const countRimborsate = bookingsOfTour.filter(b => b.status === 'Rimborsata' || b.status === 'Cancellata' || (b.status && b.status.includes('Rimborsat'))).length;
 
     let html = `
-        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <button type="button" class="btn-secondary btn-small" onclick="chiudiCartellaTour()" style="background: #f1f5f9; color: #0b2545; border: 1.5px solid #cbd5e1; font-weight: bold;">
@@ -409,7 +372,8 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
         const dateStr = b.dateReadable || b.dateISO;
         if (filtroDataSelezionata !== 'TUTTI' && dateStr !== filtroDataSelezionata) return false;
 
-        if (filtroOrarioSelezionato !== 'TUTTI' && b.time !== filtroOrarioSelezionato) return false;
+        const slot = b.time || b.slotTime || '09:30';
+        if (filtroOrarioSelezionato !== 'TUTTI' && slot !== filtroOrarioSelezionato) return false;
 
         if (filtroStatoPrenotazioni === 'In attesa' && b.status && b.status !== 'In attesa') return false;
         if (filtroStatoPrenotazioni === 'Incassata' && !(b.status === 'Incassata' || b.status === 'Confermata' || (b.status && b.status.includes('Incassat')))) return false;
@@ -458,7 +422,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                     code: b.code || '#SPT-BOOK',
                     tourTitle: b.tourTitle || 'Tour Palermo',
                     dateStr: b.dateReadable || b.dateISO || 'N/D',
-                    timeStr: b.time || '09:30',
+                    timeStr: b.time || b.slotTime || '09:30',
                     passengerName: p.name || 'N/D',
                     passengerType: p.type || (idxP === 0 ? 'Referente' : 'Adulto'),
                     passengerDob: p.dob || 'N/D',
@@ -476,7 +440,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                 code: b.code || '#SPT-BOOK',
                 tourTitle: b.tourTitle || 'Tour Palermo',
                 dateStr: b.dateReadable || b.dateISO || 'N/D',
-                timeStr: b.time || '09:30',
+                timeStr: b.time || b.slotTime || '09:30',
                 passengerName: b.customerName || 'N/D',
                 passengerType: 'Referente',
                 passengerDob: 'N/D',
@@ -563,7 +527,6 @@ function renderSchedePrenotazioni(bookingsList) {
 
         return `
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 5px solid ${borderColor}; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 15px;">
-                <!-- BARRA INFO DETTAGLIATA PAGAMENTO ED ORA TRANSAZIONE -->
                 <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.88rem; color: #0369a1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center;">
                     <div><strong>🔖 Codice:</strong> <code style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95rem; color: #0b2545;">${escapeHtmlBooking(b.code || '#SPT-BOOK')}</code></div>
                     <div><strong>🕒 Data e Ora Transazione:</strong> <span style="font-weight: bold; color: #0b2545;">${escapeHtmlBooking(b.createdAt || 'Registrato il ' + new Date().toLocaleString('it-IT'))}</span></div>
@@ -584,7 +547,7 @@ function renderSchedePrenotazioni(bookingsList) {
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.9rem; color: #334155; margin-bottom: 14px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
                     <div>📅 <strong>Data:</strong> ${escapeHtmlBooking(b.dateReadable || b.dateISO)}</div>
-                    <div>⏰ <strong>Orario:</strong> ${escapeHtmlBooking(b.time || '09:30')}</div>
+                    <div>⏰ <strong>Orario:</strong> ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</div>
                     <div>🎟️ <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
                     <div>💰 <strong>Totale:</strong> €${escapeHtmlBooking(b.total || '0.00')}</div>
                 </div>
@@ -638,17 +601,17 @@ function renderSchedePrenotazioni(bookingsList) {
 }
 
 // Funzioni Gestione Incasso & Rimborso Parziale o Totale Stripe dall'Admin
-async function incassaPagamentoStripeAdmin(bookingId) {
+async function eseguiIncassoTotale100(bookingId) {
     const list = getPrenotazioniAdmin();
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
 
-    if (!confirm(`💶 Confermi l'incasso definitivo di €${booking.total || '50.00'} per la prenotazione ${booking.code}?`)) {
+    if (!confirm(`💶 Confermi l'incasso definitivo di €${booking.total || '25.00'} per la prenotazione ${booking.code}?`)) {
         return;
     }
 
     const intentId = booking.paymentIntentId || '';
-    const importoVal = parseFloat(booking.total) || 50;
+    const importoVal = parseFloat(booking.total) || 25;
 
     if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
         await window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
@@ -659,12 +622,39 @@ async function incassaPagamentoStripeAdmin(bookingId) {
     booking.status = 'Incassata';
     booking.amountCollected = importoVal.toFixed(2);
     savePrenotazioniAdmin(list);
-    if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
     caricaPrenotazioniAdmin();
     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }
 
-async function rimborsaPagamentoStripeAdmin(bookingId) {
+async function eseguiIncassoPenaleParziale(bookingId) {
+    const list = getPrenotazioniAdmin();
+    const booking = list.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const totalStr = booking.total || '25.00';
+    const importoInput = prompt(`⚖️ Incasso Penale Parziale per Cancellazione:\n\nTotale pre-autorizzato: €${totalStr}\n\nDigita l'importo della penale da trattenere (es. 15.00 per il 30% o 50%):\nLa rimanenza verrà sbloccata gratuitamente sulla carta del cliente!`, '15.00');
+
+    if (importoInput === null) return;
+    const importoVal = parseFloat(importoInput) || 0;
+
+    if (importoVal <= 0) return;
+
+    const intentId = booking.paymentIntentId || '';
+
+    if (window.stripePayment && intentId && intentId.startsWith('pi_')) {
+        await window.stripePayment.incassaImportoPreAutorizzato(intentId, importoVal);
+    } else {
+        alert(`✅ Penale di €${importoVal.toFixed(2)} incassata con successo! Rimanenza rilasciata al cliente.`);
+    }
+
+    booking.status = `Incassata Penale (€${importoVal.toFixed(2)})`;
+    booking.amountCollected = importoVal.toFixed(2);
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
+    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
+}
+
+async function eseguiRimborsoSblocco100(bookingId) {
     const list = getPrenotazioniAdmin();
     const booking = list.find(b => b.id === bookingId);
     if (!booking) return;
@@ -683,42 +673,22 @@ async function rimborsaPagamentoStripeAdmin(bookingId) {
 
     booking.status = 'Rimborsata';
     savePrenotazioniAdmin(list);
-    if (window.cloudDB) window.cloudDB.salvaPrenotazioniCloud(list);
     caricaPrenotazioniAdmin();
     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }
 
-    const intentId = booking.paymentIntentId || 'pi_test';
-    const totalAutorizzato = booking.total || '50.00';
-
-    const importoInput = prompt(`🔄 Sblocco Carta / Rimborso Parziale Stripe:\n\nScegli quanto rimborsare o sbloccare al cliente in Euro:\n• Digita '${totalAutorizzato}' o lascia VUOTO per sbloccare/annullare al 100% (0€ commissioni per te).\n• Digita una somma (es. 20.00) per un rimborso parziale.`, totalAutorizzato);
-
-    if (importoInput === null) return;
-
-    const importoVal = parseFloat(importoInput) || 0;
-
-    if (window.stripePayment) {
-        window.stripePayment.sbloccaImportoCarta(intentId, importoVal > 0 ? importoVal : null);
-    } else {
-        alert(`⚠️ Pre-autorizzazione sbloccata/rimborsata con successo!`);
-    }
-
-    booking.status = 'Cancellata (Rimborsata)';
-    savePrenotazioniAdmin(list);
-    caricaPrenotazioniAdmin();
-}
-
-window.incassaPagamentoStripeAdmin = incassaPagamentoStripeAdmin;
-window.rimborsaPagamentoStripeAdmin = rimborsaPagamentoStripeAdmin;
+window.eseguiIncassoTotale100 = eseguiIncassoTotale100;
+window.eseguiIncassoPenaleParziale = eseguiIncassoPenaleParziale;
+window.eseguiRimborsoSblocco100 = eseguiRimborsoSblocco100;
 
 // SCARICA E SALVA IL DOCUMENTO UFFICIALE APRIBILE E CONDIVISIBILE SU QUALSIASI DISPOSITIVO
 function scaricaSalvaDocumentoLista(titoloTour) {
     let list = getPrenotazioniAdmin();
     if (titoloTour) {
-        list = list.filter(b => b.tourTitle === titoloTour);
+        list = list.filter(b => b.tourTitle === titoloTour || String(b.tourId) === String(titoloTour));
     }
     if (filtroOrarioSelezionato !== 'TUTTI') {
-        list = list.filter(b => b.time === filtroOrarioSelezionato);
+        list = list.filter(b => (b.time || b.slotTime) === filtroOrarioSelezionato);
     }
     if (filtroDataSelezionata !== 'TUTTI') {
         list = list.filter(b => (b.dateReadable || b.dateISO) === filtroDataSelezionata);
@@ -747,12 +717,27 @@ function scaricaSalvaDocumentoLista(titoloTour) {
                         <td>${escapeHtmlBooking(p.dob || '-')}</td>
                         <td>${escapeHtmlBooking(p.origin || '-')}</td>
                         <td>${escapeHtmlBooking(b.tourTitle || 'Tour Palermo')}</td>
-                        <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || '09:30')}</strong></td>
+                        <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</strong></td>
                         <td>${escapeHtmlBooking(b.customerPhone || '-')}</td>
                         <td>${p.notes ? escapeHtmlBooking(p.notes) : '-'}</td>
                     </tr>
                 `;
             });
+        } else {
+            rowsHtml += `
+                <tr>
+                    <td style="text-align:center;">[ &nbsp; ]</td>
+                    <td style="text-align:center; font-weight:bold;">${counter++}</td>
+                    <td><strong>${escapeHtmlBooking(b.customerName || 'N/D')}</strong></td>
+                    <td>Referente</td>
+                    <td>-</td>
+                    <td>${escapeHtmlBooking(b.country || 'Italia')}</td>
+                    <td>${escapeHtmlBooking(b.tourTitle || 'Tour Palermo')}</td>
+                    <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</strong></td>
+                    <td>${escapeHtmlBooking(b.customerPhone || '-')}</td>
+                    <td>${b.notes ? escapeHtmlBooking(b.notes) : '-'}</td>
+                </tr>
+            `;
         }
     });
 

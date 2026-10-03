@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prenotazione Tour Palermo - Sicily Palermo Tour</title>
-    <link rel="stylesheet" href="../style.css?v=3">
-    <link rel="stylesheet" href="../itinerari/itinerari.css?v=3">
-    <link rel="stylesheet" href="../whatsapp/whatsapp.css?v=3">
-    <link rel="stylesheet" href="calendario.css?v=3">
-    <link rel="stylesheet" href="booking-wizard.css?v=3">
+    <link rel="stylesheet" href="../style.css?v=4">
+    <link rel="stylesheet" href="../itinerari/itinerari.css?v=4">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css?v=4">
+    <link rel="stylesheet" href="calendario.css?v=4">
+    <link rel="stylesheet" href="booking-wizard.css?v=4">
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&disable-funding=card,mybank,sofort,paylater"></script>
-    <script src="stripe-payment.js?v=3"></script>
-    <script src="../email/email-service.js?v=3"></script>
-    <script src="../cloud/cloud-db.js?v=3"></script>
-    <script src="../itinerari/itinerari-data.js?v=3"></script>
-    <script src="calendario.js?v=3"></script>
-    <script src="step1-data-orario.js?v=3"></script>
-    <script src="step2-partecipanti.js?v=3"></script>
-    <script src="step3-dati.js?v=3"></script>
-    <script src="step4-conferma.js?v=3"></script>
+    <script src="stripe-payment.js?v=4"></script>
+    <script src="../email/email-service.js?v=4"></script>
+    <script src="../cloud/cloud-db.js?v=4"></script>
+    <script src="../itinerari/itinerari-data.js?v=4"></script>
+    <script src="calendario.js?v=4"></script>
+    <script src="step1-data-orario.js?v=4"></script>
+    <script src="step2-partecipanti.js?v=4"></script>
+    <script src="step3-dati.js?v=4"></script>
+    <script src="step4-conferma.js?v=4"></script>
 </head>
 <body>
 
@@ -44,64 +44,65 @@
     <div class="steps-bar-container">
         <div class="steps-bar">
             <div class="step-item active" id="bar-step-1" onclick="wizardManager.tryGoToStep(1)">
-                <span class="step-number">1</span>
-                <span class="step-text">Data & Orario</span>
+                <span class="step-badge">1</span>
+                <span class="step-label">Data & Ora</span>
             </div>
+            <div class="step-connector"></div>
             <div class="step-item" id="bar-step-2" onclick="wizardManager.tryGoToStep(2)">
-                <span class="step-number">2</span>
-                <span class="step-text">Partecipanti</span>
+                <span class="step-badge">2</span>
+                <span class="step-label">Partecipanti</span>
             </div>
+            <div class="step-connector"></div>
             <div class="step-item" id="bar-step-3" onclick="wizardManager.tryGoToStep(3)">
-                <span class="step-number">3</span>
-                <span class="step-text">I Tuoi Dati</span>
+                <span class="step-badge">3</span>
+                <span class="step-label">I Tuoi Dati</span>
             </div>
+            <div class="step-connector"></div>
             <div class="step-item" id="bar-step-4" onclick="wizardManager.tryGoToStep(4)">
-                <span class="step-number">4</span>
-                <span class="step-text">Conferma</span>
+                <span class="step-badge">4</span>
+                <span class="step-label">Conferma & Paga</span>
             </div>
         </div>
     </div>
 
-    <div class="wizard-main-container">
+    <!-- Contenitore Principale del Wizard -->
+    <main class="wizard-container">
 
-        <!-- Tour Hero Banner -->
-        <div class="tour-hero-card">
-            <img id="tour-hero-img" class="tour-hero-img" src="../unnamed.webp" alt="Tour Palermo">
-            <div class="tour-hero-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span id="booking-tour-category" class="badge">Sicily Palermo Tour</span>
-                    <span id="booking-ref-code" class="booking-ref-badge">Codice: #SPT-BOOK</span>
-                </div>
-                <h2 id="booking-tour-title" class="tour-hero-title">Tour Guidato Palermo</h2>
+        <!-- Banner Hero Dettaglio Tour Selezionato -->
+        <div class="tour-selected-banner">
+            <div class="tour-selected-img-box">
+                <img id="tour-hero-img" src="https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1200&q=80" alt="Tour Selezionato">
+            </div>
+            <div class="tour-selected-info">
+                <span id="booking-tour-category" class="badge">Sicily Palermo Tour</span>
+                <span id="booking-ref-code" class="booking-ref-badge">Codice: #SPT-BOOK</span>
+                <h1 id="booking-tour-title">Tour Guidato Palermo</h1>
                 <div class="tour-highlights-chips">
-                    <span id="chip-duration" class="chip-item">⏱️ Durata: Flessibile</span>
-                    <span id="chip-price" class="chip-item">💰 Prezzo: Su richiesta</span>
+                    <span id="chip-duration" class="chip-item">⏱️ Durata: 3 Ore</span>
+                    <span id="chip-price" class="chip-item">💰 Prezzo: Da 25€</span>
                     <span id="chip-meeting" class="chip-item">📍 Incontro: Palermo Centro</span>
-                    <span class="chip-item">⭐ Guida Certificata</span>
                 </div>
             </div>
         </div>
 
-        <!-- Contenitori per ciascun Step del Wizard -->
-        <div id="step-card-1" class="wizard-step-card"></div>
-        <div id="step-card-2" class="wizard-step-card hidden-step"></div>
-        <div id="step-card-3" class="wizard-step-card hidden-step"></div>
-        <div id="step-card-4" class="wizard-step-card hidden-step"></div>
+        <!-- CARDS STEP DINAMICHE -->
+        <div class="wizard-step-card" id="step-card-1">
+            <!-- Modulo Step 1 montato via JS -->
+        </div>
 
-    </div>
+        <div class="wizard-step-card hidden-step" id="step-card-2">
+            <!-- Modulo Step 2 montato via JS -->
+        </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Sicily Palermo Tour - Tutti i diritti riservati.</p>
-    </footer>
+        <div class="wizard-step-card hidden-step" id="step-card-3">
+            <!-- Modulo Step 3 montato via JS -->
+        </div>
 
-    <!-- Moduli Script Separati per ogni Step -->
-    <script src="../itinerari/itinerari-data.js"></script>
-    <script src="calendario.js"></script>
-    <script src="step1-data-orario.js"></script>
-    <script src="step2-partecipanti.js"></script>
-    <script src="step3-dati.js"></script>
-    <script src="step4-conferma.js"></script>
+        <div class="wizard-step-card hidden-step" id="step-card-4">
+            <!-- Modulo Step 4 montato via JS -->
+        </div>
+
+    </main>
 
     <!-- Master Controller Script Wizard -->
     <script>
@@ -119,6 +120,7 @@
 
                 this.bookingData = {
                     code: '',
+                    tourId: '1',
                     tourTitle: 'Tour Palermo',
                     dateISO: '',
                     dateReadable: '',
@@ -129,43 +131,44 @@
                     customerEmail: '',
                     customerPhone: '',
                     notes: '',
-                    total: '50.00'
+                    total: '25.00'
                 };
 
                 this.init();
             }
 
             init() {
-                // Genera Codice Univoco
                 this.codicePrenotazione = '#SPT-' + Math.floor(1000 + Math.random() * 9000);
                 this.bookingData.code = this.codicePrenotazione;
                 document.getElementById('booking-ref-code').textContent = `Codice: ${this.codicePrenotazione}`;
 
-                // Ottieni TourId da URL con Fallback di Sicurezza
                 const urlParams = new URLSearchParams(window.location.search);
                 const tourId = urlParams.get('tourId') || '1';
-
-                const fallbackTour = {
-                    id: '1',
-                    title: 'Tour Guidato Palermo Centro Storico',
-                    price: '25€',
-                    duration: '3 Ore',
-                    category: 'Storia & Cultura',
-                    meetingPoint: 'Piazza Politeama, Palermo',
-                    imageUrl: 'https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1200&q=80',
-                    maxCapacity: 15
-                };
 
                 let itinerari = [];
                 if (typeof getItinerari === 'function') {
                     try { itinerari = getItinerari() || []; } catch (e) {}
                 }
 
-                this.tourCorrente = (Array.isArray(itinerari) && itinerari.length > 0)
-                    ? (itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0])
-                    : fallbackTour;
+                if (Array.isArray(itinerari) && itinerari.length > 0) {
+                    this.tourCorrente = itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0];
+                }
 
-                if (!this.tourCorrente) this.tourCorrente = fallbackTour;
+                if (!this.tourCorrente) {
+                    this.tourCorrente = {
+                        id: tourId,
+                        title: 'Tour Guidato Palermo Centro Storico',
+                        price: '25€',
+                        duration: '3 Ore',
+                        category: 'Storia & Cultura',
+                        meetingPoint: 'Piazza Politeama, Palermo',
+                        imageUrl: 'https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1200&q=80',
+                        maxCapacity: 15
+                    };
+                }
+
+                this.bookingData.tourId = String(this.tourCorrente.id || tourId);
+                this.bookingData.tourTitle = this.tourCorrente.title || 'Tour Palermo';
 
                 this.popolaHeroBanner();
 
@@ -177,7 +180,6 @@
                         this.bookingData.dateReadable = data.dateReadable;
                         this.bookingData.slotTime = data.slotTime;
 
-                        // Aggiorna slot e capienza per Step 2
                         let cap = 15;
                         if (data.calendarInstance && data.calendarInstance.defaultSlots) {
                             const slotObj = data.calendarInstance.defaultSlots.find(s => s.time === data.slotTime);
@@ -244,6 +246,7 @@
                 document.getElementById('booking-tour-title').textContent = tour.title || 'Tour Palermo';
 
                 this.bookingData.tourTitle = tour.title || 'Tour Palermo';
+                this.bookingData.tourId = String(tour.id || '1');
 
                 document.getElementById('chip-duration').textContent = `⏱️ Durata: ${tour.duration || '3 Ore'}`;
                 document.getElementById('chip-price').textContent = `💰 Prezzo: ${tour.price || 'Da 25€'}`;
@@ -273,7 +276,6 @@
                     this.maxStepReached = stepNum;
                 }
 
-                // Nascondi tutte le card e mostra solo la card attiva
                 [1, 2, 3, 4].forEach(i => {
                     const card = document.getElementById(`step-card-${i}`);
                     const barItem = document.getElementById(`bar-step-${i}`);
@@ -290,7 +292,6 @@
                     }
                 });
 
-                // Scroll fluido in alto alla card dello step
                 const activeCard = document.getElementById(`step-card-${stepNum}`);
                 if (activeCard) {
                     activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -308,11 +309,12 @@
             }
 
             confermaDefinitiva(res) {
-                // 1. Salva nel localStorage ed allinea sia time che slotTime
                 try {
                     const list = JSON.parse(localStorage.getItem('spt_bookings') || '[]');
                     const record = {
                         ...this.bookingData,
+                        tourTitle: this.tourCorrente ? this.tourCorrente.title : (this.bookingData.tourTitle || 'Tour Palermo'),
+                        tourId: String(this.tourCorrente ? this.tourCorrente.id : (this.bookingData.tourId || '1')),
                         time: this.bookingData.slotTime || '09:30',
                         paymentIntentId: (res && res.paymentIntentId) ? res.paymentIntentId : '',
                         id: Date.now().toString(),
@@ -322,15 +324,12 @@
                     list.unshift(record);
                     localStorage.setItem('spt_bookings', JSON.stringify(list));
 
-                    // 2. Sincronizza subito la nuova prenotazione ed il pagamento nel Cloud Firebase
                     if (window.cloudDB) {
                         window.cloudDB.salvaPrenotazioniCloud(list);
                     }
 
-                    // 3. Scala i posti disponibili dal Tour ed aggiorna la capienza nel Cloud
                     this.scalaCapienzaPostiTour();
 
-                    // 4. Invia email automatica via Brevo al cliente e all'amministratore
                     if (window.brevoEmailService) {
                         window.brevoEmailService.inviaEmailPrenotazione(record);
                     }
@@ -354,20 +353,35 @@
                     const saved = localStorage.getItem('spt_itineraries');
                     if (saved) itinerari = JSON.parse(saved);
 
+                    if (!Array.isArray(itinerari) || itinerari.length === 0) {
+                        if (typeof getItinerari === 'function') itinerari = getItinerari() || [];
+                    }
+
                     if (!Array.isArray(itinerari) || itinerari.length === 0) return;
 
                     let modif = false;
                     itinerari = itinerari.map(tour => {
                         if (String(tour.id) === String(this.tourCorrente.id) || tour.title === this.tourCorrente.title) {
-                            if (tour.timeSlots && Array.isArray(tour.timeSlots)) {
-                                tour.timeSlots = tour.timeSlots.map(s => {
-                                    if (typeof s === 'object' && s.time === targetSlot) {
-                                        s.booked = (parseInt(s.booked, 10) || 0) + totalePasseggeri;
-                                        modif = true;
-                                    }
-                                    return s;
-                                });
+                            if (!tour.timeSlots || !Array.isArray(tour.timeSlots)) {
+                                tour.timeSlots = [
+                                    { time: '09:30', maxCapacity: 15, booked: 0 },
+                                    { time: '11:30', maxCapacity: 15, booked: 0 },
+                                    { time: '15:30', maxCapacity: 15, booked: 0 },
+                                    { time: '18:00', maxCapacity: 15, booked: 0 }
+                                ];
                             }
+                            tour.timeSlots = tour.timeSlots.map(s => {
+                                let slotTimeStr = typeof s === 'string' ? s : s.time;
+                                if (slotTimeStr === targetSlot) {
+                                    if (typeof s === 'string') {
+                                        s = { time: slotTimeStr, maxCapacity: 15, booked: totalePasseggeri };
+                                    } else {
+                                        s.booked = (parseInt(s.booked, 10) || 0) + totalePasseggeri;
+                                    }
+                                    modif = true;
+                                }
+                                return s;
+                            });
                         }
                         return tour;
                     });
