@@ -169,12 +169,7 @@ class StripePaymentManager {
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 16px;">
-                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
-                            👤 Nome e Cognome Intestatario Carta *
-                        </label>
-                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" style="width: 100%; padding: 13px 15px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.98rem; box-sizing: border-box; transition: all 0.2s ease;" oninput="stripePayment.aggiornaAnteprimaCarta(this.value)">
-                    </div>
+                    <!-- Dati della Carta senza campo Nome Intestatario ridondante -->
 
                     <div style="margin-bottom: 12px;">
                         <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
@@ -344,11 +339,7 @@ class StripePaymentManager {
             };
         }
 
-        const cardholderInput = document.getElementById('stripe-cardholder-name');
-        let cardholderName = (cardholderInput && cardholderInput.value.trim()) ? cardholderInput.value.trim() : customerName;
-        if (!cardholderName || cardholderName.trim().length < 2) {
-            cardholderName = customerName || 'Cliente Referente';
-        }
+        const cardholderName = customerName || 'Cliente Referente';
 
         // Se Stripe Elements è attivo, crea prima il PaymentMethod con i dati reali della carta inseriti dall'utente
         if (this.stripe && this.cardElement) {
