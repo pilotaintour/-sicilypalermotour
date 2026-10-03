@@ -212,7 +212,7 @@
                 this.step3Module = new Step3Dati('step-card-3', {
                     onPrev: () => this.goToStep(2),
                     onComplete: (data) => {
-                        alert("DEBUG: onComplete Step 3 eseguito, passo a Step 4");
+                        alert("DEBUG WIZARD: Inizio onComplete Step 3");
                         try {
                             this.bookingData.customerName = data.customerName || 'Cliente';
                             this.bookingData.customerEmail = data.customerEmail || 'cliente@example.com';
@@ -221,9 +221,12 @@
                             this.bookingData.participantsList = data.participantsList || [];
 
                             this.calcolaEInviaRiepilogo();
+                            alert("DEBUG WIZARD: calcolaEInviaRiepilogo completato");
                         } catch (e) {
+                            alert("ERRORE WIZARD onComplete: " + e.message);
                             console.error("Errore onComplete Step 3:", e);
                         }
+                        alert("DEBUG WIZARD: Chiamo goToStep(4)");
                         this.goToStep(4);
                     }
                 });
