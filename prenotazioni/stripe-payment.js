@@ -80,16 +80,18 @@ class StripePaymentManager {
     }
 
     getPublishableKey() {
-        const saved = localStorage.getItem('spt_stripe_pk') || localStorage.getItem(STRIPE_PK_KEY);
-        if (saved && saved.startsWith('pk_') && saved.length > 30 && !saved.includes('*') && !saved.includes('G8hJ')) {
+        const saved = localStorage.getItem(STRIPE_PK_KEY) || localStorage.getItem('spt_stripe_pk');
+        if (saved && saved.startsWith('pk_test_') && saved.length > 30) {
             return saved;
         }
         return DEFAULT_STRIPE_PK;
     }
 
     getSecretKey() {
-        const saved = localStorage.getItem(STRIPE_SK_KEY);
-        if (saved) return saved;
+        const saved = localStorage.getItem(STRIPE_SK_KEY) || localStorage.getItem('spt_stripe_sk');
+        if (saved && saved.startsWith('sk_test_') && saved.length > 30) {
+            return saved;
+        }
         try {
             return atob(DEFAULT_SK_P1 + DEFAULT_SK_P2);
         } catch (e) {
@@ -192,7 +194,7 @@ class StripePaymentManager {
 
                 <!-- Box PayPal Smart Buttons -->
                 <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 26px; text-align: center;">
-                    <div style="font-size: 2.2rem; margin-bottom: 6px;">🔵</div>
+                    <div style="font-size: 2rem; margin-bottom: 6px;">🔵</div>
                     <strong style="font-size: 1.1rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
                     <p style="font-size: 0.9rem; color: #0369a1; margin: 0 0 18px 0; line-height: 1.5;">
                         Accedi in totale sicurezza al tuo conto PayPal per autorizzare il pagamento:
