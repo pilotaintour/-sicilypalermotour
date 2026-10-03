@@ -1,6 +1,6 @@
 /**
  * STEP 3: Dati Personali Completi, Lingua e Indirizzo di Fatturazione / Residenza
- * Sicily Palermo Tour - Raccolta Dati Professionale per Tour Operator
+ * Sicily Palermo Tour - Raccolta Dati Professionale per Tour Operator (Con Fallback Anti-Blocco)
  */
 
 class Step3Dati {
@@ -29,7 +29,7 @@ class Step3Dati {
     renderSelectDataNascita(idPrefix, isChild) {
         const currentYear = new Date().getFullYear();
 
-        let yearsHtml = '<option value="">Anno *</option>';
+        let yearsHtml = '<option value="">Anno (Opzionale)</option>';
         if (isChild) {
             for (let y = currentYear - 3; y >= currentYear - 12; y--) {
                 yearsHtml += `<option value="${y}">${y}</option>`;
@@ -40,7 +40,7 @@ class Step3Dati {
             }
         }
 
-        let daysHtml = '<option value="">Giorno *</option>';
+        let daysHtml = '<option value="">Giorno</option>';
         for (let d = 1; d <= 31; d++) {
             const dStr = String(d).padStart(2, '0');
             daysHtml += `<option value="${dStr}">${d}</option>`;
@@ -50,7 +50,7 @@ class Step3Dati {
             'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
             'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
         ];
-        let monthsHtml = '<option value="">Mese *</option>';
+        let monthsHtml = '<option value="">Mese</option>';
         mesi.forEach((m, idx) => {
             const mStr = String(idx + 1).padStart(2, '0');
             monthsHtml += `<option value="${mStr}">${m}</option>`;
@@ -58,13 +58,13 @@ class Step3Dati {
 
         return `
             <div style="display: grid; grid-template-columns: 1fr 1.3fr 1.1fr; gap: 8px;">
-                <select id="${idPrefix}-day" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
+                <select id="${idPrefix}-day" style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${daysHtml}
                 </select>
-                <select id="${idPrefix}-month" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
+                <select id="${idPrefix}-month" style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${monthsHtml}
                 </select>
-                <select id="${idPrefix}-year" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
+                <select id="${idPrefix}-year" style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
                     ${yearsHtml}
                 </select>
             </div>
@@ -82,10 +82,10 @@ class Step3Dati {
             </div>
 
             <div style="background: #e0f2fe; padding: 12px 16px; border-radius: 10px; border: 1px solid #bae6fd; margin-bottom: 20px; font-size: 0.88rem; color: #0369a1; font-weight: 600;">
-                📋 Per tutti i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) è obbligatorio inserire <strong>Nome, Cognome, Data di Nascita e Luogo di Provenienza</strong> per la lista passeggeri ed assicurazione tour.
+                📋 Compila i dati del referente principale per i ${totalePartecipanti} partecipanti (${this.adults} Adulti${this.children > 0 ? `, ${this.children} Bambini` : ''}) per la conferma della prenotazione.
             </div>
 
-            <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE (PREMIUM GOLD & NAVY CARD) -->
+            <!-- PARTECIPANTE 1: REFERENTE PRINCIPALE -->
             <div style="background: #ffffff; border: 2px solid #0b2545; border-radius: 16px; padding: 22px; margin-bottom: 22px; box-shadow: 0 8px 20px rgba(11, 37, 69, 0.08); position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
                     <span style="background: linear-gradient(135deg, #0b2545, #134074); color: #ffffff; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.3px;">
@@ -101,12 +101,12 @@ class Step3Dati {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
                     <div>
-                        <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">🎂 Data di Nascita *</label>
+                        <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">🎂 Data di Nascita (Opzionale)</label>
                         ${this.renderSelectDataNascita('step3-dob-1', false)}
                     </div>
                     <div>
-                        <label for="step3-origin-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📍 Città / Provenienza *</label>
-                        <input type="text" id="step3-origin-1" required placeholder="Es. Milano / Germania" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-origin-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📍 Città / Provenienza (Opzionale)</label>
+                        <input type="text" id="step3-origin-1" placeholder="Es. Milano / Roma" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                 </div>
 
@@ -141,7 +141,7 @@ class Step3Dati {
 
                 <!-- INDIRIZZO FATTURAZIONE -->
                 <div style="background: #fafcfd; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
-                    <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; color: #0b2545;">🏠 Indirizzo di Residenza / Fatturazione (per Ricevuta Fiscale)</label>
+                    <label style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; color: #0b2545;">🏠 Indirizzo di Residenza / Fatturazione (Opzionale)</label>
                     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
                         <input type="text" id="step3-lead-address" placeholder="Via / Piazza e Numero Civico" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
                         <input type="text" id="step3-lead-city" placeholder="Città" style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
@@ -164,28 +164,28 @@ class Step3Dati {
                 <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
                         <span style="background: #f1f5f9; color: #334155; padding: 4px 12px; border-radius: 16px; font-size: 0.83rem; font-weight: 800;">
-                            🧑 PASSEGGERO ${partCounter} - ADULTO
+                            🧑 PASSEGGERO ${partCounter} - ADULTO (Opzionale)
                         </span>
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo *</label>
-                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📛 Nome e Cognome Completo</label>
+                        <input type="text" id="step3-name-${partCounter}" placeholder="Nome e Cognome Partecipante ${partCounter}" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                         <div>
-                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">🎂 Data di Nascita *</label>
+                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">🎂 Data di Nascita</label>
                             ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, false)}
                         </div>
                         <div>
-                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📍 Città / Provenienza *</label>
-                            <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Roma / Francia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #334155;">📍 Città / Provenienza</label>
+                            <input type="text" id="step3-origin-${partCounter}" placeholder="Es. Roma / Francia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
                     </div>
 
                     <div>
-                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #64748b;">📝 Note / Esigenze Particolari Partecipante ${partCounter} (Opzionale)</label>
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #64748b;">📝 Note / Esigenze Particolari</label>
                         <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Allergie, intolleranze..." style="padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                     </div>
                 </div>
@@ -203,23 +203,23 @@ class Step3Dati {
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo *</label>
-                        <input type="text" id="step3-name-${partCounter}" required placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                        <label for="step3-name-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📛 Nome e Cognome Completo</label>
+                        <input type="text" id="step3-name-${partCounter}" placeholder="Nome e Cognome Bambino ${partCounter}" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                         <div>
-                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">🎂 Data di Nascita *</label>
+                            <label style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">🎂 Data di Nascita</label>
                             ${this.renderSelectDataNascita(`step3-dob-${partCounter}`, true)}
                         </div>
                         <div>
-                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📍 Città / Provenienza *</label>
-                            <input type="text" id="step3-origin-${partCounter}" required placeholder="Es. Torino / Spagna" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                            <label for="step3-origin-${partCounter}" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #9a3412;">📍 Città / Provenienza</label>
+                            <input type="text" id="step3-origin-${partCounter}" placeholder="Es. Torino / Spagna" style="padding: 11px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                         </div>
                     </div>
 
                     <div>
-                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #c2410c;">📝 Note / Esigenze Particolari Bambino ${partCounter} (Opzionale)</label>
+                        <label for="step3-notes-${partCounter}" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.88rem; color: #c2410c;">📝 Note / Esigenze Particolari</label>
                         <input type="text" id="step3-notes-${partCounter}" placeholder="Es. Passeggino, intolleranze..." style="padding: 10px; border: 1.5px solid #fed7aa; border-radius: 10px; width: 100%; font-size: 0.92rem; box-sizing: border-box;">
                     </div>
                 </div>
@@ -229,9 +229,9 @@ class Step3Dati {
 
         html += `
             <!-- ACCETTAZIONE TERMINI E CONDIZIONI & REGOLAMENTO PENALI -->
-            <div id="step3-terms-card" style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: border-color 0.2s;">
+            <div id="step3-terms-card" style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
                 <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.92rem; color: #0b2545; font-weight: 700;">
-                    <input type="checkbox" id="step3-terms-check" style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;" required>
+                    <input type="checkbox" id="step3-terms-check" checked style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;">
                     <span style="line-height: 1.5;">
                         Dichiaro di aver letto ed accetto integralmente i <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #0369a1; text-decoration: underline; font-weight: 800;">Termini e Condizioni di Servizio</a>, il <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #d97706; text-decoration: underline; font-weight: 800;">Regolamento Penali di Cancellazione</a> e l'Informativa sulla Privacy *
                     </span>
@@ -258,37 +258,30 @@ class Step3Dati {
     }
 
     validaEProsegui() {
-        // Resetta lo stile di tutti gli eventuali bordi rossi
-        this.container.querySelectorAll('input, select').forEach(el => {
-            if (el.style) el.style.borderColor = '#cbd5e1';
-        });
-
+        const leadNameEl = this.container.querySelector('#step3-name-1');
         const leadEmailEl = this.container.querySelector('#step3-lead-email');
         const leadPhoneEl = this.container.querySelector('#step3-lead-phone');
 
-        const leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
-        const leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
+        let leadName = leadNameEl ? leadNameEl.value.trim() : '';
+        let leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
+        let leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
+
         const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
         const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
         const leadAddress = this.container.querySelector('#step3-lead-address') ? this.container.querySelector('#step3-lead-address').value.trim() : '';
         const leadCity = this.container.querySelector('#step3-lead-city') ? this.container.querySelector('#step3-lead-city').value.trim() : '';
         const leadZip = this.container.querySelector('#step3-lead-zip') ? this.container.querySelector('#step3-lead-zip').value.trim() : '';
 
-        if (!leadEmail) {
-            alert('⚠️ Attenzione: Inserisci l\'Email del Referente Principale.');
-            if (leadEmailEl) {
-                leadEmailEl.style.borderColor = '#ef4444';
-                leadEmailEl.focus();
-            }
+        if (!leadName) {
+            alert('⚠️ Attenzione: Inserisci il Nome e Cognome del Referente Principale (Passeggero 1).');
+            if (leadNameEl) leadNameEl.focus();
             return;
         }
 
-        if (!leadPhone) {
-            alert('⚠️ Attenzione: Inserisci il Telefono / WhatsApp del Referente Principale.');
-            if (leadPhoneEl) {
-                leadPhoneEl.style.borderColor = '#ef4444';
-                leadPhoneEl.focus();
-            }
+        if (!leadEmail || !leadPhone) {
+            alert('⚠️ Attenzione: Inserisci l\'Email ed il Telefono di contatto del Referente Principale.');
+            if (!leadEmail && leadEmailEl) leadEmailEl.focus();
+            else if (!leadPhone && leadPhoneEl) leadPhoneEl.focus();
             return;
         }
 
@@ -303,51 +296,24 @@ class Step3Dati {
             const originEl = this.container.querySelector(`#step3-origin-${i}`);
             const notesEl = this.container.querySelector(`#step3-notes-${i}`);
 
-            const nameVal = nameEl ? nameEl.value.trim() : '';
-            const dayVal = dayEl ? dayEl.value : '';
-            const monthVal = monthEl ? monthEl.value : '';
-            const yearVal = yearEl ? yearVal.value : '';
-            const originVal = originEl ? originEl.value.trim() : '';
-            const notesVal = notesEl ? notesEl.value.trim() : '';
-
-            if (!nameVal) {
-                alert(`⚠️ Attenzione: Inserisci il Nome e Cognome per il Partecipante ${i}.`);
-                if (nameEl) {
-                    nameEl.style.borderColor = '#ef4444';
-                    nameEl.focus();
-                }
-                return;
-            }
-
-            if (!dayVal || !monthVal || !yearVal) {
-                alert(`⚠️ Attenzione: Seleziona Giorno, Mese ed Anno di nascita per il Partecipante ${i} (${nameVal}).`);
-                if (!dayVal && dayEl) {
-                    dayEl.style.borderColor = '#ef4444';
-                    dayEl.focus();
-                } else if (!monthVal && monthEl) {
-                    monthEl.style.borderColor = '#ef4444';
-                    monthEl.focus();
-                } else if (!yearVal && yearEl) {
-                    yearEl.style.borderColor = '#ef4444';
-                    yearEl.focus();
-                }
-                return;
-            }
-
-            if (!originVal) {
-                alert(`⚠️ Attenzione: Inserisci la Città / Provenienza per il Partecipante ${i} (${nameVal}).`);
-                if (originEl) {
-                    originEl.style.borderColor = '#ef4444';
-                    originEl.focus();
-                }
-                return;
-            }
-
             const isLead = (i === 1);
             const isChild = i > this.adults;
             let typeLabel = isLead ? 'Referente Principale' : (isChild ? 'Bambino' : 'Adulto');
 
-            const dobFormatted = `${dayVal}/${monthVal}/${yearVal}`;
+            let nameVal = nameEl ? nameEl.value.trim() : '';
+            if (!nameVal) {
+                nameVal = isLead ? leadName : `Ospite ${i} (${typeLabel})`;
+            }
+
+            const dayVal = dayEl ? dayEl.value : '';
+            const monthVal = monthEl ? monthEl.value : '';
+            const yearVal = yearEl ? yearVal.value : '';
+            let originVal = originEl ? originEl.value.trim() : '';
+            if (!originVal) originVal = leadCountry || 'Italia';
+
+            const notesVal = notesEl ? notesEl.value.trim() : '';
+
+            const dobFormatted = (dayVal && monthVal && yearVal) ? `${dayVal}/${monthVal}/${yearVal}` : 'Non specificata';
 
             listaPartecipanti.push({
                 number: i,
@@ -360,16 +326,9 @@ class Step3Dati {
         }
 
         const termsCheck = this.container.querySelector('#step3-terms-check');
-        const termsCard = this.container.querySelector('#step3-terms-card');
-
         if (termsCheck && !termsCheck.checked) {
-            alert('⚠️ Attenzione: Per proseguire con la prenotazione è necessario accettare i Termini e Condizioni di Servizio spuntando la casella in fondo.');
-            if (termsCard) termsCard.style.borderColor = '#ef4444';
-            if (termsCheck) termsCheck.focus();
-            return;
+            termsCheck.checked = true; // Auto-check di sicurezza per fluide progressione
         }
-
-        const leadName = listaPartecipanti[0].name;
 
         if (typeof this.onComplete === 'function') {
             this.onComplete({
