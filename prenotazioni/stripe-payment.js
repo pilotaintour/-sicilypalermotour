@@ -166,8 +166,8 @@ class StripePaymentManager {
                         <div class="virtual-card-number" id="vcard-number-display">•••• •••• •••• ••••</div>
                         <div class="virtual-card-footer">
                             <div>
-                                <span class="virtual-card-holder-label">Protezione Transazione</span>
-                                <div class="virtual-card-holder" style="letter-spacing: 0.8px; font-size: 0.82rem;">🔒 256-BIT SSL SECURE</div>
+                                <span class="virtual-card-holder-label">Intestatario Carta</span>
+                                <div class="virtual-card-holder" id="vcard-holder-display" style="letter-spacing: 1px; font-size: 0.88rem; font-weight: 800;">NOME COGNOME</div>
                             </div>
                             <div class="virtual-card-brands">
                                 <span class="brand-badge-pill" style="background: rgba(255,255,255,0.25); color: #fff;">VISA</span>
@@ -177,7 +177,13 @@ class StripePaymentManager {
                         </div>
                     </div>
 
-                    <!-- Dati della Carta senza campo Nome Intestatario ridondante -->
+                    <!-- Campo Nome Intestatario con scrittura in tempo reale sulla carta virtuale -->
+                    <div style="margin-bottom: 12px;">
+                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.88rem; color: #0b2545; margin-bottom: 5px;">
+                            👤 Nome Intestatario Carta *
+                        </label>
+                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" oninput="const h=document.getElementById('vcard-holder-display'); if(h) h.textContent = this.value.toUpperCase() || 'NOME COGNOME';" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box; background: #ffffff;">
+                    </div>
 
                     <div style="margin-bottom: 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
