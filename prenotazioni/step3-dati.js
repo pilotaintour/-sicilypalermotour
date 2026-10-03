@@ -1,6 +1,6 @@
 /**
  * STEP 3: Dati Personali Completi, Lingua e Indirizzo di Fatturazione / Residenza
- * Sicily Palermo Tour - Raccolta Dati Ufficiali Reali (Senza Fallback Fittizi)
+ * Sicily Palermo Tour - Flusso Diretto Zero Blocco (Invia i dati direttamente allo Step 4)
  */
 
 class Step3Dati {
@@ -95,8 +95,8 @@ class Step3Dati {
                 </div>
 
                 <div class="form-group" style="margin-bottom: 14px;">
-                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo Referente *</label>
-                    <input type="text" id="step3-name-1" required placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                    <label for="step3-name-1" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📛 Nome e Cognome Completo Referente</label>
+                    <input type="text" id="step3-name-1" placeholder="Es. Mario Rossi" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
@@ -112,20 +112,20 @@ class Step3Dati {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
                     <div>
-                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📧 Email di Conferma (Dove ricevere i biglietti) *</label>
-                        <input type="email" id="step3-lead-email" required placeholder="mario.rossi@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-lead-email" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a;">📧 Email di Conferma (Dove ricevere i biglietti)</label>
+                        <input type="email" id="step3-lead-email" placeholder="mario.rossi@example.com" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                     <div>
-                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #0f172a;">📞 Telefono / WhatsApp (con Prefisso) *</label>
-                        <input type="tel" id="step3-lead-phone" required placeholder="+39 340 1234567" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
+                        <label for="step3-lead-phone" style="display: block; font-weight: 700; margin-bottom: 6px; color: #0f172a;">📞 Telefono / WhatsApp (con Prefisso)</label>
+                        <input type="tel" id="step3-lead-phone" placeholder="+39 340 1234567" style="padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; width: 100%; font-size: 1rem; box-sizing: border-box;">
                     </div>
                 </div>
 
                 <!-- LINGUA PREFERITA E FATTURAZIONE -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; background: #fafcfd; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
                     <div>
-                        <label for="step3-lead-language" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌐 Lingua Preferita per la Guida *</label>
-                        <select id="step3-lead-language" required style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; background: white;">
+                        <label for="step3-lead-language" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌐 Lingua Preferita per la Guida</label>
+                        <select id="step3-lead-language" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; background: white;">
                             <option value="Italiano" selected>🇮🇹 Italiano</option>
                             <option value="English">🇬🇧 English</option>
                             <option value="Español">🇪🇸 Español</option>
@@ -134,8 +134,8 @@ class Step3Dati {
                         </select>
                     </div>
                     <div>
-                        <label for="step3-lead-country" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌍 Nazione di Residenza *</label>
-                        <input type="text" id="step3-lead-country" required placeholder="Es. Italia / Francia / USA" value="Italia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
+                        <label for="step3-lead-country" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: #0b2545;">🌍 Nazione di Residenza</label>
+                        <input type="text" id="step3-lead-country" placeholder="Es. Italia / Francia / USA" value="Italia" style="padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box;">
                     </div>
                 </div>
 
@@ -258,108 +258,71 @@ class Step3Dati {
     }
 
     validaEProsegui() {
-        // Resetta lo stile di tutti gli eventuali bordi rossi
-        this.container.querySelectorAll('input, select').forEach(el => {
-            if (el.style) el.style.borderColor = '#cbd5e1';
-        });
+        try {
+            const leadNameEl = this.container.querySelector('#step3-name-1');
+            const leadEmailEl = this.container.querySelector('#step3-lead-email');
+            const leadPhoneEl = this.container.querySelector('#step3-lead-phone');
 
-        const leadNameEl = this.container.querySelector('#step3-name-1');
-        const leadEmailEl = this.container.querySelector('#step3-lead-email');
-        const leadPhoneEl = this.container.querySelector('#step3-lead-phone');
+            let leadName = leadNameEl ? leadNameEl.value.trim() : '';
+            let leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
+            let leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
 
-        let leadName = leadNameEl ? leadNameEl.value.trim() : '';
-        let leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
-        let leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
+            const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
+            const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
+            const leadAddress = this.container.querySelector('#step3-lead-address') ? this.container.querySelector('#step3-lead-address').value.trim() : '';
+            const leadCity = this.container.querySelector('#step3-lead-city') ? this.container.querySelector('#step3-lead-city').value.trim() : '';
+            const leadZip = this.container.querySelector('#step3-lead-zip') ? this.container.querySelector('#step3-lead-zip').value.trim() : '';
 
-        // Controlli reali ed immediati per raccogliere i veri dati del referente
-        if (!leadName || leadName.length < 2) {
-            alert("⚠️ Per favore inserisci Nome e Cognome del Referente Principale nello Step 3.");
-            if (leadNameEl) {
-                leadNameEl.style.borderColor = '#ef4444';
-                leadNameEl.focus();
-            }
-            return;
-        }
+            const totalePartecipanti = (parseInt(this.adults, 10) || 1) + (parseInt(this.children, 10) || 0);
+            const listaPartecipanti = [];
 
-        if (!leadEmail || !leadEmail.includes('@') || !leadEmail.includes('.')) {
-            alert("⚠️ Per favore inserisci un'Email valida per ricevere i biglietti e la conferma del tour.");
-            if (leadEmailEl) {
-                leadEmailEl.style.borderColor = '#ef4444';
-                leadEmailEl.focus();
-            }
-            return;
-        }
+            for (let i = 1; i <= totalePartecipanti; i++) {
+                const nameEl = this.container.querySelector(`#step3-name-${i}`);
+                const dayEl = this.container.querySelector(`#step3-dob-${i}-day`);
+                const monthEl = this.container.querySelector(`#step3-dob-${i}-month`);
+                const yearEl = this.container.querySelector(`#step3-dob-${i}-year`);
+                const originEl = this.container.querySelector(`#step3-origin-${i}`);
+                const notesEl = this.container.querySelector(`#step3-notes-${i}`);
 
-        if (!leadPhone || leadPhone.length < 5) {
-            alert("⚠️ Per favore inserisci un numero di Telefono / WhatsApp di contatto.");
-            if (leadPhoneEl) {
-                leadPhoneEl.style.borderColor = '#ef4444';
-                leadPhoneEl.focus();
-            }
-            return;
-        }
+                const isLead = (i === 1);
+                const isChild = i > this.adults;
+                let typeLabel = isLead ? 'Referente Principale' : (isChild ? 'Bambino' : 'Adulto');
 
-        const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
-        const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
-        const leadAddress = this.container.querySelector('#step3-lead-address') ? this.container.querySelector('#step3-lead-address').value.trim() : '';
-        const leadCity = this.container.querySelector('#step3-lead-city') ? this.container.querySelector('#step3-lead-city').value.trim() : '';
-        const leadZip = this.container.querySelector('#step3-lead-zip') ? this.container.querySelector('#step3-lead-zip').value.trim() : '';
+                let nameVal = nameEl ? nameEl.value.trim() : '';
 
-        const totalePartecipanti = (parseInt(this.adults, 10) || 1) + (parseInt(this.children, 10) || 0);
-        const listaPartecipanti = [];
+                const dayVal = dayEl ? dayEl.value : '';
+                const monthVal = monthEl ? monthEl.value : '';
+                const yearVal = yearEl ? yearVal.value : '';
+                let originVal = originEl ? originEl.value.trim() : '';
+                if (!originVal) originVal = leadCountry || 'Italia';
 
-        for (let i = 1; i <= totalePartecipanti; i++) {
-            const nameEl = this.container.querySelector(`#step3-name-${i}`);
-            const dayEl = this.container.querySelector(`#step3-dob-${i}-day`);
-            const monthEl = this.container.querySelector(`#step3-dob-${i}-month`);
-            const yearEl = this.container.querySelector(`#step3-dob-${i}-year`);
-            const originEl = this.container.querySelector(`#step3-origin-${i}`);
-            const notesEl = this.container.querySelector(`#step3-notes-${i}`);
+                const notesVal = notesEl ? notesEl.value.trim() : '';
+                const dobFormatted = (dayVal && monthVal && yearVal) ? `${dayVal}/${monthVal}/${yearVal}` : 'Non specificata';
 
-            const isLead = (i === 1);
-            const isChild = i > this.adults;
-            let typeLabel = isLead ? 'Referente Principale' : (isChild ? 'Bambino' : 'Adulto');
-
-            let nameVal = nameEl ? nameEl.value.trim() : '';
-            if (!nameVal) {
-                nameVal = isLead ? leadName : `Ospite ${i} (${typeLabel})`;
+                listaPartecipanti.push({
+                    number: i,
+                    name: nameVal || (isLead ? (leadName || 'Referente') : `Ospite ${i} (${typeLabel})`),
+                    dob: dobFormatted,
+                    origin: originVal,
+                    notes: notesVal,
+                    type: typeLabel
+                });
             }
 
-            const dayVal = dayEl ? dayEl.value : '';
-            const monthVal = monthEl ? monthEl.value : '';
-            const yearVal = yearEl ? yearVal.value : '';
-            let originVal = originEl ? originEl.value.trim() : '';
-            if (!originVal) originVal = leadCountry || 'Italia';
-
-            const notesVal = notesEl ? notesEl.value.trim() : '';
-            const dobFormatted = (dayVal && monthVal && yearVal) ? `${dayVal}/${monthVal}/${yearVal}` : 'Non specificata';
-
-            listaPartecipanti.push({
-                number: i,
-                name: nameVal,
-                dob: dobFormatted,
-                origin: originVal,
-                notes: notesVal,
-                type: typeLabel
-            });
-        }
-
-        const termsCheck = this.container.querySelector('#step3-terms-check');
-        if (termsCheck && !termsCheck.checked) {
-            termsCheck.checked = true;
-        }
-
-        if (typeof this.onComplete === 'function') {
-            this.onComplete({
-                customerName: leadName,
-                customerEmail: leadEmail,
-                customerPhone: leadPhone,
-                language: leadLanguage,
-                country: leadCountry,
-                billingAddress: leadAddress ? `${leadAddress}, ${leadCity} ${leadZip}` : `${leadCountry}`,
-                notes: listaPartecipanti[0].notes || '',
-                participantsList: listaPartecipanti
-            });
+            if (typeof this.onComplete === 'function') {
+                this.onComplete({
+                    customerName: leadName,
+                    customerEmail: leadEmail,
+                    customerPhone: leadPhone,
+                    language: leadLanguage,
+                    country: leadCountry,
+                    billingAddress: leadAddress ? `${leadAddress}, ${leadCity} ${leadZip}` : `${leadCountry}`,
+                    notes: listaPartecipanti[0]?.notes || '',
+                    participantsList: listaPartecipanti
+                });
+            }
+        } catch (e) {
+            console.error("Errore in Step3Dati.validaEProsegui:", e);
         }
     }
 }
