@@ -726,6 +726,11 @@ async function eseguiIncassoPenaleParziale(bookingId) {
     booking.status = `Incassata Penale (€${importoVal.toFixed(2)})`;
     booking.amountCollected = importoVal.toFixed(2);
     savePrenotazioniAdmin(list);
+
+    if (window.brevoEmailService) {
+        await window.brevoEmailService.inviaEmailRimborsoPenale(booking, 'PENALE_PARZIALE', importoVal.toFixed(2));
+    }
+
     caricaPrenotazioniAdmin();
     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }
@@ -749,6 +754,11 @@ async function eseguiRimborsoSblocco100(bookingId) {
 
     booking.status = 'Rimborsata';
     savePrenotazioniAdmin(list);
+
+    if (window.brevoEmailService) {
+        await window.brevoEmailService.inviaEmailRimborsoPenale(booking, 'RIMBORSO_100', null);
+    }
+
     caricaPrenotazioniAdmin();
     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
 }

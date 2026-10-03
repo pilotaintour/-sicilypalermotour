@@ -492,6 +492,86 @@ class BrevoEmailService {
             return { success: false, error: e };
         }
     }
+
+    // Invia email all'utente quando viene eseguito un rimborso totale o parziale con penale (Collegato SOLO ai due pulsanti dedicati)
+    async inviaEmailRimborsoPenale(booking, tipo, importoDettaglio) {
+        const apiKey = this.getApiKey();
+        if (!apiKey || !booking || !booking.customerEmail) return;
+
+        const customerEmail = booking.customerEmail;
+        const customerName = booking.customerName || 'Cliente';
+        const code = booking.code || '#SPT-BOOK';
+        const tourTitle = booking.tourTitle || 'Tour Palermo';
+        const total = booking.total || '0.00';
+        const waNum = (localStorage.getItem('spt_wa_number') || '393401234567').replace(/[^0-9]/g, '');
+
+        let titoloEmail = '';
+        let descrizioneEmail = '';
+
+        if (tipo === 'RIMBORSO_100') {
+            titoloEmail = `[Rimborso Confermato] La tua prenotazione ${code} è stata rimborsata al 100%`;
+            descrizioneEmail = `Ti confermiamo che la pre-autorizzazione di <strong>€${total}</strong> per il tour <strong>${tourTitle}</strong> (Codice: ${code}) è stata <strong>completamente sbloccata/rimborsata al 100%</strong> senza alcuna penale o trattenuta. L'importo tornerà disponibile sul tuo conto/carta secondo le tempistiche bancarie.`;
+        } else {
+            titoloEmail = `[Aggiornamento Prenotazione] Rimborso parziale e penale applicata per ${code}`;
+            descrizioneEmail = `Ti informiamo riguardo alla tua prenotazione per il tour <strong>${tourTitle}</strong> (Codice: ${code}). È stata applicata una trattenuta penale di <strong>€${importoDettaglio}</strong> (su un totale di €${total}), e la rimanenza è stata sbloccata/rilasciata sulla tua carta.`;
+        }
+
+        const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="it">
+            <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+            <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; padding:15px; color:#1e293b; background:#f8fafc; margin:0;">
+                <div style="max-width:560px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #cbd5e1; box-shadow:0 4px 12px rgba(0,0,0,0.05); box-sizing:border-box;">
+                    <div style="background:linear-gradient(135deg, #0b2545, #134074); padding:24px 20px; text-align:center; color:#ffffff; border-bottom:3px solid #d97706;">
+                        <img src="https://pilotaintour.github.io/-sicilypalermotour/logo.svg" alt="Sicily Palermo Tour" width="220" style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto 10px auto;">
+                        <h2 style="margin:0; font-size:1.25rem;">Aggiornamento Stato Rimborso</h2>
+                    </div>
+                    <div style="padding:24px;">
+                        <h3 style="color:#0b2545; margin-top:0;">Ciao ${customerName},</h3>
+                        <p style="font-size:0.95rem; color:#475569; line-height:1.6;">
+                            ${descrizioneEmail}
+                        </p>
+                        <div style="background:#f1f5f9; padding:14px 18px; border-radius:10px; margin:18px 0; font-size:0.9rem; color:#334155;">
+                            <strong>Riepilogo:</strong><br>
+                            📍 Tour: ${tourTitle}<br>
+                            🔑 Codice: ${code}<br>
+                            💰 Totale Iniziale: €${total}
+                        </div>
+                        <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
+                            Per qualsiasi domanda o chiarimento, puoi contattarci direttamente su WhatsApp.
+                        </p>
+                        <div style="margin-top:20px; text-align:center;">
+                            <a href="https://wa.me/${waNum}" style="background:#25d366; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:10px; font-weight:bold; display:inline-block; font-size:0.92rem;">💬 Contattaci su WhatsApp</a>
+                        </div>
+                    </div>
+                    <div style="background:#f1f5f9; padding:14px; text-align:center; font-size:0.8rem; color:#64748b; border-top:1px solid #e2e8f0;">
+                        Sicily Palermo Tour - La tua guida speciale a Palermo
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
+        try {
+            await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': apiKey,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: "Sicily Palermo Tour", email: ADMIN_NOTIFICATION_EMAIL },
+                    to: [{ email: customerEmail, name: customerName }],
+                    subject: titoloEmail,
+                    htmlContent: htmlContent
+                })
+            });
+            console.log(`Email di rimborso (${tipo}) inviata a ${customerEmail}`);
+        } catch (e) {
+            console.error("Errore invio email rimborso Brevo:", e);
+        }
+    }
 }
 
 // Istanza globale del servizio email

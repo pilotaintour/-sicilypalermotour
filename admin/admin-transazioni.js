@@ -353,6 +353,11 @@ async function eseguiIncassoPenaleParziale(bookingId) {
     booking.amountCollected = importoVal.toFixed(2);
 
     saveTransazioniAdmin(list);
+
+    if (window.brevoEmailService) {
+        await window.brevoEmailService.inviaEmailRimborsoPenale(booking, 'PENALE_PARZIALE', importoVal.toFixed(2));
+    }
+
     caricaSezioneTransazioni();
 }
 window.eseguiIncassoPenaleParziale = eseguiIncassoPenaleParziale;
@@ -378,6 +383,11 @@ async function eseguiRimborsoSblocco100(bookingId) {
     booking.status = 'Rimborsata';
 
     saveTransazioniAdmin(list);
+
+    if (window.brevoEmailService) {
+        await window.brevoEmailService.inviaEmailRimborsoPenale(booking, 'RIMBORSO_100', null);
+    }
+
     caricaSezioneTransazioni();
 }
 window.eseguiRimborsoSblocco100 = eseguiRimborsoSblocco100;
