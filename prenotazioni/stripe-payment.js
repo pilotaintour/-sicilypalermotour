@@ -17,7 +17,12 @@ function selezionaMetodoPagamento(tipo) {
     const labelCard = document.getElementById('opt-label-card');
     const labelPaypal = document.getElementById('opt-label-paypal');
 
+    const radioCard = document.querySelector('input[name="payment_method"][value="card"]');
+    const radioPaypal = document.querySelector('input[name="payment_method"][value="paypal"]');
+
     if (tipo === 'card') {
+        if (radioCard) radioCard.checked = true;
+        if (radioPaypal) radioPaypal.checked = false;
         if (boxCard) boxCard.style.display = 'block';
         if (boxPaypal) boxPaypal.style.display = 'none';
         if (labelCard) {
@@ -31,6 +36,8 @@ function selezionaMetodoPagamento(tipo) {
             labelPaypal.style.boxShadow = 'none';
         }
     } else {
+        if (radioCard) radioCard.checked = false;
+        if (radioPaypal) radioPaypal.checked = true;
         if (boxCard) boxCard.style.display = 'none';
         if (boxPaypal) boxPaypal.style.display = 'block';
         if (labelCard) {

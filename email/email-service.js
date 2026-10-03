@@ -452,7 +452,8 @@ class BrevoEmailService {
         `;
 
         try {
-            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            // 1. Invio primario al Turista nella sua lingua
+            const reqCustomer = fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
@@ -461,25 +462,33 @@ class BrevoEmailService {
                 },
                 body: JSON.stringify({
                     sender: { name: "Sicily Palermo Tour", email: ADMIN_NOTIFICATION_EMAIL },
-                    to: [
-                        { email: customerEmail, name: customerName },
-                        { email: ADMIN_NOTIFICATION_EMAIL, name: "Admin Palermo Tour" }
-                    ],
+                    to: [{ email: customerEmail, name: customerName }],
                     subject: subjectDyn,
                     htmlContent: htmlTurista
                 })
-            });
+            }).catch(e => console.error("Errore invio Brevo Cliente:", e));
 
-            if (response.ok) {
-                console.log(`Email multilingua (${langKey.toUpperCase()}) inviata con successo via Brevo!`);
-                return { success: true };
-            } else {
-                const errData = await response.json();
-                console.error("Errore risposta Brevo:", errData);
-                return { success: false, error: errData };
-            }
+            // 2. Invio notifica istantanea all'Amministratore
+            const reqAdmin = fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': apiKey,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: "Sicily Palermo Tour", email: ADMIN_NOTIFICATION_EMAIL },
+                    to: [{ email: ADMIN_NOTIFICATION_EMAIL, name: "Admin Palermo Tour" }],
+                    subject: `[NUOVA PRENOTAZIONE] ${tourTitle} - ${customerName} (€${total})`,
+                    htmlContent: htmlTurista
+                })
+            }).catch(e => console.error("Errore invio Brevo Admin:", e));
+
+            await Promise.all([reqCustomer, reqAdmin]);
+            console.log(`Email multilingua (${langKey.toUpperCase()}) inviata con successo via Brevo a ${customerEmail}!`);
+            return { success: true };
         } catch (e) {
-            console.error("Errore durante l'invio dell'email via Brevo:", e);
+            console.error("Errore generale invio email Brevo:", e);
             return { success: false, error: e };
         }
     }

@@ -36,14 +36,16 @@ class Step1DataOrario {
             </div>
         `;
 
-        // Prepara orari impostati dall'Admin per questo tour
+        // Prepara orari e capienza reale dai dati salvati dell'Admin/Cloud per questo tour
         const customSlots = (this.tourData && this.tourData.timeSlots && this.tourData.timeSlots.length > 0)
             ? this.tourData.timeSlots.map(item => {
                 if (typeof item === 'string') {
                     return { time: item, maxCapacity: this.tourData.maxCapacity || 15, booked: 0 };
                 }
                 if (item && typeof item === 'object' && item.time) {
-                    return { time: item.time, maxCapacity: parseInt(item.capacity, 10) || 15, booked: 0 };
+                    const cap = parseInt(item.capacity || item.maxCapacity, 10) || 15;
+                    const book = parseInt(item.booked, 10) || 0;
+                    return { time: item.time, maxCapacity: cap, booked: book };
                 }
                 return null;
             }).filter(Boolean)
@@ -88,7 +90,6 @@ class Step1DataOrario {
     }
 
     validaEProsegui() {
-        // Fallback automatici se la data o lo slot non sono ancora stati cliccati
         if (!this.selectedDateISO && this.calendarInstance) {
             const initData = this.calendarInstance.getSelectedData();
             this.selectedDateISO = initData.dateISO;
