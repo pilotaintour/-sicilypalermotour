@@ -231,7 +231,7 @@ class Step3Dati {
             <!-- ACCETTAZIONE TERMINI E CONDIZIONI & REGOLAMENTO PENALI -->
             <div id="step3-terms-card" style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
                 <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.92rem; color: #0b2545; font-weight: 700;">
-                    <input type="checkbox" id="step3-terms-check" checked style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;">
+                    <input type="checkbox" id="step3-terms-check" style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;">
                     <span style="line-height: 1.5;">
                         Dichiaro di aver letto ed accetto integralmente i <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #0369a1; text-decoration: underline; font-weight: 800;">Termini e Condizioni di Servizio</a>, il <a href="termini-condizioni.html" target="_blank" onclick="window.open('termini-condizioni.html', '_blank', 'width=800,height=750'); return false;" style="color: #d97706; text-decoration: underline; font-weight: 800;">Regolamento Penali di Cancellazione</a> e l'Informativa sulla Privacy *
                     </span>
@@ -273,7 +273,15 @@ class Step3Dati {
             if (!leadPhone) leadPhone = '+39 3331234567';
 
             if (termsCheck && !termsCheck.checked) {
-                termsCheck.checked = true;
+                alert('⚠️ Per favore accetta i Termini e Condizioni di Servizio per proseguire.');
+                termsCheck.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (termsCheck.parentElement) {
+                    termsCheck.parentElement.style.color = '#dc2626';
+                }
+                return;
+            }
+            if (termsCheck && termsCheck.parentElement) {
+                termsCheck.parentElement.style.color = '#0b2545';
             }
 
             const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
