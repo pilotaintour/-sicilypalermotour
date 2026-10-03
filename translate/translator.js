@@ -38,9 +38,7 @@ function personalizzaTestoTraduttore() {
         }
     };
 
-    setInterval(aggiornaTesto, 300);
-    const observer = new MutationObserver(aggiornaTesto);
-    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(aggiornaTesto, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
