@@ -212,6 +212,7 @@
                 this.step3Module = new Step3Dati('step-card-3', {
                     onPrev: () => this.goToStep(2),
                     onComplete: (data) => {
+                        alert("DEBUG: onComplete Step 3 eseguito, passo a Step 4");
                         try {
                             this.bookingData.customerName = data.customerName || 'Cliente';
                             this.bookingData.customerEmail = data.customerEmail || 'cliente@example.com';

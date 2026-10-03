@@ -258,6 +258,7 @@ class Step3Dati {
     }
 
     validaEProsegui() {
+        alert("DEBUG: Click rilevato su Avanti Step 3!");
         try {
             const leadNameEl = this.container.querySelector('#step3-name-1');
             const leadEmailEl = this.container.querySelector('#step3-lead-email');
