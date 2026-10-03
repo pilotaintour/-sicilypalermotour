@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prenotazione Tour Palermo - Sicily Palermo Tour</title>
-    <link rel="stylesheet" href="../style.css?v=4">
-    <link rel="stylesheet" href="../itinerari/itinerari.css?v=4">
-    <link rel="stylesheet" href="../whatsapp/whatsapp.css?v=4">
-    <link rel="stylesheet" href="calendario.css?v=4">
-    <link rel="stylesheet" href="booking-wizard.css?v=4">
+    <link rel="stylesheet" href="../style.css?v=5">
+    <link rel="stylesheet" href="../itinerari/itinerari.css?v=5">
+    <link rel="stylesheet" href="../whatsapp/whatsapp.css?v=5">
+    <link rel="stylesheet" href="calendario.css?v=5">
+    <link rel="stylesheet" href="booking-wizard.css?v=5">
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&disable-funding=card,mybank,sofort,paylater"></script>
-    <script src="stripe-payment.js?v=4"></script>
-    <script src="../email/email-service.js?v=4"></script>
-    <script src="../cloud/cloud-db.js?v=4"></script>
-    <script src="../itinerari/itinerari-data.js?v=4"></script>
-    <script src="calendario.js?v=4"></script>
-    <script src="step1-data-orario.js?v=4"></script>
-    <script src="step2-partecipanti.js?v=4"></script>
-    <script src="step3-dati.js?v=4"></script>
-    <script src="step4-conferma.js?v=4"></script>
+    <script src="stripe-payment.js?v=5"></script>
+    <script src="../email/email-service.js?v=5"></script>
+    <script src="../cloud/cloud-db.js?v=5"></script>
+    <script src="../itinerari/itinerari-data.js?v=5"></script>
+    <script src="calendario.js?v=5"></script>
+    <script src="step1-data-orario.js?v=5"></script>
+    <script src="step2-partecipanti.js?v=5"></script>
+    <script src="step3-dati.js?v=5"></script>
+    <script src="step4-conferma.js?v=5"></script>
 </head>
 <body>
 
@@ -212,7 +212,6 @@
                 this.step3Module = new Step3Dati('step-card-3', {
                     onPrev: () => this.goToStep(2),
                     onComplete: (data) => {
-                        alert("DEBUG WIZARD: Inizio onComplete Step 3");
                         try {
                             this.bookingData.customerName = data.customerName || 'Cliente';
                             this.bookingData.customerEmail = data.customerEmail || 'cliente@example.com';
@@ -221,12 +220,9 @@
                             this.bookingData.participantsList = data.participantsList || [];
 
                             this.calcolaEInviaRiepilogo();
-                            alert("DEBUG WIZARD: calcolaEInviaRiepilogo completato");
                         } catch (e) {
-                            alert("ERRORE WIZARD onComplete: " + e.message);
                             console.error("Errore onComplete Step 3:", e);
                         }
-                        alert("DEBUG WIZARD: Chiamo goToStep(4)");
                         this.goToStep(4);
                     }
                 });

@@ -258,7 +258,6 @@ class Step3Dati {
     }
 
     validaEProsegui() {
-        alert("DEBUG STEP 3: 1. Click rilevato");
         try {
             const leadNameEl = this.container.querySelector('#step3-name-1');
             const leadEmailEl = this.container.querySelector('#step3-lead-email');
@@ -276,8 +275,6 @@ class Step3Dati {
             if (termsCheck && !termsCheck.checked) {
                 termsCheck.checked = true;
             }
-
-            alert("DEBUG STEP 3: 2. Dati principali letti");
 
             const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
             const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
@@ -321,8 +318,6 @@ class Step3Dati {
                 });
             }
 
-            alert("DEBUG STEP 3: 3. Partecipanti letti, chiamata onComplete");
-
             if (typeof this.onComplete === 'function') {
                 this.onComplete({
                     customerName: leadName,
@@ -334,12 +329,8 @@ class Step3Dati {
                     notes: listaPartecipanti[0]?.notes || '',
                     participantsList: listaPartecipanti
                 });
-                alert("DEBUG STEP 3: 4. onComplete completato con successo");
-            } else {
-                alert("ERRORE STEP 3: this.onComplete non è una funzione!");
             }
         } catch (e) {
-            alert("ERRORE CRITICO STEP 3: " + e.message);
             console.error("Errore in Step3Dati.validaEProsegui:", e);
         }
     }
