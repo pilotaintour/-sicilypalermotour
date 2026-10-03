@@ -510,10 +510,10 @@ class BrevoEmailService {
 
         if (tipo === 'RIMBORSO_100') {
             titoloEmail = `[Rimborso Confermato] La tua prenotazione ${code} è stata rimborsata al 100%`;
-            descrizioneEmail = `Ti confermiamo che la pre-autorizzazione di <strong>€${total}</strong> per il tour <strong>${tourTitle}</strong> (Codice: ${code}) è stata <strong>completamente sbloccata/rimborsata al 100%</strong> senza alcuna penale o trattenuta. L'importo tornerà disponibile sul tuo conto/carta secondo le tempistiche bancarie.`;
+            descrizioneEmail = `Ti confermiamo che la pre-autorizzazione di <strong>€${total}</strong> per il tour <strong>${tourTitle}</strong> (Codice: ${code}) è stata <strong>completamente sbloccata/rimborsata al 100%</strong>. Questo rimborso è stato effettuato in conformità con i <strong>Termini e Condizioni e il Regolamento Penali di Cancellazione</strong> accettati al momento della prenotazione. L'importo tornerà disponibile sul tuo conto/carta secondo le tempistiche bancarie.`;
         } else {
-            titoloEmail = `[Aggiornamento Prenotazione] Rimborso parziale e penale applicata per ${code}`;
-            descrizioneEmail = `Ti informiamo riguardo alla tua prenotazione per il tour <strong>${tourTitle}</strong> (Codice: ${code}). È stata applicata una trattenuta penale di <strong>€${importoDettaglio}</strong> (su un totale di €${total}), e la rimanenza è stata sbloccata/rilasciata sulla tua carta.`;
+            titoloEmail = `[Aggiornamento Prenotazione] Rimborso parziale e applicazione penale per ${code}`;
+            descrizioneEmail = `Ti informiamo riguardo alla tua prenotazione per il tour <strong>${tourTitle}</strong> (Codice: ${code}). In conformità con i <strong>Termini e Condizioni e il Regolamento Penali di Cancellazione</strong> accettati al momento della prenotazione, è stata applicata una trattenuta penale di <strong>€${importoDettaglio}</strong> (su un totale di €${total}), e la rimanenza è stata regolarmente sbloccata/rilasciata sulla tua carta.`;
         }
 
         const htmlContent = `
@@ -536,6 +536,10 @@ class BrevoEmailService {
                             📍 Tour: ${tourTitle}<br>
                             🔑 Codice: ${code}<br>
                             💰 Totale Iniziale: €${total}
+                        </div>
+                        <div style="background:#fffbf5; border:1.5px solid #fed7aa; border-radius:10px; padding:14px; margin:16px 0; font-size:0.86rem; color:#9a3412; line-height:1.5;">
+                            <strong>📜 Regolamento e Termini di Servizio:</strong><br>
+                            Il presente rimborso/trattenuta è stato calcolato ed eseguito esattamente in conformità con i <em>Termini e Condizioni di Servizio e Regolamento Penali di Cancellazione</em> accettati al momento della conferma della prenotazione.
                         </div>
                         <p style="font-size:0.9rem; color:#64748b; line-height:1.5;">
                             Per qualsiasi domanda o chiarimento, puoi contattarci direttamente su WhatsApp.
