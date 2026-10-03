@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DATABASE CLOUD - FIREBASE REALTIME DATABASE (GOOGLE)
- * Sicily Palermo Tour - Sincronizzazione in Tempo Reale con Unione Intelligente e Protezione Dati
+ * Sicily Palermo Tour - Sincronizzazione in Tempo Reale con Protezione Eliminazioni
  */
 
 const FIREBASE_DB_URL = 'https://sicilypalermotour-default-rtdb.europe-west1.firebasedatabase.app/spt_database.json';
@@ -19,6 +19,7 @@ class CloudDatabaseManager {
         this.dbUrl = FIREBASE_DB_URL;
         this.syncInterval = null;
         this.isSaving = false;
+        this.lastSaveTime = 0;
 
         this.initAutoSync();
     }
@@ -29,7 +30,7 @@ class CloudDatabaseManager {
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
-            }, 5000);
+            }, 6000);
         }
 
         window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
@@ -51,7 +52,10 @@ class CloudDatabaseManager {
     }
 
     async fetchTuttiDatiCloud() {
-        if (this.isSaving) return null;
+        // Se un salvataggio/eliminazione locale è stato effettuato negli ultimi 8 secondi, rispetta lo stato locale ed evita sovrascritture
+        if (this.isSaving || (Date.now() - this.lastSaveTime < 8000)) {
+            return null;
+        }
 
         try {
             const timestamp = Date.now();
@@ -63,7 +67,7 @@ class CloudDatabaseManager {
                 }
             });
 
-            if (res.ok && !this.isSaving) {
+            if (res.ok && !this.isSaving && (Date.now() - this.lastSaveTime >= 8000)) {
                 const record = (await res.json()) || {};
 
                 // 1. Sincronizza Itinerari
@@ -83,28 +87,9 @@ class CloudDatabaseManager {
                     localStorage.setItem('spt_hero_photos', JSON.stringify(record.heroPhotos));
                 }
 
-                // 3. Unione Intelligente Prenotazioni & Transazioni (Senza mai cancellare le prenotazioni locali)
+                // 3. Sincronizza Prenotazioni (Rispetta lo stato pulito dal Cloud)
                 if (record.bookings && Array.isArray(record.bookings)) {
-                    let localBookings = [];
-                    try { localBookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]'); } catch (e) {}
-
-                    const mappaBookings = {};
-                    // Prima aggiungi le locali
-                    localBookings.forEach(b => {
-                        const key = b.id || b.code || (b.createdAt + '_' + b.customerEmail);
-                        mappaBookings[key] = b;
-                    });
-                    // Poi unisci quelle dal Cloud
-                    record.bookings.forEach(b => {
-                        const key = b.id || b.code || (b.createdAt + '_' + b.customerEmail);
-                        mappaBookings[key] = b;
-                    });
-
-                    const unioneBookings = Object.values(mappaBookings).sort((a, b) => {
-                        return (parseInt(b.id, 10) || 0) - (parseInt(a.id, 10) || 0);
-                    });
-
-                    localStorage.setItem('spt_bookings', JSON.stringify(unioneBookings));
+                    localStorage.setItem('spt_bookings', JSON.stringify(record.bookings));
 
                     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
                     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
@@ -127,6 +112,7 @@ class CloudDatabaseManager {
 
     async salvaTuttiDatiCloud(dataObj) {
         this.isSaving = true;
+        this.lastSaveTime = Date.now();
 
         try {
             if (typeof dataObj.itinerari !== 'undefined') {
@@ -161,9 +147,9 @@ class CloudDatabaseManager {
             });
 
             if (res.ok) {
-                console.log("🔥 Dati pubblicati con successo su Firebase Realtime Database!");
+                console.log("🔥 Dati pubblicati ed eliminazioni sincronizzate con successo nel Cloud!");
                 this.isSaving = false;
-                setTimeout(() => this.fetchTuttiDatiCloud(), 200);
+                this.lastSaveTime = Date.now();
                 return true;
             }
         } catch (e) {
