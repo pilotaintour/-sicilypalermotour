@@ -157,45 +157,40 @@ class StripePaymentManager {
                 <!-- Box Dati Carta di Credito -->
                 <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px;">
 
-                    <!-- Virtual Credit Card Visual Widget -->
-                    <div class="virtual-card-preview" id="virtual-card-preview-box">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <!-- Virtual Credit Card Visual Widget with Embedded Inputs -->
+                    <div class="virtual-card-preview" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0b2545 100%); border-radius: 20px; padding: 26px; color: white; box-shadow: 0 16px 36px rgba(15, 23, 42, 0.35); position: relative; max-width: 500px; margin: 0 auto 22px auto; border: 1px solid rgba(255,255,255,0.15);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <div class="virtual-card-chip"></div>
-                            <div style="font-size: 1.2rem; opacity: 0.85;">📶</div>
+                            <div style="font-size: 1.3rem; opacity: 0.9;">📶</div>
                         </div>
-                        <div class="virtual-card-number" id="vcard-number-display">•••• •••• •••• ••••</div>
-                        <div class="virtual-card-footer">
+
+                        <!-- Numero Carta (Stripe CardNumber Element) -->
+                        <div style="margin-bottom: 18px;">
+                            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; display: block; margin-bottom: 4px;">💳 Numero Carta *</span>
+                            <div id="stripe-card-number-mount" style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 12px 14px; min-height: 24px;"></div>
+                        </div>
+
+                        <!-- Footer: Intestatario, Scadenza, CVC -->
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; align-items: flex-end;">
                             <div>
-                                <span class="virtual-card-holder-label">Intestatario Carta</span>
-                                <div class="virtual-card-holder" id="vcard-holder-display" style="letter-spacing: 1px; font-size: 0.88rem; font-weight: 800;">NOME COGNOME</div>
+                                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; display: block; margin-bottom: 4px;">👤 Intestatario *</span>
+                                <input type="text" id="stripe-cardholder-name" placeholder="MARIO ROSSI" style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 11px 10px; color: white; font-size: 0.9rem; width: 100%; box-sizing: border-box; text-transform: uppercase; font-weight: 700; outline: none;">
                             </div>
-                            <div class="virtual-card-brands">
-                                <span class="brand-badge-pill" style="background: rgba(255,255,255,0.25); color: #fff;">VISA</span>
-                                <span class="brand-badge-pill" style="background: rgba(235,0,27,0.25); color: #fff;">MC</span>
-                                <span class="brand-badge-pill" style="background: rgba(0,111,207,0.25); color: #fff;">AMEX</span>
+                            <div>
+                                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; display: block; margin-bottom: 4px;">⏳ Scadenza *</span>
+                                <div id="stripe-card-expiry-mount" style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 11px 10px; min-height: 20px;"></div>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; display: block; margin-bottom: 4px;">🔒 CVC / CVV *</span>
+                                <div id="stripe-card-cvc-mount" style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 11px 10px; min-height: 20px;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Campo Nome Intestatario con scrittura in tempo reale sulla carta virtuale -->
-                    <div style="margin-bottom: 12px;">
-                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.88rem; color: #0b2545; margin-bottom: 5px;">
-                            👤 Nome Intestatario Carta *
-                        </label>
-                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" oninput="const h=document.getElementById('vcard-holder-display'); if(h) h.textContent = this.value.toUpperCase() || 'NOME COGNOME';" style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 0.95rem; box-sizing: border-box; background: #ffffff;">
-                    </div>
-
-                    <div style="margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <label style="font-weight: 700; font-size: 0.9rem; color: #0b2545; display: flex; align-items: center; gap: 6px; margin: 0;">
-                                💳 Dati della Carta (Numero, Scadenza, CVC) *
-                            </label>
-                            <button type="button" onclick="if(window.stripePayment){ window.stripePayment.autoCompilaTestCard(); }" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                                ⚡ Inserisci Carta di Test
-                            </button>
-                        </div>
-                        <!-- Riquadro Form Carta Stripe Elements -->
-                        <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 14px;">
+                        <button type="button" onclick="if(window.stripePayment){ window.stripePayment.autoCompilaTestCard(); }" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                            ⚡ Inserisci Dati Carta di Test
+                        </button>
                     </div>
 
                     <p style="font-size: 0.83rem; color: #64748b; margin-top: 10px; margin-bottom: 0; line-height: 1.4;">
@@ -224,53 +219,46 @@ class StripePaymentManager {
 
         if (this.elements) {
             try {
-                this.cardElement = this.elements.create('card', {
+                this.cardNumber = this.elements.create('cardNumber', {
                     style: {
                         base: {
-                            color: '#0f172a',
+                            color: '#ffffff',
                             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            fontSmoothing: 'antialiased',
                             fontSize: '16px',
                             '::placeholder': { color: '#94a3b8' }
                         },
-                        invalid: {
-                            color: '#dc2626',
-                            iconColor: '#dc2626'
-                        }
+                        invalid: { color: '#fca5a5' }
+                    }
+                });
+                this.cardExpiry = this.elements.create('cardExpiry', {
+                    style: {
+                        base: {
+                            color: '#ffffff',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            fontSize: '15px',
+                            '::placeholder': { color: '#94a3b8' }
+                        },
+                        invalid: { color: '#fca5a5' }
+                    }
+                });
+                this.cardCvc = this.elements.create('cardCvc', {
+                    style: {
+                        base: {
+                            color: '#ffffff',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            fontSize: '15px',
+                            '::placeholder': { color: '#94a3b8' }
+                        },
+                        invalid: { color: '#fca5a5' }
                     }
                 });
 
-                const mountPoint = document.getElementById('stripe-card-mount-point');
-                if (mountPoint) {
-                    this.cardElement.mount('#stripe-card-mount-point');
-                    this.isMounted = true;
-
-                    this.cardElement.on('change', (event) => {
-                        const displayError = document.getElementById('stripe-card-errors');
-                        const vnum = document.getElementById('vcard-number-display');
-
-                        if (event.brand && event.brand !== 'unknown') {
-                            if (vnum) {
-                                const brandName = event.brand.toUpperCase();
-                                vnum.textContent = `•••• •••• •••• (${brandName})`;
-                            }
-                        } else if (vnum && !event.complete) {
-                            vnum.textContent = `•••• •••• •••• ••••`;
-                        }
-
-                        if (displayError) {
-                            if (event.error) {
-                                displayError.textContent = "⚠️ " + event.error.message;
-                                displayError.style.display = 'block';
-                            } else {
-                                displayError.textContent = '';
-                                displayError.style.display = 'none';
-                            }
-                        }
-                    });
-                }
+                this.cardNumber.mount('#stripe-card-number-mount');
+                this.cardExpiry.mount('#stripe-card-expiry-mount');
+                this.cardCvc.mount('#stripe-card-cvc-mount');
+                this.isMounted = true;
             } catch (err) {
-                console.error("Errore mount card element:", err);
+                console.error("Errore mount split card elements:", err);
             }
         }
     }
@@ -361,11 +349,11 @@ class StripePaymentManager {
         const cardholderName = customerName || 'Cliente Referente';
 
         // Se Stripe Elements è attivo, crea prima il PaymentMethod con i dati reali della carta inseriti dall'utente
-        if (this.stripe && this.cardElement) {
+        if (this.stripe && this.cardNumber) {
             try {
                 const pmResult = await this.stripe.createPaymentMethod({
                     type: 'card',
-                    card: this.cardElement,
+                    card: this.cardNumber,
                     billing_details: {
                         name: cardholderName,
                         email: customerEmail || ''
