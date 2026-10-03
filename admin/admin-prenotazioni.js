@@ -1,6 +1,6 @@
 /**
- * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri
- * Sicily Palermo Tour - Admin (Senza Demo o Dati Fittizi)
+ * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri Completa
+ * Sicily Palermo Tour - Admin (Tutti i Campi Raccolti Dettagliati: Lingua, Fatturazione, Contatti, Note)
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
@@ -400,7 +400,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     return html;
 }
 
-// Genera la vista Tabella Lista Unica Passeggeri
+// Genera la vista Tabella Lista Unica Passeggeri con TUTTI i Campi Raccolti
 function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
     if (bookingsList.length === 0) {
         return `
@@ -426,10 +426,15 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                     passengerName: p.name || 'N/D',
                     passengerType: p.type || (idxP === 0 ? 'Referente' : 'Adulto'),
                     passengerDob: p.dob || 'N/D',
-                    passengerOrigin: p.origin || 'N/D',
-                    passengerNotes: p.notes || '',
+                    passengerOrigin: p.origin || b.country || 'Italia',
+                    passengerNotes: p.notes || b.notes || '',
+                    leadName: b.customerName || 'N/D',
                     leadEmail: b.customerEmail || 'N/D',
                     leadPhone: b.customerPhone || 'N/D',
+                    language: b.language || 'Italiano',
+                    country: b.country || 'Italia',
+                    billingAddress: b.billingAddress || 'Italia',
+                    total: b.total || '0.00',
                     status: b.status || 'In attesa'
                 });
             });
@@ -442,12 +447,17 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                 dateStr: b.dateReadable || b.dateISO || 'N/D',
                 timeStr: b.time || b.slotTime || '09:30',
                 passengerName: b.customerName || 'N/D',
-                passengerType: 'Referente',
+                passengerType: 'Referente Principale',
                 passengerDob: 'N/D',
-                passengerOrigin: 'N/D',
+                passengerOrigin: b.country || 'Italia',
                 passengerNotes: b.notes || '',
+                leadName: b.customerName || 'N/D',
                 leadEmail: b.customerEmail || 'N/D',
                 leadPhone: b.customerPhone || 'N/D',
+                language: b.language || 'Italiano',
+                country: b.country || 'Italia',
+                billingAddress: b.billingAddress || 'Italia',
+                total: b.total || '0.00',
                 status: b.status || 'In attesa'
             });
         }
@@ -460,7 +470,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
             <div style="border-bottom: 2px solid #000000; padding-bottom: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
                 <div>
                     <h3 style="color: #0b2545; margin: 0; font-size: 1.4rem; font-weight: 800;">
-                        🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri
+                        🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri Completa
                     </h3>
                     <p style="color: #475569; font-size: 0.9rem; margin: 4px 0 0 0;">
                         Tour: <strong>${escapeHtmlBooking(titoloTour || 'Palermo Tour')}</strong>${infoOrarioTitolo} | Documento Guida del ${new Date().toLocaleDateString('it-IT')}
@@ -477,14 +487,16 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                         <tr style="background: #ffffff; color: #000000; font-weight: 800; border-bottom: 2px solid #000000; position: sticky; top: 0; z-index: 10;">
                             <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 48px; background: #ffffff;">Check</th>
                             <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 32px; background: #ffffff;">#</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Passeggero</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Tipo</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Passeggero (Nome e Cognome)</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Ruolo</th>
                             <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Data Nascita</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Provenienza</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Tour</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Data & Ora</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Telefono</th>
-                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Note</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Provenienza / Nazione</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">🌐 Lingua Guida</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">📞 Contatti Referente</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">🏠 Indirizzo Residenza / Fatturazione</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">📅 Data & Ora</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">💰 Totale & Stato</th>
+                            <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">📝 Note / Allergie</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -496,9 +508,17 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                                 <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #334155;">${escapeHtmlBooking(r.passengerType)}</td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; color: #1e293b; font-weight: 600;">${escapeHtmlBooking(r.passengerDob)}</td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; color: #1e293b;">${escapeHtmlBooking(r.passengerOrigin)}</td>
-                                <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 600; color: #0b2545;">${escapeHtmlBooking(r.tourTitle)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 700; color: #0b2545;">🌐 ${escapeHtmlBooking(r.language)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #334155;">
+                                    <strong>${escapeHtmlBooking(r.leadPhone)}</strong><br>
+                                    <span style="color:#64748b; font-size:0.8rem;">${escapeHtmlBooking(r.leadEmail)}</span>
+                                </td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.83rem; color: #1e293b;">🏠 ${escapeHtmlBooking(r.billingAddress)}</td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 600; color: #334155; font-size: 0.83rem;">${escapeHtmlBooking(r.dateStr)}<br><strong>Ore ${escapeHtmlBooking(r.timeStr)}</strong></td>
-                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #334155;">${escapeHtmlBooking(r.leadPhone)}</td>
+                                <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.83rem;">
+                                    <strong style="color:#0369a1;">€${escapeHtmlBooking(r.total)}</strong><br>
+                                    <span style="font-size:0.78rem; font-weight:bold; color:#d97706;">${escapeHtmlBooking(r.status)}</span>
+                                </td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; font-size: 0.85rem; color: #475569;">${r.passengerNotes ? escapeHtmlBooking(r.passengerNotes) : '-'}</td>
                             </tr>
                         `).join('')}
@@ -530,7 +550,7 @@ function renderSchedePrenotazioni(bookingsList) {
                 <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.88rem; color: #0369a1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center;">
                     <div><strong>🔖 Codice:</strong> <code style="font-family: monospace; font-weight: bold; background: #ffffff; padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95rem; color: #0b2545;">${escapeHtmlBooking(b.code || '#SPT-BOOK')}</code></div>
                     <div><strong>🕒 Data e Ora Transazione:</strong> <span style="font-weight: bold; color: #0b2545;">${escapeHtmlBooking(b.createdAt || 'Registrato il ' + new Date().toLocaleString('it-IT'))}</span></div>
-                    <div><strong>💳 ID Stripe:</strong> <code style="font-family: monospace; font-size: 0.82rem; background: #ffffff; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1;">${escapeHtmlBooking(b.paymentIntentId || 'pi_stripe')}</code></div>
+                    <div><strong>💳 ID Stripe / PayPal:</strong> <code style="font-family: monospace; font-size: 0.82rem; background: #ffffff; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1;">${escapeHtmlBooking(b.paymentIntentId || 'pi_stripe')}</code></div>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
@@ -546,18 +566,21 @@ function renderSchedePrenotazioni(bookingsList) {
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.9rem; color: #334155; margin-bottom: 14px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    <div>📅 <strong>Data:</strong> ${escapeHtmlBooking(b.dateReadable || b.dateISO)}</div>
-                    <div>⏰ <strong>Orario:</strong> ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</div>
+                    <div>📅 <strong>Data Visita:</strong> ${escapeHtmlBooking(b.dateReadable || b.dateISO)}</div>
+                    <div>⏰ <strong>Orario Partenza:</strong> ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</div>
                     <div>🎟️ <strong>Ospiti:</strong> ${b.adults} Adulti ${b.children > 0 ? `, ${b.children} Bambini` : ''}</div>
-                    <div>💰 <strong>Totale:</strong> €${escapeHtmlBooking(b.total || '0.00')}</div>
+                    <div>💰 <strong>Totale Pre-Autorizzato:</strong> €${escapeHtmlBooking(b.total || '0.00')}</div>
+                    <div>🌐 <strong>Lingua Guida:</strong> ${escapeHtmlBooking(b.language || 'Italiano')}</div>
+                    <div>🌍 <strong>Nazione Residenza:</strong> ${escapeHtmlBooking(b.country || 'Italia')}</div>
                 </div>
 
                 <div style="font-size: 0.92rem; color: #475569; margin-bottom: 14px;">
                     👤 <strong>Referente:</strong> ${escapeHtmlBooking(b.customerName)} | 📧 ${escapeHtmlBooking(b.customerEmail)} | 📞 ${escapeHtmlBooking(b.customerPhone)}
+                    <br>🏠 <strong>Indirizzo Residenza / Fatturazione:</strong> ${escapeHtmlBooking(b.billingAddress || 'Italia')}
 
                     ${b.participantsList && b.participantsList.length > 0 ? `
                         <div style="margin-top: 10px; background: #fafcfd; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                            <strong style="color: #1b4f72;">🧳 Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
+                            <strong style="color: #1b4f72;">🧳 Lista Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
                             <ol style="margin: 6px 0 0 18px; padding: 0; font-size: 0.88rem; color: #1e293b; line-height: 1.6;">
                                 ${b.participantsList.map(p => `
                                     <li style="margin-bottom: 4px;">
@@ -715,11 +738,13 @@ function scaricaSalvaDocumentoLista(titoloTour) {
                         <td><strong>${escapeHtmlBooking(p.name || 'N/D')}</strong></td>
                         <td>${escapeHtmlBooking(p.type || 'Adulto')}</td>
                         <td>${escapeHtmlBooking(p.dob || '-')}</td>
-                        <td>${escapeHtmlBooking(p.origin || '-')}</td>
-                        <td>${escapeHtmlBooking(b.tourTitle || 'Tour Palermo')}</td>
+                        <td>${escapeHtmlBooking(p.origin || b.country || 'Italia')}</td>
+                        <td>🌐 <strong>${escapeHtmlBooking(b.language || 'Italiano')}</strong></td>
+                        <td><strong>${escapeHtmlBooking(b.customerPhone || '-')}</strong><br><span style="font-size:0.8rem; color:#64748b;">${escapeHtmlBooking(b.customerEmail || '-')}</span></td>
+                        <td>🏠 ${escapeHtmlBooking(b.billingAddress || b.country || 'Italia')}</td>
                         <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</strong></td>
-                        <td>${escapeHtmlBooking(b.customerPhone || '-')}</td>
-                        <td>${p.notes ? escapeHtmlBooking(p.notes) : '-'}</td>
+                        <td>€${escapeHtmlBooking(b.total || '0.00')} (${escapeHtmlBooking(b.status || 'In attesa')})</td>
+                        <td>${p.notes ? escapeHtmlBooking(p.notes) : (b.notes ? escapeHtmlBooking(b.notes) : '-')}</td>
                     </tr>
                 `;
             });
@@ -729,12 +754,14 @@ function scaricaSalvaDocumentoLista(titoloTour) {
                     <td style="text-align:center;">[ &nbsp; ]</td>
                     <td style="text-align:center; font-weight:bold;">${counter++}</td>
                     <td><strong>${escapeHtmlBooking(b.customerName || 'N/D')}</strong></td>
-                    <td>Referente</td>
+                    <td>Referente Principale</td>
                     <td>-</td>
                     <td>${escapeHtmlBooking(b.country || 'Italia')}</td>
-                    <td>${escapeHtmlBooking(b.tourTitle || 'Tour Palermo')}</td>
+                    <td>🌐 <strong>${escapeHtmlBooking(b.language || 'Italiano')}</strong></td>
+                    <td><strong>${escapeHtmlBooking(b.customerPhone || '-')}</strong><br><span style="font-size:0.8rem; color:#64748b;">${escapeHtmlBooking(b.customerEmail || '-')}</span></td>
+                    <td>🏠 ${escapeHtmlBooking(b.billingAddress || b.country || 'Italia')}</td>
                     <td>${escapeHtmlBooking(b.dateReadable || b.dateISO)} - <strong>Ore ${escapeHtmlBooking(b.time || b.slotTime || '09:30')}</strong></td>
-                    <td>${escapeHtmlBooking(b.customerPhone || '-')}</td>
+                    <td>€${escapeHtmlBooking(b.total || '0.00')} (${escapeHtmlBooking(b.status || 'In attesa')})</td>
                     <td>${b.notes ? escapeHtmlBooking(b.notes) : '-'}</td>
                 </tr>
             `;
@@ -768,7 +795,7 @@ function scaricaSalvaDocumentoLista(titoloTour) {
         <button class="btn-print" onclick="window.print()">🖨️ Stampa / Salva in PDF</button>
     </div>
 
-    <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri ${infoOrario}</h1>
+    <h1>🏛️ Sicily Palermo Tour - Lista Ufficiale Passeggeri Completa ${infoOrario}</h1>
     <p>Tour: <strong>${escapeHtmlBooking(titoloTour || 'Tutti i Tour')}</strong> ${infoOrario} | Documento Guida del ${new Date().toLocaleString('it-IT')}</p>
 
     <table>
@@ -777,13 +804,15 @@ function scaricaSalvaDocumentoLista(titoloTour) {
                 <th style="text-align:center; width: 45px;">Check</th>
                 <th style="text-align:center; width: 30px;">#</th>
                 <th>Passeggero</th>
-                <th>Tipo</th>
+                <th>Ruolo</th>
                 <th>Data Nascita</th>
-                <th>Provenienza</th>
-                <th>Tour</th>
+                <th>Provenienza / Nazione</th>
+                <th>Lingua Guida</th>
+                <th>Contatti Referente</th>
+                <th>Indirizzo Fatturazione</th>
                 <th>Data & Ora</th>
-                <th>Telefono</th>
-                <th>Note</th>
+                <th>Totale & Stato</th>
+                <th>Note / Allergie</th>
             </tr>
         </thead>
         <tbody>
@@ -838,27 +867,6 @@ function eliminaPrenotazioneAdmin(id) {
     savePrenotazioniAdmin(list);
     caricaPrenotazioniAdmin();
 }
-
-function apriChatWhatsAppCliente(telefono, nome, tour) {
-    let cleanNum = (telefono || '').replace(/[^0-9]/g, '');
-    if (cleanNum.length === 10 && cleanNum.startsWith('3')) {
-        cleanNum = '39' + cleanNum;
-    }
-
-    if (!cleanNum || cleanNum.length < 8) {
-        const inputNum = prompt('Inserisci il numero WhatsApp del cliente (con prefisso, es. 393401234567):', cleanNum || '39');
-        if (!inputNum) return;
-        cleanNum = inputNum.replace(/[^0-9]/g, '');
-    }
-
-    const clientName = nome || 'Cliente';
-    const tourName = tour || 'Tour Palermo';
-    const msg = `Ciao ${clientName}! Ti contattiamo da Sicily Palermo Tour riguardo la tua prenotazione per il tour "${tourName}".`;
-
-    const waUrl = `https://api.whatsapp.com/send?phone=${cleanNum}&text=${encodeURIComponent(msg)}`;
-    window.open(waUrl, '_blank');
-}
-window.apriChatWhatsAppCliente = apriChatWhatsAppCliente;
 
 function escapeHtmlBooking(str) {
     if (!str) return '';
