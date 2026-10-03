@@ -1,6 +1,6 @@
 /**
  * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri Completa
- * Sicily Palermo Tour - Admin (Con Tasto Cestino 🗑️ per Elimina Singolo Passeggero)
+ * Sicily Palermo Tour - Admin (Con Pulsante Elimina Cartella 🗑️ ed Allineamento Dati Reali)
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
@@ -53,6 +53,19 @@ function eliminaSingoloPasseggero(bookingId, passengerName, pIdx) {
     caricaPrenotazioniAdmin();
 }
 window.eliminaSingoloPasseggero = eliminaSingoloPasseggero;
+
+// Elimina un'intera cartella itinerario (es. cartelle test o vecchie)
+function eliminaInteraCartellaTour(titoloTour, event) {
+    if (event) event.stopPropagation();
+    if (!confirm(`🗑️ Sei sicuro di voler eliminare DEFINITIVAMENTE la cartella "${titoloTour}" e tutte le sue prenotazioni?`)) return;
+
+    let list = getPrenotazioniAdmin();
+    list = list.filter(b => b.tourTitle !== titoloTour && String(b.tourId) !== String(titoloTour));
+
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
+}
+window.eliminaInteraCartellaTour = eliminaInteraCartellaTour;
 
 // Apre la cartella prenotazioni di un determinato itinerario
 function apriCartellaTour(titoloTour) {
@@ -253,8 +266,8 @@ function renderGrigliaCartelleItinerari(allBookings) {
         const orariArray = Array.from(itemTour.timeSlotsSet).sort();
 
         html += `
-            <div onclick="apriCartellaTour('${escapeHtmlBooking(title)}')" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.25s ease; position: relative;" onmouseover="this.style.borderColor='#0b2545'; this.style.transform='translateY(-3px)';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.transform='none';">
-                <div style="height: 130px; overflow: hidden; position: relative;">
+            <div style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: all 0.25s ease; position: relative;">
+                <div style="height: 130px; overflow: hidden; position: relative; cursor: pointer;" onclick="apriCartellaTour('${escapeHtmlBooking(title)}')">
                     <img src="${coverImg}" alt="${escapeHtmlBooking(title)}" style="width: 100%; height: 100%; object-fit: cover;">
                     <span style="position: absolute; top: 10px; right: 10px; background: rgba(11, 37, 69, 0.88); backdrop-filter: blur(4px); color: #ffffff; padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: bold;">
                         ${itemTour.countBookings} Prenotazioni
@@ -262,7 +275,7 @@ function renderGrigliaCartelleItinerari(allBookings) {
                 </div>
 
                 <div style="padding: 18px;">
-                    <h4 style="color: #0b2545; margin: 0 0 8px 0; font-size: 1.15rem; font-weight: 800;">
+                    <h4 style="color: #0b2545; margin: 0 0 8px 0; font-size: 1.15rem; font-weight: 800; cursor: pointer;" onclick="apriCartellaTour('${escapeHtmlBooking(title)}')">
                         🏛️ ${escapeHtmlBooking(title)}
                     </h4>
 
@@ -273,9 +286,14 @@ function renderGrigliaCartelleItinerari(allBookings) {
                         ${orariArray.map(o => `<span style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:8px; font-size:0.78rem; font-weight:bold;">⏰ ${o}</span>`).join('')}
                     </div>
 
-                    <button type="button" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #0b2545, #134074); padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        📂 Apri Prenotazioni Tour →
-                    </button>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button type="button" class="btn-primary" onclick="apriCartellaTour('${escapeHtmlBooking(title)}')" style="flex: 1; background: linear-gradient(135deg, #0b2545, #134074); padding: 10px; font-size: 0.88rem; font-weight: 800; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            📂 Apri Cartella →
+                        </button>
+                        <button type="button" class="btn-danger btn-small" onclick="eliminaInteraCartellaTour('${escapeHtmlBooking(title)}', event)" style="padding: 10px 12px; background: #dc2626; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;" title="Elimina intera cartella test">
+                            🗑️
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
