@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO GESTIONE PRE-AUTORIZZAZIONI BANCARIE STRIPE & PAYPAL
- * Sicily Palermo Tour - Semplificato Zero Confusione (Utilizza direttamente i dati ufficiali dello Step 3)
+ * Sicily Palermo Tour - Con Campo CAP (Codice di Avviamento Postale) nello Step 4
  */
 
 const STRIPE_PK_KEY = 'spt_stripe_publishable_key';
@@ -101,7 +101,7 @@ class StripePaymentManager {
         this.init();
     }
 
-    // Monta il selettore metodi di pagamento ed il form carta
+    // Monta il selettore metodi di pagamento ed il form carta con campo CAP nello Step 4
     mountCardForm(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -144,12 +144,20 @@ class StripePaymentManager {
 
                 <!-- Box Dati Carta di Credito -->
                 <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">
-                    <div style="margin-bottom: 10px;">
+                    <div style="margin-bottom: 12px;">
                         <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
                             💳 Dati della Carta (Numero, Scadenza, CVC) *
                         </label>
                         <!-- Form Carta Stripe Elements -->
                         <div id="stripe-card-mount-point" style="padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 40px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
+                    </div>
+
+                    <!-- CAMPO CAP (CODICE DI AVVIAMENTO POSTALE) SULLO STEP 4 -->
+                    <div style="margin-top: 14px; margin-bottom: 12px;">
+                        <label for="stripe-card-zip" style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
+                            📮 CAP - Codice di Avviamento Postale (per Convalida Carta)
+                        </label>
+                        <input type="text" id="stripe-card-zip" placeholder="Es. 90133" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.98rem; box-sizing: border-box; background: #ffffff;">
                     </div>
 
                     <p style="font-size: 0.82rem; color: #64748b; margin-top: 8px; margin-bottom: 0; line-height: 1.4;">
@@ -277,7 +285,7 @@ class StripePaymentManager {
         }
     }
 
-    // Esegue la Pre-Autorizzazione Reale (Utilizza direttamente i dati passati dallo Step 3)
+    // Esegue la Pre-Autorizzazione Reale (Utilizza direttamente i dati passati dallo Step 3 ed il CAP)
     async processaPreAutorizzazione(totaleEuro, customerName, customerEmail) {
         const errorElement = document.getElementById('stripe-card-errors');
         if (errorElement) {
@@ -296,16 +304,24 @@ class StripePaymentManager {
         }
 
         const cardholderName = customerName || 'Cliente Referente';
+        const zipInput = document.getElementById('stripe-card-zip');
+        const userZip = zipInput ? zipInput.value.trim() : '';
 
         if (this.stripe && this.cardElement) {
             try {
+                const billingObj = {
+                    name: cardholderName,
+                    email: customerEmail || ''
+                };
+
+                if (userZip) {
+                    billingObj.address = { postal_code: userZip };
+                }
+
                 const pmResult = await this.stripe.createPaymentMethod({
                     type: 'card',
                     card: this.cardElement,
-                    billing_details: {
-                        name: cardholderName,
-                        email: customerEmail || ''
-                    }
+                    billing_details: billingObj
                 });
 
                 if (pmResult.error) {
