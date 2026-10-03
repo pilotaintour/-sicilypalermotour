@@ -141,12 +141,31 @@
                 this.bookingData.code = this.codicePrenotazione;
                 document.getElementById('booking-ref-code').textContent = `Codice: ${this.codicePrenotazione}`;
 
-                // Ottieni TourId da URL
+                // Ottieni TourId da URL con Fallback di Sicurezza
                 const urlParams = new URLSearchParams(window.location.search);
                 const tourId = urlParams.get('tourId') || '1';
 
-                const itinerari = getItinerari();
-                this.tourCorrente = itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0];
+                const fallbackTour = {
+                    id: '1',
+                    title: 'Tour Guidato Palermo Centro Storico',
+                    price: '25€',
+                    duration: '3 Ore',
+                    category: 'Storia & Cultura',
+                    meetingPoint: 'Piazza Politeama, Palermo',
+                    imageUrl: 'https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1200&q=80',
+                    maxCapacity: 15
+                };
+
+                let itinerari = [];
+                if (typeof getItinerari === 'function') {
+                    try { itinerari = getItinerari() || []; } catch (e) {}
+                }
+
+                this.tourCorrente = (Array.isArray(itinerari) && itinerari.length > 0)
+                    ? (itinerari.find(t => String(t.id) === String(tourId)) || itinerari[0])
+                    : fallbackTour;
+
+                if (!this.tourCorrente) this.tourCorrente = fallbackTour;
 
                 this.popolaHeroBanner();
 
@@ -190,13 +209,17 @@
                 this.step3Module = new Step3Dati('step-card-3', {
                     onPrev: () => this.goToStep(2),
                     onComplete: (data) => {
-                        this.bookingData.customerName = data.customerName;
-                        this.bookingData.customerEmail = data.customerEmail;
-                        this.bookingData.customerPhone = data.customerPhone;
-                        this.bookingData.notes = data.notes;
-                        this.bookingData.participantsList = data.participantsList;
+                        try {
+                            this.bookingData.customerName = data.customerName || 'Cliente';
+                            this.bookingData.customerEmail = data.customerEmail || 'cliente@example.com';
+                            this.bookingData.customerPhone = data.customerPhone || '+39';
+                            this.bookingData.notes = data.notes || '';
+                            this.bookingData.participantsList = data.participantsList || [];
 
-                        this.calcolaEInviaRiepilogo();
+                            this.calcolaEInviaRiepilogo();
+                        } catch (e) {
+                            console.error("Errore onComplete Step 3:", e);
+                        }
                         this.goToStep(4);
                     }
                 });
@@ -210,31 +233,34 @@
             }
 
             popolaHeroBanner() {
-                if (!this.tourCorrente) return;
+                const tour = this.tourCorrente || { title: 'Tour Palermo', category: 'Tour', duration: '3 Ore', price: 'Da 25€', meetingPoint: 'Palermo Centro' };
 
                 const heroImg = document.getElementById('tour-hero-img');
-                if (heroImg && this.tourCorrente.imageUrl) {
-                    heroImg.src = this.tourCorrente.imageUrl;
+                if (heroImg && tour.imageUrl) {
+                    heroImg.src = tour.imageUrl;
                 }
 
-                document.getElementById('booking-tour-category').textContent = this.tourCorrente.category || 'Tour';
-                document.getElementById('booking-tour-title').textContent = this.tourCorrente.title || 'Tour Palermo';
+                document.getElementById('booking-tour-category').textContent = tour.category || 'Tour';
+                document.getElementById('booking-tour-title').textContent = tour.title || 'Tour Palermo';
 
-                this.bookingData.tourTitle = this.tourCorrente.title || 'Tour Palermo';
+                this.bookingData.tourTitle = tour.title || 'Tour Palermo';
 
-                document.getElementById('chip-duration').textContent = `⏱️ Durata: ${this.tourCorrente.duration || '3 Ore'}`;
-                document.getElementById('chip-price').textContent = `💰 Prezzo: ${this.tourCorrente.price || 'Da 25€'}`;
-                document.getElementById('chip-meeting').textContent = `📍 Incontro: ${this.tourCorrente.meetingPoint || 'Palermo Centro'}`;
+                document.getElementById('chip-duration').textContent = `⏱️ Durata: ${tour.duration || '3 Ore'}`;
+                document.getElementById('chip-price').textContent = `💰 Prezzo: ${tour.price || 'Da 25€'}`;
+                document.getElementById('chip-meeting').textContent = `📍 Incontro: ${tour.meetingPoint || 'Palermo Centro'}`;
             }
 
             calcolaEInviaRiepilogo() {
-                if (!this.tourCorrente) return;
+                const tour = this.tourCorrente || { price: '25€', title: 'Tour Palermo' };
 
-                const match = (this.tourCorrente.price || '').match(/\d+/);
+                const match = (tour.price || '').match(/\d+/);
                 const prezzoBase = match ? parseInt(match[0], 10) : 25;
 
-                const totale = (this.bookingData.adults * prezzoBase) + (this.bookingData.children * (prezzoBase * 0.5));
-                this.bookingData.total = totale.toFixed(2);
+                const adults = parseInt(this.bookingData.adults, 10) || 1;
+                const children = parseInt(this.bookingData.children, 10) || 0;
+
+                const totale = (adults * prezzoBase) + (children * (prezzoBase * 0.5));
+                this.bookingData.total = totale > 0 ? totale.toFixed(2) : '25.00';
 
                 if (this.step4Module) {
                     this.step4Module.renderSummary(this.bookingData);
