@@ -1,6 +1,6 @@
 /**
  * MODULO AUTONOMO DATABASE CLOUD - FIREBASE REALTIME DATABASE (GOOGLE)
- * Sicily Palermo Tour - Sincronizzazione in Tempo Reale Illimitata (1GB Gratis, Nessun Limite di Chiamate)
+ * Sicily Palermo Tour - Sincronizzazione in Tempo Reale con Unione Intelligente e Protezione Dati
  */
 
 const FIREBASE_DB_URL = 'https://sicilypalermotour-default-rtdb.europe-west1.firebasedatabase.app/spt_database.json';
@@ -10,7 +10,6 @@ function pulisciVecchiItinerariDemo(lista) {
     return lista.filter(item => {
         if (!item) return false;
         const id = String(item.id || '');
-        // Rimuove solo i vecchi ID '1', '2', '3' dei tour predefiniti hardcoded
         return !(id === '1' || id === '2' || id === '3');
     });
 }
@@ -21,22 +20,18 @@ class CloudDatabaseManager {
         this.syncInterval = null;
         this.isSaving = false;
 
-        // Inizia la sincronizzazione automatica continua in background
         this.initAutoSync();
     }
 
     initAutoSync() {
-        // 1. Sync immediato all'avvio
         setTimeout(() => this.fetchTuttiDatiCloud(), 300);
 
-        // 2. Poll automatico veloce in background ogni 6 secondi (senza alcun limite su Firebase)
         if (!this.syncInterval) {
             this.syncInterval = setInterval(() => {
                 this.fetchTuttiDatiCloud();
-            }, 6000);
+            }, 5000);
         }
 
-        // 3. Sincronizzazione istantanea quando l'utente/admin torna sulla scheda del browser o torna online
         window.addEventListener('focus', () => this.fetchTuttiDatiCloud());
         window.addEventListener('online', () => this.fetchTuttiDatiCloud());
     }
@@ -55,7 +50,6 @@ class CloudDatabaseManager {
         return { itinerari, heroPhotos, bookings, reviews };
     }
 
-    // Scarica e sincronizza in tempo reale in background TUTTI i dati da Firebase
     async fetchTuttiDatiCloud() {
         if (this.isSaving) return null;
 
@@ -72,8 +66,8 @@ class CloudDatabaseManager {
             if (res.ok && !this.isSaving) {
                 const record = (await res.json()) || {};
 
-                // 1. Sincronizza e renderizza Itinerari
-                if (record.itinerari && Array.isArray(record.itinerari)) {
+                // 1. Sincronizza Itinerari
+                if (record.itinerari && Array.isArray(record.itinerari) && record.itinerari.length > 0) {
                     const itinerariPuliti = pulisciVecchiItinerariDemo(record.itinerari);
                     localStorage.setItem('spt_itineraries', JSON.stringify(itinerariPuliti));
 
@@ -82,30 +76,42 @@ class CloudDatabaseManager {
                         renderItinerariGrid(itinerariPuliti, cat);
                     }
                     if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
-                } else if (!record.itinerari) {
-                    localStorage.setItem('spt_itineraries', JSON.stringify([]));
-                    if (typeof renderItinerariGrid === 'function') renderItinerariGrid([], 'Tutti');
-                    if (typeof caricaElencoItinerari === 'function') caricaElencoItinerari();
                 }
 
                 // 2. Sincronizza Hero Photos
-                if (record.heroPhotos && Array.isArray(record.heroPhotos)) {
+                if (record.heroPhotos && Array.isArray(record.heroPhotos) && record.heroPhotos.length > 0) {
                     localStorage.setItem('spt_hero_photos', JSON.stringify(record.heroPhotos));
                 }
 
-                // 3. Sincronizza Prenotazioni & Transazioni
+                // 3. Unione Intelligente Prenotazioni & Transazioni (Senza mai cancellare le prenotazioni locali)
                 if (record.bookings && Array.isArray(record.bookings)) {
-                    localStorage.setItem('spt_bookings', JSON.stringify(record.bookings));
-                    if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
-                    if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
-                } else {
-                    localStorage.setItem('spt_bookings', JSON.stringify([]));
+                    let localBookings = [];
+                    try { localBookings = JSON.parse(localStorage.getItem('spt_bookings') || '[]'); } catch (e) {}
+
+                    const mappaBookings = {};
+                    // Prima aggiungi le locali
+                    localBookings.forEach(b => {
+                        const key = b.id || b.code || (b.createdAt + '_' + b.customerEmail);
+                        mappaBookings[key] = b;
+                    });
+                    // Poi unisci quelle dal Cloud
+                    record.bookings.forEach(b => {
+                        const key = b.id || b.code || (b.createdAt + '_' + b.customerEmail);
+                        mappaBookings[key] = b;
+                    });
+
+                    const unioneBookings = Object.values(mappaBookings).sort((a, b) => {
+                        return (parseInt(b.id, 10) || 0) - (parseInt(a.id, 10) || 0);
+                    });
+
+                    localStorage.setItem('spt_bookings', JSON.stringify(unioneBookings));
+
                     if (typeof caricaPrenotazioniAdmin === 'function') caricaPrenotazioniAdmin();
                     if (typeof caricaSezioneTransazioni === 'function') caricaSezioneTransazioni();
                 }
 
-                // 4. Sincronizza e renderizza Recensioni
-                if (record.reviews && Array.isArray(record.reviews)) {
+                // 4. Sincronizza Recensioni
+                if (record.reviews && Array.isArray(record.reviews) && record.reviews.length > 0) {
                     localStorage.setItem('spt_recensioni', JSON.stringify(record.reviews));
                     if (typeof renderRecensioniGrid === 'function') renderRecensioniGrid();
                     if (typeof caricaRecensioniAdmin === 'function') caricaRecensioniAdmin();
@@ -114,15 +120,11 @@ class CloudDatabaseManager {
                 return record;
             }
         } catch (e) {
-            // Silenzioso in background
+            // Silenzioso
         }
         return null;
     }
 
-    async fetchItinerariCloud() { return this.fetchTuttiDatiCloud(); }
-    async fetchRecensioniCloud() { return this.fetchTuttiDatiCloud(); }
-
-    // Salva automaticamente qualunque modifica nel Firebase Cloud
     async salvaTuttiDatiCloud(dataObj) {
         this.isSaving = true;
 

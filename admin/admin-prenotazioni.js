@@ -83,6 +83,55 @@ function impostaVistaPrenotazioni(modo) {
     caricaPrenotazioniAdmin();
 }
 
+let prevBookingsCountGlobal = -1;
+
+function notificaNuovaPrenotazioneRilevata(nuovaBooking) {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.45);
+    } catch (e) {}
+
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #0b2545, #134074);
+        color: #ffffff;
+        padding: 16px 20px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border: 2px solid #f59e0b;
+        z-index: 10000;
+        font-family: sans-serif;
+        font-size: 0.95rem;
+        max-width: 380px;
+    `;
+    toast.innerHTML = `
+        <div style="font-weight: 800; font-size: 1.05rem; color: #fbbf24; margin-bottom: 4px;">
+            🔔 NUOVA PRENOTAZIONE RICEVUTA!
+        </div>
+        <div>
+            <strong>${nuovaBooking.customerName || 'Cliente'}</strong> ha prenotato per <strong>${nuovaBooking.tourTitle || 'Tour'}</strong> (€${nuovaBooking.total || '0.00'})!
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 6000);
+}
+
 // Funzione principale di rendering
 function caricaPrenotazioniAdmin() {
     const listContainer = document.getElementById('admin-bookings-list');
@@ -91,6 +140,12 @@ function caricaPrenotazioniAdmin() {
     if (!listContainer) return;
 
     let bookings = getPrenotazioniAdmin();
+
+    // Notifica visiva ed acustica per nuove prenotazioni
+    if (prevBookingsCountGlobal >= 0 && bookings.length > prevBookingsCountGlobal) {
+        if (bookings[0]) notificaNuovaPrenotazioneRilevata(bookings[0]);
+    }
+    prevBookingsCountGlobal = bookings.length;
 
     // Separa le prenotazioni in Attive (prossime) ed Archiviate (passate)
     const { attive, passate } = (window.adminArchivio && typeof window.adminArchivio.separaPrenotazioni === 'function')
