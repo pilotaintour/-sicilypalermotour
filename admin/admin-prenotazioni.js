@@ -134,66 +134,87 @@ function notificaNuovaPrenotazioneRilevata(nuovaBooking) {
 
 // Funzione principale di rendering
 function caricaPrenotazioniAdmin() {
-    const listContainer = document.getElementById('admin-bookings-list');
-    const badgeCount = document.getElementById('cnt-prenotazioni-badge');
+    try {
+        const listContainer = document.getElementById('admin-bookings-list');
+        const badgeCount = document.getElementById('cnt-prenotazioni-badge');
 
-    if (!listContainer) return;
+        if (!listContainer) return;
 
-    let bookings = getPrenotazioniAdmin();
+        let bookings = getPrenotazioniAdmin();
+        if (!Array.isArray(bookings)) bookings = [];
 
-    // Notifica visiva ed acustica per nuove prenotazioni
-    if (prevBookingsCountGlobal >= 0 && bookings.length > prevBookingsCountGlobal) {
-        if (bookings[0]) notificaNuovaPrenotazioneRilevata(bookings[0]);
-    }
-    prevBookingsCountGlobal = bookings.length;
+        // Notifica visiva ed acustica per nuove prenotazioni
+        if (prevBookingsCountGlobal >= 0 && bookings.length > prevBookingsCountGlobal) {
+            if (bookings[0]) notificaNuovaPrenotazioneRilevata(bookings[0]);
+        }
+        prevBookingsCountGlobal = bookings.length;
 
-    // Separa le prenotazioni in Attive (prossime) ed Archiviate (passate)
-    const { attive, passate } = (window.adminArchivio && typeof window.adminArchivio.separaPrenotazioni === 'function')
-        ? window.adminArchivio.separaPrenotazioni(bookings)
-        : { attive: bookings, passate: [] };
+        // Separa le prenotazioni in Attive (prossime) ed Archiviate (passate)
+        const { attive, passate } = (window.adminArchivio && typeof window.adminArchivio.separaPrenotazioni === 'function')
+            ? window.adminArchivio.separaPrenotazioni(bookings)
+            : { attive: bookings, passate: [] };
 
-    if (badgeCount) badgeCount.textContent = attive.length;
+        if (badgeCount) badgeCount.textContent = attive.length;
 
-    // Barra selettore tra Prenotazioni Attive ed Archivio Storico
-    const htmlBarraArchivioToggle = `
-        <div style="margin-bottom: 18px; display: flex; gap: 10px; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; padding: 10px 14px; border-radius: 12px; flex-wrap: wrap;">
-            <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ATTIVE' ? 'background:#0b2545; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ATTIVE'; caricaPrenotazioniAdmin();">
-                📥 Prenotazioni Attive (${attive.length})
-            </button>
-            <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ARCHIVIO' ? 'background:#64748b; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ARCHIVIO'; caricaPrenotazioniAdmin();">
-                🗄️ Archivio Tour Passati (${passate.length})
-            </button>
-        </div>
-    `;
-
-    // Se l'admin seleziona la vista Archivio Storico
-    if (selettoreVistaPrenotazioniArchivio === 'ARCHIVIO') {
-        listContainer.innerHTML = htmlBarraArchivioToggle + (window.adminArchivio ? window.adminArchivio.renderSezioneArchivio(passate) : '<p>Archivio non disponibile</p>');
-        return;
-    }
-
-    if (attive.length === 0) {
-        listContainer.innerHTML = htmlBarraArchivioToggle + `
-            <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna prenotazione attiva al momento</h3>
-                <p style="font-size: 0.9rem;">Le prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
-                <button type="button" class="btn-primary btn-small" style="background:#0b2545; margin-top:12px; padding: 10px 18px; font-weight: bold;" onclick="aggiungiPrenotazioneDemoProva()">
-                    🧪 Genera Prenotazione di Prova (1-Click Test)
+        // Barra selettore tra Prenotazioni Attive ed Archivio Storico
+        const htmlBarraArchivioToggle = `
+            <div style="margin-bottom: 18px; display: flex; gap: 10px; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; padding: 10px 14px; border-radius: 12px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ATTIVE' ? 'background:#0b2545; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ATTIVE'; caricaPrenotazioniAdmin();">
+                    📥 Prenotazioni Attive (${attive.length})
+                </button>
+                <button type="button" class="btn-primary btn-small" style="${selettoreVistaPrenotazioniArchivio === 'ARCHIVIO' ? 'background:#64748b; color:#ffffff; font-weight:bold;' : 'background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;'}" onclick="selettoreVistaPrenotazioniArchivio = 'ARCHIVIO'; caricaPrenotazioniAdmin();">
+                    🗄️ Archivio Tour Passati (${passate.length})
                 </button>
             </div>
         `;
-        return;
-    }
 
-    // SCENARIO A: Nessun Tour Selezionato -> Mostra la Griglia delle Cartelle Itinerari Attive
-    if (!tourSelezionatoCartella) {
-        listContainer.innerHTML = htmlBarraArchivioToggle + renderGrigliaCartelleItinerari(attive);
-        return;
-    }
+        // Se l'admin seleziona la vista Archivio Storico
+        if (selettoreVistaPrenotazioniArchivio === 'ARCHIVIO') {
+            listContainer.innerHTML = htmlBarraArchivioToggle + (window.adminArchivio ? window.adminArchivio.renderSezioneArchivio(passate) : '<p>Archivio non disponibile</p>');
+            return;
+        }
 
-    // SCENARIO B: Tour Selezionato -> Mostra la Vista Dettagliata per quell'Itinerario
-    const bookingsDelTour = attive.filter(b => b.tourTitle === tourSelezionatoCartella);
-    listContainer.innerHTML = htmlBarraArchivioToggle + renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
+        if (attive.length === 0) {
+            let msgExtra = '';
+            if (passate.length > 0) {
+                msgExtra = `
+                    <p style="font-size: 0.92rem; color: #0b2545; font-weight: 700; margin-top: 10px;">
+                        📂 Ci sono <strong>${passate.length} prenotazioni</strong> già archiviate nello Storico.
+                    </p>
+                    <button type="button" class="btn-primary btn-small" style="background:#64748b; margin-top:8px; padding: 8px 16px; font-weight: bold;" onclick="selettoreVistaPrenotazioniArchivio = 'ARCHIVIO'; caricaPrenotazioniAdmin();">
+                        🗄️ Apri Archivio Storico (${passate.length}) →
+                    </button>
+                `;
+            }
+
+            listContainer.innerHTML = htmlBarraArchivioToggle + `
+                <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1.5px solid #cbd5e1;">
+                    <h3 style="color: #1b4f72; margin-top: 0;">📥 Nessuna prenotazione attiva al momento</h3>
+                    <p style="font-size: 0.9rem;">Le nuove prenotazioni effettuate dai turisti dal sito compariranno qui ordinate per itinerario ed orario.</p>
+                    ${msgExtra}
+                    <div style="margin-top: 15px;">
+                        <button type="button" class="btn-primary btn-small" style="background:#0b2545; padding: 10px 18px; font-weight: bold;" onclick="aggiungiPrenotazioneDemoProva()">
+                            🧪 Genera Prenotazione di Prova (1-Click Test)
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // SCENARIO A: Nessun Tour Selezionato -> Mostra la Griglia delle Cartelle Itinerari Attive
+        if (!tourSelezionatoCartella) {
+            listContainer.innerHTML = htmlBarraArchivioToggle + renderGrigliaCartelleItinerari(attive);
+            return;
+        }
+
+        // SCENARIO B: Tour Selezionato -> Mostra la Vista Dettagliata per quell'Itinerario
+        const bookingsDelTour = attive.filter(b => b.tourTitle === tourSelezionatoCartella);
+        listContainer.innerHTML = htmlBarraArchivioToggle + renderDettaglioCartellaTour(tourSelezionatoCartella, bookingsDelTour);
+    } catch (err) {
+        console.error("Errore in caricaPrenotazioniAdmin:", err);
+    }
+}
 }
 
 // Renderizza la Griglia di Cartelle degli Itinerari
