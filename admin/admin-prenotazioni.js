@@ -1,6 +1,6 @@
 /**
  * MODULO 2: Cartelle Itinerari, Orari Prenotati & Lista Ufficiale Passeggeri Completa
- * Sicily Palermo Tour - Admin (Tutti i Campi Raccolti Dettagliati: Lingua, Fatturazione, Contatti, Note)
+ * Sicily Palermo Tour - Admin (Con Tasto Cestino 🗑️ per Elimina Singolo Passeggero)
  */
 
 const BOOKINGS_STORAGE_KEY = 'spt_bookings';
@@ -31,6 +31,28 @@ function savePrenotazioniAdmin(list) {
         window.cloudDB.salvaPrenotazioniCloud(list);
     }
 }
+
+// Elimina un singolo passeggero dalla lista o l'intera prenotazione se era l'unico
+function eliminaSingoloPasseggero(bookingId, passengerName, pIdx) {
+    if (!confirm(`🗑️ Sei sicuro di voler rimuovere il passeggero "${passengerName}" da questa lista?`)) return;
+
+    let list = getPrenotazioniAdmin();
+    const booking = list.find(b => String(b.id) === String(bookingId));
+
+    if (!booking) return;
+
+    if (booking.participantsList && Array.isArray(booking.participantsList) && booking.participantsList.length > 1) {
+        booking.participantsList = booking.participantsList.filter((_, idx) => idx !== pIdx);
+        if (booking.adults > 1) booking.adults--;
+        else if (booking.children > 0) booking.children--;
+    } else {
+        list = list.filter(b => String(b.id) !== String(bookingId));
+    }
+
+    savePrenotazioniAdmin(list);
+    caricaPrenotazioniAdmin();
+}
+window.eliminaSingoloPasseggero = eliminaSingoloPasseggero;
 
 // Apre la cartella prenotazioni di un determinato itinerario
 function apriCartellaTour(titoloTour) {
@@ -400,7 +422,7 @@ function renderDettaglioCartellaTour(titoloTour, bookingsOfTour) {
     return html;
 }
 
-// Genera la vista Tabella Lista Unica Passeggeri con TUTTI i Campi Raccolti
+// Genera la vista Tabella Lista Unica Passeggeri con TUTTI i Campi Raccolti + Tasto Cestino 🗑️
 function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
     if (bookingsList.length === 0) {
         return `
@@ -419,6 +441,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                 righePasseggeri.push({
                     rowNum: counter++,
                     bookingId: b.id,
+                    passengerIndex: idxP,
                     code: b.code || '#SPT-BOOK',
                     tourTitle: b.tourTitle || 'Tour Palermo',
                     dateStr: b.dateReadable || b.dateISO || 'N/D',
@@ -442,6 +465,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
             righePasseggeri.push({
                 rowNum: counter++,
                 bookingId: b.id,
+                passengerIndex: 0,
                 code: b.code || '#SPT-BOOK',
                 tourTitle: b.tourTitle || 'Tour Palermo',
                 dateStr: b.dateReadable || b.dateISO || 'N/D',
@@ -485,6 +509,7 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; background: #ffffff;">
                     <thead>
                         <tr style="background: #ffffff; color: #000000; font-weight: 800; border-bottom: 2px solid #000000; position: sticky; top: 0; z-index: 10;">
+                            <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 55px; background: #ffffff;">Azione</th>
                             <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 48px; background: #ffffff;">Check</th>
                             <th style="padding: 10px 8px; border: 1px solid #000000; text-align: center; width: 32px; background: #ffffff;">#</th>
                             <th style="padding: 10px 8px; border: 1px solid #000000; background: #ffffff;">Passeggero (Nome e Cognome)</th>
@@ -502,6 +527,11 @@ function renderRegistroExcelPasseggeri(bookingsList, titoloTour) {
                     <tbody>
                         ${righePasseggeri.map((r) => `
                             <tr style="background: #ffffff; border-bottom: 1px solid #cbd5e1;">
+                                <td style="padding: 6px; border: 1px solid #000000; text-align: center;">
+                                    <button type="button" class="btn-danger btn-small" style="padding: 5px 8px; font-size: 0.85rem; background: #dc2626; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;" title="Elimina Singolo Passeggero" onclick="eliminaSingoloPasseggero('${r.bookingId}', '${escapeHtmlBooking(r.passengerName).replace(/'/g, "\\'")}', ${r.passengerIndex})">
+                                        🗑️
+                                    </button>
+                                </td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; text-align: center; color: #1e293b; font-family: monospace; font-size: 0.95rem;">[ &nbsp; ]</td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; text-align: center; font-weight: bold; color: #1e293b;">${r.rowNum}</td>
                                 <td style="padding: 10px 8px; border: 1px solid #000000; font-weight: 800; color: #000000;">${escapeHtmlBooking(r.passengerName)}</td>
@@ -582,10 +612,15 @@ function renderSchedePrenotazioni(bookingsList) {
                         <div style="margin-top: 10px; background: #fafcfd; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
                             <strong style="color: #1b4f72;">🧳 Lista Passeggeri / Partecipanti (${b.participantsList.length}):</strong>
                             <ol style="margin: 6px 0 0 18px; padding: 0; font-size: 0.88rem; color: #1e293b; line-height: 1.6;">
-                                ${b.participantsList.map(p => `
-                                    <li style="margin-bottom: 4px;">
-                                        <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - da ' + p.origin : ''})
-                                        ${p.notes ? `<div style="font-size:0.82rem; color:#64748b; margin-top:2px;">📝 <em>Note: ${escapeHtmlBooking(p.notes)}</em></div>` : ''}
+                                ${b.participantsList.map((p, pIdx) => `
+                                    <li style="margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px;">
+                                        <div>
+                                            <strong>${escapeHtmlBooking(p.name)}</strong> (${p.dob ? 'Nato/a il ' + p.dob : p.type}${p.origin ? ' - da ' + p.origin : ''})
+                                            ${p.notes ? `<div style="font-size:0.82rem; color:#64748b; margin-top:2px;">📝 <em>Note: ${escapeHtmlBooking(p.notes)}</em></div>` : ''}
+                                        </div>
+                                        <button type="button" class="btn-danger btn-small" style="padding: 3px 8px; font-size: 0.78rem; background: #dc2626; color: #fff; border: none; border-radius: 4px; cursor: pointer;" title="Rimuovi passeggero" onclick="eliminaSingoloPasseggero('${b.id}', '${escapeHtmlBooking(p.name).replace(/'/g, "\\'")}', ${pIdx})">
+                                            🗑️ Rimuovi
+                                        </button>
                                     </li>
                                 `).join('')}
                             </ol>
