@@ -10,22 +10,38 @@ class AdminArchivioManager {
         this.tourSelezionatoArchivio = null; // null = Griglia Cartelle Archivio; string = Titolo Tour aperto
     }
 
-    // Controlla se la data e l'orario di una prenotazione sono già passati
+    // Controlla se la data e l'orario di una prenotazione sono antecedenti ad oggi
     isPrenotazionePassata(b) {
         if (!b) return false;
-        const dateISO = b.dateISO || '';
-        if (!dateISO) return false;
+        const dateStr = b.dateISO || b.dateReadable || '';
+        if (!dateStr) return false;
 
         try {
+            let y, m, d;
+            if (dateStr.includes('-')) {
+                const parts = dateStr.split('-');
+                y = parseInt(parts[0], 10);
+                m = parseInt(parts[1], 10) - 1;
+                d = parseInt(parts[2], 10);
+            } else if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                d = parseInt(parts[0], 10);
+                m = parseInt(parts[1], 10) - 1;
+                y = parseInt(parts[2], 10);
+            } else {
+                return false;
+            }
+
             const timeParts = (b.time || b.slotTime || '23:59').split(':');
             const hh = parseInt(timeParts[0], 10) || 0;
             const mm = parseInt(timeParts[1], 10) || 0;
 
-            const dateBooking = new Date(dateISO);
-            dateBooking.setHours(hh, mm, 59, 999);
+            const dateBooking = new Date(y, m, d, hh, mm, 59, 999);
+            const oggiInizio = new Date();
+            oggiInizio.setHours(0, 0, 0, 0);
 
-            const adesso = new Date();
-            return dateBooking < adesso;
+            // Considera archiviata SOLTANTO se il giorno dell'evento è strettamente antecedente ad oggi
+            return dateBooking < oggiInizio;
         } catch (e) {
             return false;
         }
@@ -35,6 +51,8 @@ class AdminArchivioManager {
     separaPrenotazioni(allBookings) {
         const attive = [];
         const passate = [];
+
+        if (!Array.isArray(allBookings)) return { attive: [], passate: [] };
 
         allBookings.forEach(b => {
             if (this.isPrenotazionePassata(b)) {
@@ -61,11 +79,11 @@ class AdminArchivioManager {
 
     // Renderizza la Sezione Archivio
     renderSezioneArchivio(passateList) {
-        if (passateList.length === 0) {
+        if (!Array.isArray(passateList) || passateList.length === 0) {
             return `
                 <div style="text-align: center; padding: 40px; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 15px;">
                     <h3 style="color: #0b2545; margin-top: 0;">🗄️ L'Archivio Storico è vuoto</h3>
-                    <p>I tour e gli orari già conclusi verranno archiviati qui automaticamente quando il tempo sarà trascorso.</p>
+                    <p>I tour e gli orari già conclusi nei giorni passati verranno archiviati qui automaticamente.</p>
                 </div>
             `;
         }
@@ -100,7 +118,7 @@ class AdminArchivioManager {
                 };
             }
             tourMappa[title].countBookings++;
-            const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : (b.adults + b.children);
+            const numPasseggeri = (b.participantsList && b.participantsList.length > 0) ? b.participantsList.length : ((parseInt(b.adults, 10) || 1) + (parseInt(b.children, 10) || 0));
             tourMappa[title].totalPassengers += numPasseggeri;
             if (b.dateReadable || b.dateISO) tourMappa[title].dateSet.add(b.dateReadable || b.dateISO);
         });
@@ -164,7 +182,7 @@ class AdminArchivioManager {
 
         passateDelTour.forEach(b => {
             const dateStr = b.dateReadable || b.dateISO || 'Data Sconosciuta';
-            const timeStr = b.time || '09:30';
+            const timeStr = b.time || b.slotTime || '09:30';
             const key = `${dateStr}_${timeStr}`;
 
             if (!mappaDataOrario[key]) {
@@ -300,7 +318,7 @@ class AdminArchivioManager {
         list = list.filter(b => {
             const matchTour = b.tourTitle === tourTitle;
             const matchDate = (b.dateReadable || b.dateISO) === dateStr;
-            const matchTime = b.time === timeStr;
+            const matchTime = (b.time || b.slotTime) === timeStr;
             return !(matchTour && matchDate && matchTime && this.isPrenotazionePassata(b));
         });
 
