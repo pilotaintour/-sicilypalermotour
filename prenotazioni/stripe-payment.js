@@ -105,6 +105,14 @@ class StripePaymentManager {
         this.init();
     }
 
+    autoCompilaTestCard() {
+        alert("🧪 CARTA DI TEST STRIPE:\n\n• Numero: 4242 4242 4242 4242\n• Scadenza: Qualsiasi data futura (es. 12/28)\n• CVC: 123 (o qualsiasi 3 cifre)\n\nNota: Per sicurezza bancaria PCI-DSS, inserisci questi numeri direttamente nel campo protetto di Stripe qui sotto.");
+        const vnum = document.getElementById('vcard-number-display');
+        if (vnum) {
+            vnum.textContent = "4242 •••• •••• 4242 (VISA)";
+        }
+    }
+
     // Monta il selettore metodi di pagamento ed il form carta
     mountCardForm(containerId) {
         const container = document.getElementById(containerId);
@@ -172,9 +180,14 @@ class StripePaymentManager {
                     <!-- Dati della Carta senza campo Nome Intestatario ridondante -->
 
                     <div style="margin-bottom: 12px;">
-                        <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
-                            💳 Dati della Carta (Numero, Scadenza, CVC) *
-                        </label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-weight: 700; font-size: 0.9rem; color: #0b2545; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                💳 Dati della Carta (Numero, Scadenza, CVC) *
+                            </label>
+                            <button type="button" onclick="if(window.stripePayment){ window.stripePayment.autoCompilaTestCard(); }" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                                ⚡ Inserisci Carta di Test
+                            </button>
+                        </div>
                         <!-- Riquadro Form Carta Stripe Elements -->
                         <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
                     </div>
