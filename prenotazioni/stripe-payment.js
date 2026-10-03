@@ -158,8 +158,8 @@ class StripePaymentManager {
                         <div class="virtual-card-number" id="vcard-number-display">•••• •••• •••• ••••</div>
                         <div class="virtual-card-footer">
                             <div>
-                                <span class="virtual-card-holder-label">Intestatario Carta</span>
-                                <div class="virtual-card-holder" id="vcard-holder-display">MARIO ROSSI</div>
+                                <span class="virtual-card-holder-label">Protezione Transazione</span>
+                                <div class="virtual-card-holder" style="letter-spacing: 0.8px; font-size: 0.82rem;">🔒 256-BIT SSL SECURE</div>
                             </div>
                             <div class="virtual-card-brands">
                                 <span class="brand-badge-pill" style="background: rgba(255,255,255,0.25); color: #fff;">VISA</span>
