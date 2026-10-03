@@ -58,13 +58,13 @@ class Step3Dati {
 
         return `
             <div style="display: grid; grid-template-columns: 1fr 1.3fr 1.1fr; gap: 8px;">
-                <select id="${idPrefix}-day" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
+                <select id="${idPrefix}-day" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
                     ${daysHtml}
                 </select>
-                <select id="${idPrefix}-month" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
+                <select id="${idPrefix}-month" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
                     ${monthsHtml}
                 </select>
-                <select id="${idPrefix}-year" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box;">
+                <select id="${idPrefix}-year" required style="padding: 10px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; background: #ffffff; color: #1e293b; box-sizing: border-box; transition: border-color 0.2s;">
                     ${yearsHtml}
                 </select>
             </div>
@@ -229,7 +229,7 @@ class Step3Dati {
 
         html += `
             <!-- ACCETTAZIONE TERMINI E CONDIZIONI & REGOLAMENTO PENALI -->
-            <div style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div id="step3-terms-card" style="background: #fafcfd; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: border-color 0.2s;">
                 <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.92rem; color: #0b2545; font-weight: 700;">
                     <input type="checkbox" id="step3-terms-check" style="width: 22px; height: 22px; accent-color: #0b2545; margin-top: 2px; cursor: pointer;" required>
                     <span style="line-height: 1.5;">
@@ -258,23 +258,37 @@ class Step3Dati {
     }
 
     validaEProsegui() {
-        const leadEmail = this.container.querySelector('#step3-lead-email').value.trim();
-        const leadPhone = this.container.querySelector('#step3-lead-phone').value.trim();
+        // Resetta lo stile di tutti gli eventuali bordi rossi
+        this.container.querySelectorAll('input, select').forEach(el => {
+            if (el.style) el.style.borderColor = '#cbd5e1';
+        });
+
+        const leadEmailEl = this.container.querySelector('#step3-lead-email');
+        const leadPhoneEl = this.container.querySelector('#step3-lead-phone');
+
+        const leadEmail = leadEmailEl ? leadEmailEl.value.trim() : '';
+        const leadPhone = leadPhoneEl ? leadPhoneEl.value.trim() : '';
         const leadLanguage = this.container.querySelector('#step3-lead-language') ? this.container.querySelector('#step3-lead-language').value : 'Italiano';
         const leadCountry = this.container.querySelector('#step3-lead-country') ? this.container.querySelector('#step3-lead-country').value.trim() : 'Italia';
         const leadAddress = this.container.querySelector('#step3-lead-address') ? this.container.querySelector('#step3-lead-address').value.trim() : '';
         const leadCity = this.container.querySelector('#step3-lead-city') ? this.container.querySelector('#step3-lead-city').value.trim() : '';
         const leadZip = this.container.querySelector('#step3-lead-zip') ? this.container.querySelector('#step3-lead-zip').value.trim() : '';
 
-        if (!leadEmail || !leadPhone) {
-            alert('Per favore compila l\'Email ed il Telefono del Referente Principale.');
+        if (!leadEmail) {
+            alert('⚠️ Attenzione: Inserisci l\'Email del Referente Principale.');
+            if (leadEmailEl) {
+                leadEmailEl.style.borderColor = '#ef4444';
+                leadEmailEl.focus();
+            }
             return;
         }
 
-        const termsCheck = this.container.querySelector('#step3-terms-check');
-        if (termsCheck && !termsCheck.checked) {
-            alert('⚠️ Attenzione: Per proseguire con la prenotazione è necessario accettare i Termini e Condizioni di Servizio.');
-            termsCheck.focus();
+        if (!leadPhone) {
+            alert('⚠️ Attenzione: Inserisci il Telefono / WhatsApp del Referente Principale.');
+            if (leadPhoneEl) {
+                leadPhoneEl.style.borderColor = '#ef4444';
+                leadPhoneEl.focus();
+            }
             return;
         }
 
@@ -294,25 +308,38 @@ class Step3Dati {
             const monthVal = monthEl ? monthEl.value : '';
             const yearVal = yearEl ? yearVal.value : '';
             const originVal = originEl ? originEl.value.trim() : '';
-            const notesVal = notesEl ? notesVal.value.trim() : '';
+            const notesVal = notesEl ? notesEl.value.trim() : '';
 
             if (!nameVal) {
-                alert(`⚠️ Attenzione: è obbligatorio inserire il Nome e Cognome per il Partecipante ${i}.`);
-                if (nameEl) nameEl.focus();
+                alert(`⚠️ Attenzione: Inserisci il Nome e Cognome per il Partecipante ${i}.`);
+                if (nameEl) {
+                    nameEl.style.borderColor = '#ef4444';
+                    nameEl.focus();
+                }
                 return;
             }
 
             if (!dayVal || !monthVal || !yearVal) {
-                alert(`⚠️ Attenzione: seleziona Giorno, Mese ed Anno di nascita per il Partecipante ${i} (${nameVal}).`);
-                if (!dayVal && dayEl) dayEl.focus();
-                else if (!monthVal && monthEl) monthEl.focus();
-                else if (!yearVal && yearEl) yearEl.focus();
+                alert(`⚠️ Attenzione: Seleziona Giorno, Mese ed Anno di nascita per il Partecipante ${i} (${nameVal}).`);
+                if (!dayVal && dayEl) {
+                    dayEl.style.borderColor = '#ef4444';
+                    dayEl.focus();
+                } else if (!monthVal && monthEl) {
+                    monthEl.style.borderColor = '#ef4444';
+                    monthEl.focus();
+                } else if (!yearVal && yearEl) {
+                    yearEl.style.borderColor = '#ef4444';
+                    yearEl.focus();
+                }
                 return;
             }
 
             if (!originVal) {
-                alert(`⚠️ Attenzione: è obbligatorio inserire il Luogo di Provenienza per il Partecipante ${i} (${nameVal}).`);
-                if (originEl) originEl.focus();
+                alert(`⚠️ Attenzione: Inserisci la Città / Provenienza per il Partecipante ${i} (${nameVal}).`);
+                if (originEl) {
+                    originEl.style.borderColor = '#ef4444';
+                    originEl.focus();
+                }
                 return;
             }
 
@@ -330,6 +357,16 @@ class Step3Dati {
                 notes: notesVal,
                 type: typeLabel
             });
+        }
+
+        const termsCheck = this.container.querySelector('#step3-terms-check');
+        const termsCard = this.container.querySelector('#step3-terms-card');
+
+        if (termsCheck && !termsCheck.checked) {
+            alert('⚠️ Attenzione: Per proseguire con la prenotazione è necessario accettare i Termini e Condizioni di Servizio spuntando la casella in fondo.');
+            if (termsCard) termsCard.style.borderColor = '#ef4444';
+            if (termsCheck) termsCheck.focus();
+            return;
         }
 
         const leadName = listaPartecipanti[0].name;
