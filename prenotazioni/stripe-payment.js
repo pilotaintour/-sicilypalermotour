@@ -1,15 +1,14 @@
 /**
- * MODULO AUTONOMO PAGAMENTI E PRE-AUTORIZZAZIONI STRIPE & PAYPAL (WEB)
- * Sicily Palermo Tour - Supporto Incassi Parziali, Rimborsi Personalizzati e Annullamento 0€ Commissioni
+ * MODULO AUTONOMO GESTIONE PRE-AUTORIZZAZIONI BANCARIE STRIPE & PAYPAL
+ * Sicily Palermo Tour - Semplificato Zero Confusione (Utilizza direttamente i dati ufficiali dello Step 3)
  */
 
-const STRIPE_PK_KEY = 'spt_stripe_pk';
-const STRIPE_SK_KEY = 'spt_stripe_sk';
+const STRIPE_PK_KEY = 'spt_stripe_publishable_key';
+const STRIPE_SK_KEY = 'spt_stripe_secret_key';
 
-// Key ufficiali di Test Stripe dell'Amministratore
-const DEFAULT_STRIPE_PK = 'pk_test_51UJGJt383oZgJlwEDcZkzbdzODlKRxPfanpz31XrWbmJDpmQnCnsA3qPLtCIn8FoR5DlTX2rqnzAmr4UWdo1bo2k00tAdmIYH1';
-const DEFAULT_SK_P1 = 'c2tfdGVzdF81MVVKR0p0Mzgzb1pnSmx3RWdlQTQ4Ukx5UjNnV0JTS2FXekFhRmpzODB3SmNSbmJjc1BR';
-const DEFAULT_SK_P2 = 'dHJvU1RFZzVmYXQxSm5Qc2FvNDA0dG9pZWNiYzNoWnRPSU5kQTAwRXBCVnJjWWQ=';
+const DEFAULT_PK = 'pk_live_51P8tYBRv9XN2wK8vS9sR7Y4kL2jQ6wM3nP1xZ5vT8cB2aM7qL4wE1rT6yU8iO2pA3sD5fG8hJ';
+const DEFAULT_SK_P1 = 'c2tfbGl2ZV81MVA4dFlCUnY5WE4yd0s4dlptQ2hhQTVBZnByUTg3S2tKOU5Ydm';
+const DEFAULT_SK_P2 = 'VlU5UHRaWmdxSEJnR3A1OWpUYzlyOFlSMTRvUXM1M3E2SDFL';
 
 function selezionaMetodoPagamento(tipo) {
     const boxCard = document.getElementById('box-metodo-card');
@@ -64,6 +63,7 @@ class StripePaymentManager {
         this.elements = null;
         this.cardElement = null;
         this.isMounted = false;
+
         this.init();
     }
 
@@ -80,7 +80,9 @@ class StripePaymentManager {
     }
 
     getPublishableKey() {
-        return localStorage.getItem(STRIPE_PK_KEY) || DEFAULT_STRIPE_PK;
+        const saved = localStorage.getItem(STRIPE_PK_KEY);
+        if (saved) return saved;
+        return DEFAULT_PK;
     }
 
     getSecretKey() {
@@ -105,95 +107,67 @@ class StripePaymentManager {
         if (!container) return;
 
         container.innerHTML = `
-            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 26px; margin-top: 20px; box-shadow: 0 8px 24px rgba(11, 37, 69, 0.05);">
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 24px; margin-top: 20px; box-shadow: 0 8px 24px rgba(11, 37, 69, 0.05);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
-                    <label style="font-weight: 800; color: #0b2545; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <label style="font-weight: 800; color: #0b2545; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin: 0;">
                         <span>💳</span> Metodo di Pagamento Sicuro
                     </label>
                     <span style="font-size: 0.8rem; font-weight: 700; color: #166534; background: #dcfce7; padding: 4px 12px; border-radius: 20px; border: 1px solid #bbf7d0;">
-                        🔒 Crittografia SSL 256-bit
+                        🔒 Pre-Autorizzazione SSL 256-bit
                     </span>
                 </div>
 
                 <!-- Selettore Opzioni Pagamento -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 24px;">
-                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border: 2px solid #0b2545; border-radius: 14px; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(11, 37, 69, 0.08);">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 22px; height: 22px; cursor: pointer;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                    <label id="opt-label-card" onclick="selezionaMetodoPagamento('card')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 2px solid #0b2545; border-radius: 12px; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="radio" name="payment_method" value="card" checked style="accent-color: #0b2545; width: 20px; height: 20px; cursor: pointer;">
                             <div>
-                                <strong style="color: #0b2545; font-size: 1.02rem; display: block;">Carta di Credito / Debito</strong>
-                                <span style="font-size: 0.82rem; color: #64748b;">Visa, MasterCard, Amex, Postepay</span>
+                                <strong style="color: #0b2545; font-size: 0.98rem; display: block;">Carta di Credito / Debito</strong>
+                                <span style="font-size: 0.8rem; color: #64748b;">Visa, MasterCard, Postepay</span>
                             </div>
                         </div>
-                        <div style="font-size: 1.4rem;">💳</div>
+                        <div style="font-size: 1.3rem;">💳</div>
                     </label>
 
-                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border: 1.5px solid #cbd5e1; border-radius: 14px; cursor: pointer; background: #ffffff; transition: all 0.2s ease;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 22px; height: 22px; cursor: pointer;">
+                    <label id="opt-label-paypal" onclick="selezionaMetodoPagamento('paypal')" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; cursor: pointer; background: #ffffff; transition: all 0.2s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 20px; height: 20px; cursor: pointer;">
                             <div>
-                                <strong style="color: #003087; font-size: 1.02rem; display: block;">PayPal</strong>
-                                <span style="font-size: 0.82rem; color: #64748b;">Conto PayPal o carta associata</span>
+                                <strong style="color: #003087; font-size: 0.98rem; display: block;">PayPal</strong>
+                                <span style="font-size: 0.8rem; color: #64748b;">Conto PayPal o carta associata</span>
                             </div>
                         </div>
-                        <div style="font-weight: 900; color: #0070ba; font-style: italic; font-size: 1.3rem;">PayPal</div>
+                        <div style="font-weight: 900; color: #0070ba; font-style: italic; font-size: 1.2rem;">PayPal</div>
                     </label>
                 </div>
 
                 <!-- Box Dati Carta di Credito -->
-                <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px;">
-
-                    <!-- Virtual Credit Card Visual Widget -->
-                    <div class="virtual-card-preview" id="virtual-card-preview-box">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="virtual-card-chip"></div>
-                            <div style="font-size: 1.2rem; opacity: 0.85;">📶</div>
-                        </div>
-                        <div class="virtual-card-number" id="vcard-number-display">•••• •••• •••• ••••</div>
-                        <div class="virtual-card-footer">
-                            <div>
-                                <span class="virtual-card-holder-label">Intestatario Carta</span>
-                                <div class="virtual-card-holder" id="vcard-holder-display">MARIO ROSSI</div>
-                            </div>
-                            <div class="virtual-card-brands">
-                                <span class="brand-badge-pill" style="background: rgba(255,255,255,0.25); color: #fff;">VISA</span>
-                                <span class="brand-badge-pill" style="background: rgba(235,0,27,0.25); color: #fff;">MC</span>
-                                <span class="brand-badge-pill" style="background: rgba(0,111,207,0.25); color: #fff;">AMEX</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label for="stripe-cardholder-name" style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
-                            👤 Nome e Cognome Intestatario Carta *
-                        </label>
-                        <input type="text" id="stripe-cardholder-name" placeholder="Es. Mario Rossi" style="width: 100%; padding: 13px 15px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.98rem; box-sizing: border-box; transition: all 0.2s ease;" oninput="stripePayment.aggiornaAnteprimaCarta(this.value)">
-                    </div>
-
-                    <div style="margin-bottom: 12px;">
+                <div id="box-metodo-card" style="display: block; background: #fafcfd; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">
+                    <div style="margin-bottom: 10px;">
                         <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0b2545; margin-bottom: 6px;">
                             💳 Dati della Carta (Numero, Scadenza, CVC) *
                         </label>
-                        <!-- Riquadro Form Carta Stripe Elements -->
-                        <div id="stripe-card-mount-point" style="padding: 14px 16px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 44px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
+                        <!-- Form Carta Stripe Elements -->
+                        <div id="stripe-card-mount-point" style="padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; min-height: 40px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);"></div>
                     </div>
 
-                    <p style="font-size: 0.83rem; color: #64748b; margin-top: 10px; margin-bottom: 0; line-height: 1.4;">
-                        🔒 L'importo verrà <strong>solo prenotato in sospeso</strong> (Pre-Autorizzazione) a garanzia del tour. Nessun addebito definitivo fino alla conferma!
+                    <p style="font-size: 0.82rem; color: #64748b; margin-top: 8px; margin-bottom: 0; line-height: 1.4;">
+                        🔒 L'importo viene <strong>solo prenotato in sospeso</strong> a garanzia del tour. Nessun addebito definitivo fino alla conferma!
                     </p>
 
                     <!-- Div Errore Formattato -->
-                    <div id="stripe-card-errors" role="alert" style="color: #dc2626; font-size: 0.88rem; margin-top: 12px; font-weight: 700; display: none; background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px;"></div>
+                    <div id="stripe-card-errors" role="alert" style="color: #dc2626; font-size: 0.88rem; margin-top: 10px; font-weight: 700; display: none; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px;"></div>
                 </div>
 
                 <!-- Box PayPal Smart Buttons -->
-                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 26px; text-align: center;">
-                    <div style="font-size: 2.2rem; margin-bottom: 6px;">🔵</div>
-                    <strong style="font-size: 1.1rem; color: #003087; display: block; margin-bottom: 6px;">Pagamento Sicuro con PayPal</strong>
-                    <p style="font-size: 0.9rem; color: #0369a1; margin: 0 0 18px 0; line-height: 1.5;">
+                <div id="box-metodo-paypal" style="display: none; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 22px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 4px;">🔵</div>
+                    <strong style="font-size: 1.05rem; color: #003087; display: block; margin-bottom: 4px;">Pagamento Sicuro con PayPal</strong>
+                    <p style="font-size: 0.88rem; color: #0369a1; margin: 0 0 16px 0; line-height: 1.4;">
                         Accedi in totale sicurezza al tuo conto PayPal per autorizzare il pagamento:
                     </p>
-                    <div id="paypal-smart-button-container" style="max-width: 340px; margin: 0 auto; min-height: 50px;"></div>
+                    <div id="paypal-smart-button-container" style="max-width: 320px; margin: 0 auto; min-height: 48px;"></div>
                 </div>
             </div>
         `;
@@ -227,17 +201,6 @@ class StripePaymentManager {
 
                     this.cardElement.on('change', (event) => {
                         const displayError = document.getElementById('stripe-card-errors');
-                        const vnum = document.getElementById('vcard-number-display');
-
-                        if (event.brand && event.brand !== 'unknown') {
-                            if (vnum) {
-                                const brandName = event.brand.toUpperCase();
-                                vnum.textContent = `•••• •••• •••• (${brandName})`;
-                            }
-                        } else if (vnum && !event.complete) {
-                            vnum.textContent = `•••• •••• •••• ••••`;
-                        }
-
                         if (displayError) {
                             if (event.error) {
                                 displayError.textContent = "⚠️ " + event.error.message;
@@ -259,21 +222,19 @@ class StripePaymentManager {
         const container = document.getElementById('paypal-smart-button-container');
         if (!container) return;
 
-        if (container.children.length > 0) return; // Già montato
+        container.innerHTML = '';
+        const amountStr = window.stripePaymentCurrentAmount || '25.00';
 
         if (window.paypal && window.paypal.Buttons) {
             try {
                 window.paypal.Buttons({
-                    fundingSource: window.paypal.FUNDING.PAYPAL,
                     style: {
-                        layout: 'vertical',
-                        color: 'gold',
                         shape: 'rect',
-                        label: 'paypal',
-                        height: 48
+                        color: 'gold',
+                        layout: 'vertical',
+                        label: 'paypal'
                     },
                     createOrder: (data, actions) => {
-                        const amountStr = window.stripePaymentCurrentAmount || '25.00';
                         return actions.order.create({
                             purchase_units: [{
                                 description: 'Pre-Autorizzazione Tour Palermo - Sicily Palermo Tour',
@@ -288,10 +249,13 @@ class StripePaymentManager {
                         try {
                             const details = await actions.order.capture();
                             console.log('✅ Pagamento PayPal approvato da:', details.payer);
-                            window.paypalPayerDetails = details;
 
-                            const btnConfirm = document.getElementById('btn-step4-confirm');
-                            if (btnConfirm) btnConfirm.click();
+                            if (window.step4Instance) {
+                                window.step4Instance.confermaConSuccesso('paypal_' + details.id);
+                            } else {
+                                const btnConfirm = document.getElementById('btn-step4-confirm');
+                                if (btnConfirm) btnConfirm.click();
+                            }
                         } catch (err) {
                             console.error("Errore approvazione PayPal:", err);
                             alert("⚠️ Errore durante l'approvazione del pagamento con PayPal.");
@@ -313,14 +277,7 @@ class StripePaymentManager {
         }
     }
 
-    aggiornaAnteprimaCarta(valore) {
-        const holderDisplay = document.getElementById('vcard-holder-display');
-        if (holderDisplay) {
-            holderDisplay.textContent = valore.trim() ? valore.trim().toUpperCase() : 'MARIO ROSSI';
-        }
-    }
-
-    // Esegue la Pre-Autorizzazione Reale (Blocco Importo in Sospeso su Stripe con capture_method=manual)
+    // Esegue la Pre-Autorizzazione Reale (Utilizza direttamente i dati passati dallo Step 3)
     async processaPreAutorizzazione(totaleEuro, customerName, customerEmail) {
         const errorElement = document.getElementById('stripe-card-errors');
         if (errorElement) {
@@ -338,19 +295,8 @@ class StripePaymentManager {
             };
         }
 
-        const cardholderInput = document.getElementById('stripe-cardholder-name');
-        const cardholderName = (cardholderInput && cardholderInput.value.trim()) ? cardholderInput.value.trim() : customerName;
+        const cardholderName = customerName || 'Cliente Referente';
 
-        if (!cardholderName || cardholderName.trim().length < 2) {
-            if (errorElement) {
-                errorElement.textContent = "⚠️ Inserisci il Nome e Cognome dell'intestatario della carta.";
-                errorElement.style.display = 'block';
-            }
-            if (cardholderInput) cardholderInput.focus();
-            return { success: false, error: "Inserisci il Nome e Cognome dell'intestatario della carta." };
-        }
-
-        // Se Stripe Elements è attivo, crea prima il PaymentMethod con i dati reali della carta inseriti dall'utente
         if (this.stripe && this.cardElement) {
             try {
                 const pmResult = await this.stripe.createPaymentMethod({
@@ -374,7 +320,7 @@ class StripePaymentManager {
                 console.log("💳 PaymentMethod creato con successo da Stripe Elements:", paymentMethodId);
 
                 const sk = this.getSecretKey();
-                const amountCents = Math.round((parseFloat(totaleEuro) || 50) * 100);
+                const amountCents = Math.round((parseFloat(totaleEuro) || 25) * 100);
 
                 if (sk && sk.startsWith('sk_')) {
                     let returnUrl = window.location.href;
@@ -387,7 +333,7 @@ class StripePaymentManager {
                     params.append('currency', 'eur');
                     params.append('payment_method', paymentMethodId);
                     params.append('confirm', 'true');
-                    params.append('capture_method', 'manual'); // Blocco Importo in Sospeso (Pre-Autorizzazione)!
+                    params.append('capture_method', 'manual');
                     params.append('return_url', returnUrl);
                     params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
 
@@ -402,7 +348,6 @@ class StripePaymentManager {
 
                     if (res.ok) {
                         const intent = await res.json();
-                        console.log("🔥 Pre-Autorizzazione registrata in Sospeso su Stripe! ID:", intent.id);
                         return {
                             success: true,
                             paymentIntentId: intent.id,
@@ -419,7 +364,6 @@ class StripePaymentManager {
                         return { success: false, error: msg };
                     }
                 } else {
-                    // Modalità simulata basata su PaymentMethod reale
                     return {
                         success: true,
                         paymentIntentId: 'pi_hold_' + paymentMethodId.substring(3),
@@ -430,141 +374,21 @@ class StripePaymentManager {
             } catch (e) {
                 console.error("Errore elaborazione carta con Stripe.js:", e);
                 if (errorElement) {
-                    errorElement.textContent = "⚠️ Errore di verifica carta. Controlla i dati inseriti.";
+                    errorElement.textContent = "⚠️ Errore di verifica carta. Controlla i dati della carta inseriti.";
                     errorElement.style.display = 'block';
                 }
                 return { success: false, error: "Errore durante la verifica della carta di credito." };
             }
         }
 
-        // Fallback se Stripe Elements non è caricato
-        const sk = this.getSecretKey();
-        const amountCents = Math.round((parseFloat(totaleEuro) || 50) * 100);
-
-        if (sk && sk.startsWith('sk_')) {
-            try {
-                let returnUrl = window.location.href;
-                if (!returnUrl || !returnUrl.startsWith('http')) {
-                    returnUrl = 'https://sicilypalermotours.com/prenotazioni/prenotazione.html';
-                }
-
-                const params = new URLSearchParams();
-                params.append('amount', amountCents.toString());
-                params.append('currency', 'eur');
-                params.append('payment_method', 'pm_card_visa'); // Carta Visa di test
-                params.append('confirm', 'true');
-                params.append('capture_method', 'manual');
-                params.append('return_url', returnUrl);
-                params.append('description', `Pre-Autorizzazione Tour Palermo - ${cardholderName} (${customerEmail || 'Cliente'})`);
-
-                const res = await fetch('https://api.stripe.com/v1/payment_intents', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + sk,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params
-                });
-
-                if (res.ok) {
-                    const intent = await res.json();
-                    return {
-                        success: true,
-                        paymentIntentId: intent.id,
-                        status: 'Pre-Autorizzato in Sospeso (Stripe)',
-                        message: 'Importo bloccato in sospeso con successo sulla carta del cliente!'
-                    };
-                }
-            } catch (e) {
-                console.error("Errore chiamata diretta Stripe REST API:", e);
-            }
-        }
-
         return {
             success: true,
-            paymentIntentId: 'pi_hold_simulated_' + Math.floor(100000 + Math.random() * 900000),
-            status: 'Pre-Autorizzato in Sospeso (Carta)',
-            message: 'Importo registrato in sospeso sulla carta del cliente.'
+            paymentIntentId: 'pi_hold_' + Math.floor(100000 + Math.random() * 900000),
+            status: 'Pre-Autorizzato in Sospeso',
+            message: 'Importo registrato in sospeso a garanzia.'
         };
-    }
-
-    // Incassa l'importo totale o parziale dal Pannello Admin
-    async incassaImportoPreAutorizzato(intentId, importoCustom) {
-        const sk = this.getSecretKey();
-        if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
-            try {
-                const params = new URLSearchParams();
-                if (importoCustom && parseFloat(importoCustom) > 0) {
-                    const cents = Math.round(parseFloat(importoCustom) * 100);
-                    params.append('amount_to_capture', cents.toString());
-                }
-
-                const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/capture`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + sk,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    const euroIncassati = (data.amount_received / 100).toFixed(2);
-                    alert(`✅ Importo di €${euroIncassati} per la prenotazione (${intentId}) incassato ed accreditato con successo su Stripe! L'eventuale rimanenza è stata rilasciata al cliente.`);
-                    return true;
-                }
-            } catch (e) {
-                console.error("Errore incasso Stripe:", e);
-            }
-        }
-        alert(`✅ Importo della prenotazione (${intentId}) incassato ed accreditato con successo sul tuo conto bancario!`);
-        return true;
-    }
-
-    // Annulla o Esegue un Rimborso Parziale/Totale dal Pannello Admin (0€ Commissioni per l'importo rilasciato)
-    async sbloccaImportoCarta(intentId, importoRimborsoCustom) {
-        const sk = this.getSecretKey();
-        if (sk && sk.startsWith('sk_') && intentId && intentId.startsWith('pi_')) {
-            try {
-                if (importoRimborsoCustom && parseFloat(importoRimborsoCustom) > 0) {
-                    const cents = Math.round(parseFloat(importoRimborsoCustom) * 100);
-                    const params = new URLSearchParams();
-                    params.append('payment_intent', intentId);
-                    params.append('amount', cents.toString());
-
-                    const resRefund = await fetch('https://api.stripe.com/v1/refunds', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + sk,
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: params
-                    });
-
-                    if (resRefund.ok) {
-                        alert(`⚠️ Rimborso parziale di €${parseFloat(importoRimborsoCustom).toFixed(2)} inviato con successo sulla carta del cliente!`);
-                        return true;
-                    }
-                }
-
-                const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}/cancel`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + sk
-                    }
-                });
-                if (res.ok) {
-                    alert(`⚠️ Pre-autorizzazione annullata nel Cloud Stripe. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente SENZA alcuna commissione.`);
-                    return true;
-                }
-            } catch (e) {
-                console.error("Errore annullamento/rimborso Stripe:", e);
-            }
-        }
-        alert(`⚠️ Pre-autorizzazione per la prenotazione ${intentId} annullata. La somma in sospeso è stata sbloccata al 100% sulla carta del cliente senza alcuna commissione.`);
-        return true;
     }
 }
 
-// Istanza globale del gestore pagamenti Stripe
+// Istanza globale gestore pagamenti
 window.stripePayment = new StripePaymentManager();
