@@ -303,9 +303,8 @@
             }
 
             tryGoToStep(stepNum) {
-                if (stepNum <= this.maxStepReached) {
-                    this.goToStep(stepNum);
-                }
+                this.calcolaEInviaRiepilogo();
+                this.goToStep(stepNum);
             }
 
             confermaDefinitiva(res) {
