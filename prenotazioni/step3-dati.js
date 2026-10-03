@@ -1,6 +1,6 @@
 /**
  * STEP 3: Dati Personali Completi, Lingua e Indirizzo di Fatturazione / Residenza
- * Sicily Palermo Tour - Flusso Diretto Zero Blocco (Invia i dati direttamente allo Step 4)
+ * Sicily Palermo Tour - Flusso Diretto con Avanzamento Garantito allo Step 4
  */
 
 class Step3Dati {
@@ -129,7 +129,7 @@ class Step3Dati {
                             <option value="Italiano" selected>🇮🇹 Italiano</option>
                             <option value="English">🇬🇧 English</option>
                             <option value="Español">🇪🇸 Español</option>
-                            <option value="Français">🇫🇷 Français</option>
+                            <option value="Français">Français</option>
                             <option value="Deutsch">🇩🇪 Deutsch</option>
                         </select>
                     </div>
@@ -242,7 +242,7 @@ class Step3Dati {
                 <button type="button" class="btn-nav-prev" id="btn-step3-prev">
                     ← Indietro
                 </button>
-                <button type="button" class="btn-nav-next" id="btn-step3-next">
+                <button type="button" class="btn-nav-next" id="btn-step3-next" onclick="if(window.wizardManager){ window.wizardManager.step3Module.validaEProsegui(); window.wizardManager.goToStep(4); }">
                     Avanti: Riepilogo & Conferma →
                 </button>
             </div>
@@ -254,7 +254,10 @@ class Step3Dati {
             if (typeof this.onPrev === 'function') this.onPrev();
         };
 
-        this.container.querySelector('#btn-step3-next').onclick = () => this.validaEProsegui();
+        this.container.querySelector('#btn-step3-next').onclick = () => {
+            this.validaEProsegui();
+            if (window.wizardManager) window.wizardManager.goToStep(4);
+        };
     }
 
     validaEProsegui() {
