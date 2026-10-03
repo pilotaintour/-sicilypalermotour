@@ -80,7 +80,11 @@ class StripePaymentManager {
     }
 
     getPublishableKey() {
-        return localStorage.getItem(STRIPE_PK_KEY) || DEFAULT_STRIPE_PK;
+        const saved = localStorage.getItem('spt_stripe_pk') || localStorage.getItem(STRIPE_PK_KEY);
+        if (saved && saved.startsWith('pk_') && saved.length > 30 && !saved.includes('*') && !saved.includes('G8hJ')) {
+            return saved;
+        }
+        return DEFAULT_STRIPE_PK;
     }
 
     getSecretKey() {
