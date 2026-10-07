@@ -130,6 +130,10 @@ class Step4Conferma {
                 <strong style="color: #1b4f72;">⏰ ${data.slotTime || '09:30'}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.98rem;">
+                <span style="color: #64748b;">📍 Punto di Ritrovo / Raccolta:</span>
+                <strong style="color: #0369a1;">${data.selectedPickup || data.meetingPoint || 'Palermo Centro'}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.98rem;">
                 <span style="color: #64748b;">Partecipanti:</span>
                 <strong style="color: #0b2545;">🎟️ ${data.adults} Adulti${data.children > 0 ? `, ${data.children} Bambini` : ''}</strong>
             </div>

@@ -397,6 +397,7 @@ class BrevoEmailService {
                                 <!-- Dettagli Tour -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:0.92rem; color:#1e293b; line-height:1.7;">
                                     <tr><td style="padding:4px 0;"><strong>${tDict.tourLabel}</strong> ${tourTitle}</td></tr>
+                                    <tr><td style="padding:4px 0;"><strong>📍 Punto di Ritrovo / Raccolta:</strong> <span style="color:#0369a1; font-weight:bold;">${bookingData.selectedPickup || 'Palermo Centro'}</span></td></tr>
                                     <tr><td style="padding:4px 0;"><strong>${tDict.langLabel}</strong> ${lang}</td></tr>
                                     <tr><td style="padding:4px 0;"><strong>${tDict.dateLabel}</strong> ${dateStr}</td></tr>
                                     <tr><td style="padding:4px 0;"><strong>${tDict.timeLabel}</strong> ${timeStr}</td></tr>

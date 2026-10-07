@@ -210,12 +210,14 @@
                 });
 
                 this.step3Module = new Step3Dati('step-card-3', {
+                    tourData: this.tourCorrente,
                     onPrev: () => this.goToStep(2),
                     onComplete: (data) => {
                         try {
                             this.bookingData.customerName = data.customerName || 'Cliente';
                             this.bookingData.customerEmail = data.customerEmail || 'cliente@example.com';
                             this.bookingData.customerPhone = data.customerPhone || '+39';
+                            this.bookingData.selectedPickup = data.selectedPickup || (this.tourCorrente ? this.tourCorrente.meetingPoint : 'Palermo Centro');
                             this.bookingData.notes = data.notes || '';
                             this.bookingData.participantsList = data.participantsList || [];
 

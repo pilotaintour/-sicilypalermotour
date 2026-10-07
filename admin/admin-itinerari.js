@@ -114,6 +114,11 @@ async function salvaItinerario(event) {
     const duration = document.getElementById('duration').value.trim();
     const price = document.getElementById('price').value.trim();
     const meetingPoint = document.getElementById('meeting-point').value.trim();
+    const pickupPointsVal = document.getElementById('pickup-points') ? document.getElementById('pickup-points').value.trim() : '';
+    const meetingInstructions = document.getElementById('meeting-instructions') ? document.getElementById('meeting-instructions').value.trim() : '';
+
+    const pickupPoints = pickupPointsVal ? pickupPointsVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+
     const featured = document.getElementById('featured').value;
     const isConsigliatoEl = document.getElementById('is-consigliato');
     const isAllaModaEl = document.getElementById('is-alla-moda');
@@ -146,14 +151,14 @@ async function salvaItinerario(event) {
     if (id) {
         itinerari = itinerari.map(item => {
             if (String(item.id) === String(id)) {
-                return { id, title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
+                return { id, title, category, duration, price, meetingPoint, pickupPoints, meetingInstructions, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc };
             }
             return item;
         });
     } else {
         const nuovoItinerario = {
             id: Date.now().toString(),
-            title, category, duration, price, meetingPoint, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc
+            title, category, duration, price, meetingPoint, pickupPoints, meetingInstructions, availableDays, timeSlots, maxCapacity, featured, isConsigliato, isAllaModa, imageUrl, images, tappe, servizi, shortDesc, fullDesc
         };
         itinerari.unshift(nuovoItinerario);
     }
@@ -177,6 +182,12 @@ function preparaModifica(id) {
     document.getElementById('duration').value = item.duration || '';
     document.getElementById('price').value = item.price || '';
     document.getElementById('meeting-point').value = item.meetingPoint || '';
+    if (document.getElementById('pickup-points')) {
+        document.getElementById('pickup-points').value = (item.pickupPoints && Array.isArray(item.pickupPoints)) ? item.pickupPoints.join(', ') : (item.pickupPoints || '');
+    }
+    if (document.getElementById('meeting-instructions')) {
+        document.getElementById('meeting-instructions').value = item.meetingInstructions || '';
+    }
     document.getElementById('featured').value = item.featured || 'false';
     const isConsigliatoEl = document.getElementById('is-consigliato');
     const isAllaModaEl = document.getElementById('is-alla-moda');
@@ -241,6 +252,8 @@ function annullaModifica() {
 function resetForm() {
     document.getElementById('itineraryForm').reset();
     document.getElementById('itinerary-id').value = '';
+    if (document.getElementById('pickup-points')) document.getElementById('pickup-points').value = '';
+    if (document.getElementById('meeting-instructions')) document.getElementById('meeting-instructions').value = '';
     const fileInput = document.getElementById('image-file-input');
     if (fileInput) fileInput.value = '';
     fotoItinerarioCorrenti = [];

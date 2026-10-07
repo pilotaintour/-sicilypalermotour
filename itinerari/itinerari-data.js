@@ -256,6 +256,56 @@ function apriDettagliModal(id) {
         if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
         if (meetingEl) meetingEl.textContent = tour.meetingPoint || 'Palermo Centro';
 
+        // Renderizza Box Punti di Raccolta & Ritrovo Mappa
+        const modalPickupBox = document.getElementById('modal-pickup-box');
+        if (modalPickupBox) {
+            const mainMeeting = tour.meetingPoint || 'Palermo Centro';
+            const pickupList = (tour.pickupPoints && Array.isArray(tour.pickupPoints) && tour.pickupPoints.length > 0)
+                ? tour.pickupPoints
+                : (typeof tour.pickupPoints === 'string' && tour.pickupPoints ? tour.pickupPoints.split(',') : []);
+
+            const instructions = tour.meetingInstructions || 'Presentarsi 10 minuti prima dell\'orario di partenza stabilito.';
+            const mapsQuery = encodeURIComponent(mainMeeting + ', Palermo');
+
+            let pickupHtml = `
+                <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px;">
+                        <h4 style="margin: 0; color: #0369a1; font-size: 1.02rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            📍 Punto d'Incontro &amp; Punti di Raccolta
+                        </h4>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" style="background: #0284c7; color: white; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                            🗺️ Apri su Mappa Google
+                        </a>
+                    </div>
+
+                    <div style="font-size: 0.93rem; color: #0b2545; margin-bottom: 8px; line-height: 1.5;">
+                        <strong>📍 Ritrovo Principale:</strong> <span style="color: #1b4f72; font-weight: 700;">${escapeHtml(mainMeeting)}</span>
+                    </div>
+            `;
+
+            if (pickupList.length > 0) {
+                pickupHtml += `
+                    <div style="font-size: 0.9rem; color: #0f172a; margin-bottom: 8px;">
+                        <strong>🚌 Punti di Raccolta Disponibili:</strong>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+                            ${pickupList.map(p => `<span style="background: #ffffff; border: 1px solid #bae6fd; color: #0369a1; padding: 4px 10px; border-radius: 8px; font-size: 0.83rem; font-weight: 600;">🚌 ${escapeHtml(p.trim())}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (instructions) {
+                pickupHtml += `
+                    <div style="font-size: 0.88rem; color: #475569; background: #ffffff; padding: 10px 12px; border-radius: 8px; border-left: 3px solid #0284c7; margin-top: 8px;">
+                        🎒 <strong>Indicazioni per il Ritrovo:</strong> ${escapeHtml(instructions)}
+                    </div>
+                `;
+            }
+
+            pickupHtml += `</div>`;
+            modalPickupBox.innerHTML = pickupHtml;
+        }
+
         // Binda il pulsante di prenotazione con calendario
         const btnCalFooter = document.getElementById('btn-modal-prenota-calendario');
         if (btnCalFooter) {
