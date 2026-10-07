@@ -9,12 +9,51 @@ const AUTHORIZED_EMAIL = 'pilotaintour13@gmail.com';
 
 let fotoItinerarioCorrenti = [];
 let tappeCorrenti = ['Incontro con la guida', 'Passeggiata tra i monumenti storici'];
+let puntiRaccoltaCorrenti = ['Piazzale Giotto', 'Piazza Politeama'];
 let orariCorrenti = [
     { time: '09:30', capacity: 15 },
     { time: '11:30', capacity: 15 },
     { time: '15:30', capacity: 15 },
     { time: '18:00', capacity: 15 }
 ];
+
+function renderCampiPuntiRaccolta() {
+    const container = document.getElementById('punti-raccolta-container');
+    if (!container) return;
+
+    if (!puntiRaccoltaCorrenti || puntiRaccoltaCorrenti.length === 0) {
+        puntiRaccoltaCorrenti = ['Piazzale Giotto'];
+    }
+
+    container.innerHTML = puntiRaccoltaCorrenti.map((punto, index) => `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 800; color: #0369a1; font-size: 0.95rem; min-width: 24px; text-align: right;">${index + 1}.</span>
+            <input type="text" value="${escapeHtmlAdmin(punto)}" oninput="aggiornaValorePuntoRaccolta(${index}, this.value)" placeholder="Es. Piazzale Giotto / Piazza Politeama / Cattedrale" style="flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+            ${puntiRaccoltaCorrenti.length > 1 ? `<button type="button" class="btn-danger btn-small" onclick="rimuoviCampoPuntoRaccolta(${index})" title="Elimina punto" style="padding: 8px 12px;">🗑️</button>` : ''}
+        </div>
+    `).join('');
+}
+
+function aggiungiCampoPuntoRaccolta() {
+    puntiRaccoltaCorrenti.push('');
+    renderCampiPuntiRaccolta();
+    const inputs = document.querySelectorAll('#punti-raccolta-container input');
+    if (inputs.length > 0) {
+        inputs[inputs.length - 1].focus();
+    }
+}
+
+function rimuoviCampoPuntoRaccolta(index) {
+    if (puntiRaccoltaCorrenti.length <= 1) return;
+    puntiRaccoltaCorrenti.splice(index, 1);
+    renderCampiPuntiRaccolta();
+}
+
+function aggiornaValorePuntoRaccolta(index, val) {
+    if (puntiRaccoltaCorrenti[index] !== undefined) {
+        puntiRaccoltaCorrenti[index] = val;
+    }
+}
 
 const DEFAULT_ITINERARIES = [];
 
@@ -113,11 +152,9 @@ async function salvaItinerario(event) {
     const category = document.getElementById('category').value;
     const duration = document.getElementById('duration').value.trim();
     const price = document.getElementById('price').value.trim();
-    const meetingPoint = document.getElementById('meeting-point').value.trim();
-    const pickupPointsVal = document.getElementById('pickup-points') ? document.getElementById('pickup-points').value.trim() : '';
+    const pickupPoints = puntiRaccoltaCorrenti.map(p => p.trim()).filter(Boolean);
+    const meetingPoint = pickupPoints.length > 0 ? pickupPoints.join(' • ') : 'Palermo Centro';
     const meetingInstructions = document.getElementById('meeting-instructions') ? document.getElementById('meeting-instructions').value.trim() : '';
-
-    const pickupPoints = pickupPointsVal ? pickupPointsVal.split(',').map(s => s.trim()).filter(Boolean) : [];
 
     const featured = document.getElementById('featured').value;
     const isConsigliatoEl = document.getElementById('is-consigliato');
@@ -181,10 +218,18 @@ function preparaModifica(id) {
     document.getElementById('category').value = item.category;
     document.getElementById('duration').value = item.duration || '';
     document.getElementById('price').value = item.price || '';
-    document.getElementById('meeting-point').value = item.meetingPoint || '';
-    if (document.getElementById('pickup-points')) {
-        document.getElementById('pickup-points').value = (item.pickupPoints && Array.isArray(item.pickupPoints)) ? item.pickupPoints.join(', ') : (item.pickupPoints || '');
+    if (item.pickupPoints && Array.isArray(item.pickupPoints) && item.pickupPoints.length > 0) {
+        puntiRaccoltaCorrenti = [...item.pickupPoints];
+    } else if (item.meetingPoint) {
+        puntiRaccoltaCorrenti = item.meetingPoint.split('•').map(s => s.trim()).filter(Boolean);
+        if (puntiRaccoltaCorrenti.length === 0) {
+            puntiRaccoltaCorrenti = [item.meetingPoint];
+        }
+    } else {
+        puntiRaccoltaCorrenti = ['Piazzale Giotto'];
     }
+    renderCampiPuntiRaccolta();
+
     if (document.getElementById('meeting-instructions')) {
         document.getElementById('meeting-instructions').value = item.meetingInstructions || '';
     }
@@ -273,6 +318,8 @@ function resetForm() {
     if (isConsigliatoEl) isConsigliatoEl.checked = false;
     if (isAllaModaEl) isAllaModaEl.checked = false;
 
+    puntiRaccoltaCorrenti = ['Piazzale Giotto', 'Piazza Politeama'];
+    renderCampiPuntiRaccolta();
     renderGalleriaAnteprima();
     renderCampiTappe();
     renderCampiOrari();

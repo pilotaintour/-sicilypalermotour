@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof caricaNumeroWhatsApp === 'function') caricaNumeroWhatsApp();
     if (typeof renderCampiTappe === 'function') renderCampiTappe();
     if (typeof renderCampiOrari === 'function') renderCampiOrari();
+    if (typeof renderCampiPuntiRaccolta === 'function') renderCampiPuntiRaccolta();
 });
 
 // LOGIN CON EMAIL E PASSWORD
