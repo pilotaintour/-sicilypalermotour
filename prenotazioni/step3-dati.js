@@ -122,21 +122,6 @@ class Step3Dati {
                     </div>
                 </div>
 
-                <!-- SELEZIONE PUNTO DI RACCOLTA / RITROVO -->
-                <div style="background: #f0f9ff; padding: 14px; border-radius: 12px; border: 1.5px solid #bae6fd; margin-bottom: 14px;">
-                    <label for="step3-selected-pickup" style="display: block; font-weight: 800; margin-bottom: 6px; font-size: 0.92rem; color: #0369a1;">📍 Punto di Raccolta / Incontro Preferito *</label>
-                    <select id="step3-selected-pickup" style="padding: 11px; border: 1.5px solid #0284c7; border-radius: 8px; width: 100%; font-size: 0.95rem; background: white; font-weight: 700; color: #0b2545;">
-                        <option value="${escapeHtml(this.tourData ? (this.tourData.meetingPoint || 'Piazza Politeama / Cattedrale') : 'Piazza Politeama / Cattedrale')}" selected>📍 ${escapeHtml(this.tourData ? (this.tourData.meetingPoint || 'Ritrovo Principale') : 'Ritrovo Principale')}</option>
-                        ${(this.tourData && this.tourData.pickupPoints && Array.isArray(this.tourData.pickupPoints)) ? this.tourData.pickupPoints.map(p => `<option value="${escapeHtml(p.trim())}">🚌 ${escapeHtml(p.trim())} (Punto di Raccolta)</option>`).join('') : ''}
-                        <option value="Hotel / Alloggio del cliente (da indicare nelle note)">🏨 Pick-up Presso il Mio Hotel / Alloggio</option>
-                    </select>
-                    ${(this.tourData && this.tourData.meetingInstructions) ? `
-                        <div style="font-size: 0.83rem; color: #0369a1; margin-top: 6px; font-weight: 600;">
-                            🎒 Note sul Ritrovo: ${escapeHtml(this.tourData.meetingInstructions)}
-                        </div>
-                    ` : ''}
-                </div>
-
                 <!-- LINGUA PREFERITA E FATTURAZIONE -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; background: #fafcfd; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
                     <div>
@@ -342,15 +327,12 @@ class Step3Dati {
                 });
             }
 
-            const selectedPickupEl = this.container.querySelector('#step3-selected-pickup');
-            const selectedPickup = selectedPickupEl ? selectedPickupEl.value : (this.tourData ? this.tourData.meetingPoint : 'Palermo Centro');
-
             if (typeof this.onComplete === 'function') {
                 this.onComplete({
                     customerName: leadName,
                     customerEmail: leadEmail,
                     customerPhone: leadPhone,
-                    selectedPickup: selectedPickup,
+                    selectedPickup: (this.tourData ? this.tourData.meetingPoint : 'Palermo Centro'),
                     language: leadLanguage,
                     country: leadCountry,
                     billingAddress: leadAddress ? `${leadAddress}, ${leadCity} ${leadZip}` : `${leadCountry}`,
