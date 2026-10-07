@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Termini e Condizioni di Servizio - Sicily Palermo Tour</title>
+    <title>Termini & Condizioni di Servizio, Privacy e Cookie Policy - Sicily Palermo Tour</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../itinerari/itinerari.css">
     <link rel="stylesheet" href="booking-wizard.css">
@@ -13,48 +13,77 @@
             color: #0f172a;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px 10px;
+            padding: 25px 12px;
+            line-height: 1.65;
         }
 
         .terms-container {
-            max-width: 800px;
-            margin: 0 auto 40px auto;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
             background: #ffffff;
-            border-radius: 18px;
-            padding: 32px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 10px 30px rgba(11, 37, 69, 0.08);
+            border-radius: 20px;
+            padding: 40px 35px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 12px 36px rgba(11, 37, 69, 0.08);
         }
 
         .terms-header {
             text-align: center;
             border-bottom: 2px solid #0b2545;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
+            padding-bottom: 24px;
+            margin-bottom: 30px;
         }
 
         .terms-header img {
-            max-width: 280px;
+            max-width: 320px;
             width: 90%;
             height: auto;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .terms-title {
             color: #0b2545;
-            font-size: 1.6rem;
+            font-size: 1.75rem;
             font-weight: 800;
-            margin: 0 0 6px 0;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.3px;
         }
 
         .terms-subtitle {
             color: #64748b;
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             margin: 0;
+            font-weight: 600;
+        }
+
+        .legal-badge-box {
+            background: #f0f9ff;
+            border: 1.5px solid #bae6fd;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: #0369a1;
+            line-height: 1.6;
+        }
+
+        .legal-badge-box strong {
+            color: #0b2545;
+        }
+
+        .part-header-title {
+            background: linear-gradient(135deg, #0b2545 0%, #134074 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 35px 0 20px 0;
+            letter-spacing: 0.3px;
         }
 
         .terms-section {
-            margin-bottom: 22px;
+            margin-bottom: 26px;
         }
 
         .terms-section h3 {
@@ -62,31 +91,36 @@
             font-size: 1.15rem;
             font-weight: 800;
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
         }
 
         .terms-section p, .terms-section li {
             color: #334155;
             font-size: 0.94rem;
-            line-height: 1.65;
-            margin-bottom: 10px;
+            line-height: 1.68;
+            margin-bottom: 12px;
+        }
+
+        .terms-section ul {
+            padding-left: 22px;
+            margin-bottom: 14px;
         }
 
         .penalty-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 18px 0;
             font-size: 0.9rem;
         }
 
         .penalty-table th, .penalty-table td {
             border: 1px solid #cbd5e1;
-            padding: 10px 12px;
+            padding: 12px 14px;
             text-align: left;
         }
 
@@ -103,41 +137,77 @@
         .btn-back {
             background: #0b2545;
             color: #ffffff;
-            padding: 12px 24px;
+            padding: 13px 26px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
             display: inline-block;
             transition: background 0.2s;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-back:hover {
             background: #134074;
+        }
+
+        @media (max-width: 640px) {
+            .terms-container {
+                padding: 22px 18px;
+            }
+            .terms-title {
+                font-size: 1.35rem;
+            }
+            .penalty-table {
+                font-size: 0.8rem;
+            }
+            .penalty-table th, .penalty-table td {
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="terms-container">
+
+        <!-- Header Ufficiale Brand -->
         <div class="terms-header">
             <a href="../index.html">
                 <img src="../logo.svg" alt="Sicily Palermo Tour">
             </a>
-            <h1 class="terms-title">📜 Termini & Condizioni di Servizio</h1>
-            <p class="terms-subtitle">Regolamento Ufficiale delle Prenotazioni, Politica Penali & Cancellazioni</p>
+            <h1 class="terms-title">📜 Documento Legale &amp; Privacy Policy</h1>
+            <p class="terms-subtitle">Termini &amp; Condizioni di Servizio, Regolamento Annullamenti, Privacy GDPR e Cookie Policy</p>
+        </div>
+
+        <!-- Box Identificativo Titolare del Trattamento & Azienda -->
+        <div class="legal-badge-box">
+            <strong>Titolare del Trattamento &amp; Erogatore del Servizio:</strong> Sicily Palermo Tour<br>
+            <strong>Partita IVA:</strong> 07150890825<br>
+            <strong>Sede Operativa:</strong> Via del Bersagliere, 19 - 90143 Palermo (PA), Italia<br>
+            <strong>Email di Contatto Legale / Privacy:</strong> <a href="mailto:pilotaintour13@gmail.com" style="color:#0369a1; font-weight:bold;">pilotaintour13@gmail.com</a><br>
+            <strong>Sito Web Ufficiale:</strong> <a href="https://sicilypalermotours.com" target="_blank" style="color:#0369a1; font-weight:bold;">https://sicilypalermotours.com</a>
+        </div>
+
+
+        <!-- ========================================================================== -->
+        <!-- PARTE A: TERMINI E CONDIZIONI DI SERVIZIO & REGOLAMENTO ANNULLAMENTI      -->
+        <!-- ========================================================================== -->
+        <div class="part-header-title">
+            PARTE A: Termini e Condizioni di Servizio &amp; Regolamento Annullamenti
         </div>
 
         <div class="terms-section">
             <h3>1. Oggetto del Servizio</h3>
             <p>
-                <strong>Sicily Palermo Tour</strong> eroga servizi di visite guidate, escursioni enogastronomiche, tour culturali e trasporti privati (NCC) nella città di Palermo e sul territorio siciliano. Effettuando la prenotazione tramite la nostra piattaforma web o via WhatsApp, l'utente dichiara di aver letto, compreso ed accettato integralmente i presenti Termini e Condizioni.
+                <strong>Sicily Palermo Tour</strong> eroga servizi di visite guidate, escursioni enogastronomiche, tour culturali, esperienze ed accompagnamenti e trasporti turistici privati nella città di Palermo e nel territorio siciliano. Effettuando la prenotazione tramite la nostra piattaforma web o via WhatsApp, l'utente dichiara di aver letto, compreso ed accettato integralmente i presenti Termini e Condizioni.
             </p>
         </div>
 
         <div class="terms-section">
-            <h3>2. Modalità di Pagamento & Pre-Autorizzazione</h3>
+            <h3>2. Modalità di Pagamento &amp; Pre-Autorizzazione</h3>
             <p>
-                A garanzia della prenotazione, la piattaforma richiede l'inserimento dei dati di una carta di credito/debito (tramite circuito sicuro <strong>Stripe</strong>) o l'autorizzazione di un conto <strong>PayPal</strong>.
+                A garanzia della prenotazione, la piattaforma richiede l'inserimento dei dati di una carta di credito/debito (tramite il circuito crittografato sicuro <strong>Stripe</strong>) o l'autorizzazione di un conto <strong>PayPal</strong>.
             </p>
             <p>
                 L'importo viene <strong>solo temporaneamente riservato in sospeso (Pre-Autorizzazione)</strong> senza addebiti immediati. L'incasso effettivo ed il saldo avvengono soltanto a conferma avvenuta dell'itinerario o allo svolgimento del servizio.
@@ -145,7 +215,7 @@
         </div>
 
         <div class="terms-section">
-            <h3>3. Regolamento Cancellazioni & Penali</h3>
+            <h3>3. Regolamento Cancellazioni &amp; Penali</h3>
             <p>
                 Qualora il cliente desideri annullare la propria prenotazione, verranno applicati i seguenti scaglioni di penale calcolati in base al preavviso fornito rispetto all'orario d'inizio del tour:
             </p>
@@ -196,36 +266,130 @@
         </div>
 
         <div class="terms-section">
-            <h3>5. Puntualità & Punto di Incontro</h3>
+            <h3>5. Puntualità &amp; Punti di Raccolta / Incontro</h3>
             <p>
-                I clienti sono tenuti a presentarsi al punto di incontro concordato con la guida almeno <strong>10 minuti prima dell'orario di partenza</strong> fissato nella conferma di prenotazione.
+                I clienti sono tenuti a presentarsi al punto di incontro o di raccolta concordato con la guida almeno <strong>10 minuti prima dell'orario di partenza</strong> fissato nella conferma di prenotazione.
+            </p>
+        </div>
+
+
+        <!-- ========================================================================== -->
+        <!-- PARTE B: INFORMATIVA COMPLETA SULLA PRIVACY (REGOLAMENTO UE 2016/679 - GDPR)-->
+        <!-- ========================================================================== -->
+        <div class="part-header-title">
+            PARTE B: Informativa sulla Privacy Policy (GDPR UE 2016/679)
+        </div>
+
+        <div class="terms-section">
+            <h3>6. Tipologie di Dati Raccolti</h3>
+            <p>
+                Fra i Dati Personali raccolti da questo sito web (in modo autonomo o tramite terze parti) figurano:
+            </p>
+            <ul>
+                <li><strong>Dati comunicati dall'Utente:</strong> Nome, Cognome, Data di nascita, Indirizzo di residenza, Nazionalità, Lingua preferita, Indirizzo Email, Numero di Telefono/WhatsApp, eventuali note o intolleranze alimentari segnalate.</li>
+                <li><strong>Dati di Utilizzo e Navigazione:</strong> Indirizzi IP, identificativi dei dispositivi, orari delle richieste, caratteristiche del browser e del sistema operativo, provenienza geografica approssimativa, pagine e itinerari consultati.</li>
+                <li><strong>Dati di Pagamento:</strong> I dati delle carte di credito/debito sono trattati direttamente ed in modo crittografato dai gateway di pagamento certificati <strong>Stripe</strong> e <strong>PayPal</strong>. Sicily Palermo Tour non memorizza sui propri server i numeri completi delle carte di credito.</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h3>7. Modalità, Luogo e Conservazione dei Dati</h3>
+            <p>
+                Il Titolare adotta le opportune misure di sicurezza volte ad impedire l'accesso, la divulgazione, la modifica o la distruzione non autorizzate dei Dati Personali. Il trattamento viene effettuato mediante strumenti informatici e telematici con logiche strettamente correlate alle finalità indicate.
+            </p>
+            <p>
+                <strong>Luogo:</strong> I Dati sono trattati presso la sede operativa del Titolare ed in ogni altro luogo in cui le parti coinvolte nel trattamento siano localizzate (inclusi i server sicuri cloud di Google Firebase situati nell'Unione Europea).
+            </p>
+            <p>
+                <strong>Periodo di Conservazione:</strong> I dati legati all'esecuzione del contratto o prenotazione vengono conservati per il tempo strettamente necessario all'erogazione del servizio e per l'adempimento degli obblighi fiscali e di legge (fino a 10 anni).
             </p>
         </div>
 
         <div class="terms-section">
-            <h3>6. Privacy & Trattamento Dati Personali (GDPR)</h3>
+            <h3>8. Finalità del Trattamento &amp; Servizi Terzi Utilizzati</h3>
             <p>
-                I dati personali forniti (Nome, Cognome, Data di Nascita, Documenti, Email, Telefono) vengono raccolti e trattati ai sensi del Regolamento UE 2016/679 (GDPR) esclusivamente per la gestione dell'ordine, l'emissione dei titoli di viaggio e la copertura assicurativa del tour.
+                I Dati dell'Utente sono raccolti per consentire la fornitura del Servizio, la gestione delle prenotazioni, l'invio delle conferme, l'assistenza clienti e l'adempimento degli obblighi normativi.
+            </p>
+            <ul>
+                <li><strong>Google Firebase Realtime Database (Google Cloud - UE):</strong> Database cloud per il salvataggio sicuro e la sincronizzazione delle prenotazioni in tempo reale.</li>
+                <li><strong>Brevo (ex Sendinblue - UE):</strong> Servizio di posta transazionale per l'invio automatico delle email di conferma prenotazione al cliente e delle notifiche all'amministratore.</li>
+                <li><strong>Stripe API (Stripe Inc. - PCI-DSS Level 1):</strong> Piattaforma di elaborazione pagamenti sicuri con crittografia SSL 256-bit per la pre-autorizzazione e l'incasso.</li>
+                <li><strong>PayPal SDK (PayPal Inc.):</strong> Piattaforma di pagamento e trasferimento fondi sicuro.</li>
+                <li><strong>Google Maps Widget (Google LLC):</strong> Visualizzazione delle mappe interattive e indicazioni GPS per i punti di raccolta dei tour.</li>
+                <li><strong>Google Translate (Google LLC):</strong> Servizio di selezione e traduzione dinamica della lingua del sito.</li>
+                <li><strong>WhatsApp Chat Widget (Meta Platforms Inc.):</strong> Servizio di messaggistica istantanea per l'assistenza clienti diretta.</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h3>9. Basi Giuridiche del Trattamento</h3>
+            <p>
+                Il Titolare tratta i Dati Personali dell'Utente in caso di:
+            </p>
+            <ul>
+                <li>Esecuzione del contratto di servizio di tour o misure precontrattuali su richiesta dell'Utente.</li>
+                <li>Consenso prestato dall'Utente per specifiche finalità (es. invio comunicazioni o recensioni).</li>
+                <li>Adempimento di un obbligo legale (es. normative fiscali, contabili o amministrative).</li>
+                <li>Legittimo interesse del Titolare (es. prevenzione di frodi o sicurezza del sito web).</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h3>10. Diritti dell'Utente (GDPR UE 2016/679)</h3>
+            <p>
+                Ai sensi degli artt. 15-22 del GDPR, gli utenti hanno il diritto in qualunque momento di:
+            </p>
+            <ul>
+                <li><strong>Revocare il consenso</strong> in ogni momento.</li>
+                <li><strong>Accedere ai propri Dati</strong> ed ottenerne una copia.</li>
+                <li><strong>Verificare e chiedere la rettifica</strong> o l'aggiornamento dei dati inesatti.</li>
+                <li><strong>Ottenere la cancellazione o rimozione</strong> dei propri Dati Personali (*Diritto all'oblio*).</li>
+                <li><strong>Ottenere la limitazione del trattamento</strong> o opporsi al trattamento per motivi legittimi.</li>
+                <li><strong>Portabilità dei Dati:</strong> Ricevere i propri dati in formato strutturato e leggibile da dispositivo automatico.</li>
+                <li><strong>Proporre Reclamo:</strong> Inoltrare un reclamo all'autorità di controllo competente (*Garante per la Protezione dei Dati Personali*).</li>
+            </ul>
+            <p>
+                Per esercitare i propri diritti, l'Utente può inviare una richiesta gratuita all'indirizzo email del Titolare: <a href="mailto:pilotaintour13@gmail.com" style="color:#0369a1; font-weight:bold;">pilotaintour13@gmail.com</a>. Risponderemo nel più breve tempo possibile ed entro 30 giorni.
             </p>
         </div>
 
         <div class="terms-section">
-            <h3>7. Sicurezza dei Dati, Trattamento & Limitazione di Responsabilità (Cyber Security)</h3>
+            <h3>11. Sicurezza dei Dati &amp; Limitazione di Responsabilità (Cyber Security)</h3>
             <p>
-                <strong>Sicily Palermo Tour</strong> adotta misure tecniche e organizzative conformi al GDPR (Regolamento UE 2016/679) per proteggere i dati personali degli utenti contro accessi non autorizzati, perdita o distruzione. I pagamenti sono gestiti in modo sicuro e crittografato tramite <strong>Stripe</strong> (certificato PCI-DSS Level 1), garantendo che i dati sensibili delle carte di credito non transitino né vengano memorizzati sui nostri server.
+                <strong>Misure di Sicurezza:</strong> Sicily Palermo Tour adotta protocolli di crittografia avanzati (SSL/TLS 256-bit) e standard di sicurezza conformi per proteggere i dati personali degli utenti contro accessi non autorizzati o perdite.
             </p>
             <p>
-                <strong>Limitazione di Responsabilità:</strong> Nonostante l'adozione di standard di sicurezza elevati e protocolli di crittografia avanzati (SSL), la trasmissione di dati via Internet non può considerarsi assoluta e immune da rischi esterni. Pertanto, <strong>Sicily Palermo Tour declina ogni responsabilità per danni diretti o indiretti</strong> derivanti da accessi abusivi, attacchi informatici (hackeraggio), violazioni di dati fortuite o eventi di forza maggiore non imputabili a negligenza grave o dolo della nostra gestione.
-            </p>
-            <p>
-                <strong>Consapevolezza dell'Utente:</strong> Procedendo con la prenotazione, l'utente riconosce e accetta tali rischi inerenti all'uso delle reti telematiche e acconsente al trattamento dei propri dati nei termini descritti.
+                <strong>Limitazione di Responsabilità:</strong> Nonostante l'adozione di elevati standard tecnici, nessuna trasmissione telematica via Internet può considerarsi immune da rischi esterni. Pertanto, Sicily Palermo Tour declina ogni responsabilità per danni diretti o indiretti derivanti da accessi abusivi, attacchi informatici esterni o eventi fortuiti di forza maggiore non imputabili a negligenza grave o dolo della gestione.
             </p>
         </div>
 
-        <div style="text-align: center; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+
+        <!-- ========================================================================== -->
+        <!-- PARTE C: INFORMATIVA SUI COOKIE (COOKIE POLICY)                            -->
+        <!-- ========================================================================== -->
+        <div class="part-header-title">
+            PARTE C: Informativa sui Cookie (Cookie Policy)
+        </div>
+
+        <div class="terms-section">
+            <h3>12. Uso dei Cookie e Strumenti di Tracciamento</h3>
+            <p>
+                Questo sito web utilizza cookie e strumenti di tracciamento per garantire il funzionamento tecnico del sistema, memorizzare le preferenze di navigazione, consentire la traduzione multilingua e la selezione dei punti di raccolta nelle prenotazioni.
+            </p>
+            <ul>
+                <li><strong>Cookie Tecnici (Essenziali):</strong> Indispensabili per consentire la navigazione, il funzionamento del wizard di booking, la gestione della lingua e la sicurezza dell'area riservata. Non richiedono consenso preventivo.</li>
+                <li><strong>Cookie Analitici Anonimizzati:</strong> Utilizzati per analizzare in forma aggregata il traffico e le visite al sito senza identificare direttamente il singolo utente.</li>
+            </ul>
+            <p>
+                <strong>Gestione del Consenso Cookie:</strong> Al primo accesso, l'utente può scegliere se accettare tutti i cookie o selezionare soltanto quelli tecnici necessari tramite il banner di consenso. Le preferenze possono essere modificate o revocate in qualsiasi momento cliccando sul link *"Cookies"* presente nel Footer del sito o attraverso le impostazioni del proprio browser.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; border-top: 1.5px solid #0099d8; padding-top: 25px;">
             <a href="../index.html" class="btn-back">← Torna alla Home Page</a>
             <button type="button" class="btn-back" style="background: #64748b; margin-left: 10px;" onclick="window.close()">Chiudi Finestra</button>
         </div>
+
     </div>
 
 </body>
