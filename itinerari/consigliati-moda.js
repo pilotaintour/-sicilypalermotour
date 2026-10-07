@@ -44,28 +44,30 @@ class ConsigliatiModaManager {
             return;
         }
 
-        // 1. Filtro "Consigliati per Te"
-        let consigliatiList = list.filter(item => item.isConsigliato === true || item.isConsigliato === 'true');
-        if (consigliatiList.length === 0) {
-            consigliatiList = list.filter(i => String(i.featured) === 'true').slice(0, 3);
-            if (consigliatiList.length === 0) consigliatiList = list.slice(0, 3);
-        }
+        // 1. Filtro "Consigliati per Te" (STRETTAMENTE SOLO quelli selezionati dall'Admin)
+        const consigliatiList = list.filter(item => item.isConsigliato === true || item.isConsigliato === 'true');
 
-        // 2. Filtro "Più alla Moda / Trending"
-        let modaList = list.filter(item => item.isAllaModa === true || item.isAllaModa === 'true');
-        if (modaList.length === 0) {
-            modaList = list.filter(i => (i.category || '').includes('Street') || (i.category || '').includes('Esperienz')).slice(0, 3);
-            if (modaList.length === 0) modaList = list.slice(Math.max(0, list.length - 3));
-        }
+        // 2. Filtro "Più alla Moda / Trending" (STRETTAMENTE SOLO quelli selezionati dall'Admin)
+        const modaList = list.filter(item => item.isAllaModa === true || item.isAllaModa === 'true');
 
         if (containerConsigliati) {
-            containerConsigliati.style.display = 'block';
-            this.renderConsigliatiSection(containerConsigliati, consigliatiList);
+            if (consigliatiList.length > 0) {
+                containerConsigliati.style.display = 'block';
+                this.renderConsigliatiSection(containerConsigliati, consigliatiList);
+            } else {
+                containerConsigliati.style.display = 'none';
+                containerConsigliati.innerHTML = '';
+            }
         }
 
         if (containerModa) {
-            containerModa.style.display = 'block';
-            this.renderModaSection(containerModa, modaList);
+            if (modaList.length > 0) {
+                containerModa.style.display = 'block';
+                this.renderModaSection(containerModa, modaList);
+            } else {
+                containerModa.style.display = 'none';
+                containerModa.innerHTML = '';
+            }
         }
     }
 
