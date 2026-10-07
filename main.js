@@ -11,6 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
         caricaItinerari();
     }
 
+    // Controlla se c'è un tour da aprire in modale nei Dettagli tramite parametro URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const openModalId = urlParams.get('openModal');
+    if (openModalId && typeof apriDettagliModal === 'function') {
+        setTimeout(() => apriDettagliModal(openModalId), 300);
+    }
+
     // Sincronizzazione automatica se l'admin aggiorna gli itinerari in un'altra scheda
     window.addEventListener('storage', (e) => {
         if (e.key === 'spt_itineraries' && typeof caricaItinerari === 'function') {
