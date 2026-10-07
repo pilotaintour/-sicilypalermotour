@@ -344,12 +344,6 @@ function apriDettagliModal(id) {
             }, 100);
         }
 
-            // Inizializza la mappa con il primo punto
-            setTimeout(() => {
-                aggiornaMappaTourSelezionato(mainMeeting);
-            }, 100);
-        }
-
         // Binda il pulsante di prenotazione con calendario
         const btnCalFooter = document.getElementById('btn-modal-prenota-calendario');
         if (btnCalFooter) {
