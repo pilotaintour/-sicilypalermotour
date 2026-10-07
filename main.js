@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => apriDettagliModal(openModalId), 300);
     }
 
+    // Inizializza l'animazione al passaggio scroll del Banner Contattaci
+    inizializzaAnimazioneContattaciScroll();
+
     // Sincronizzazione automatica se l'admin aggiorna gli itinerari in un'altra scheda
     window.addEventListener('storage', (e) => {
         if (e.key === 'spt_itineraries' && typeof caricaItinerari === 'function') {
@@ -89,5 +92,36 @@ async function inviaMessaggio(event) {
         document.getElementById('contactForm').reset();
     } else {
         alert('Per favore, compila tutti i campi obbligatori.');
+    }
+}
+
+// Inizializza l'Animazione Scroll Stile PowerPoint per il Banner Contattaci
+function inizializzaAnimazioneContattaciScroll() {
+    const banner = document.getElementById('contact-scroll-banner');
+    if (!banner) return;
+
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    banner.classList.add('animate-in');
+                }
+            });
+        }, { threshold: 0.2 });
+        observer.observe(banner);
+    } else {
+        banner.classList.add('animate-in');
+    }
+}
+
+// Scroll Fluido al modulo di contatto
+function scorriAlFormContatti() {
+    const formSec = document.getElementById('contatti');
+    if (formSec) {
+        formSec.scrollIntoView({ behavior: 'smooth' });
+    }
+    const nomeInput = document.getElementById('nome');
+    if (nomeInput) {
+        setTimeout(() => nomeInput.focus(), 500);
     }
 }
