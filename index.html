@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="itinerari/consigliati-moda.css?v=2">
     <link rel="stylesheet" href="whatsapp/whatsapp.css?v=2">
     <link rel="stylesheet" href="recensioni/recensioni.css?v=2">
+    <link rel="stylesheet" href="cookie/cookie-banner.css?v=200">
     <link rel="stylesheet" href="mobile-adapt.css?v=2">
 </head>
 <body>
@@ -250,7 +251,7 @@
                 <ul class="footer-links-list">
                     <li><a href="#contatti">Contatti</a></li>
                     <li><a href="prenotazioni/termini-condizioni.html" target="_blank">Privacy</a></li>
-                    <li><a href="prenotazioni/termini-condizioni.html" target="_blank">Cookies</a></li>
+                    <li><a href="prenotazioni/termini-condizioni.html" onclick="if(window.cookieConsent){window.cookieConsent.riaprePreferenze(); return false;}">Cookies</a></li>
                 </ul>
             </div>
 
@@ -305,6 +306,7 @@
     <script src="itinerari/itinerari-data.js"></script>
     <script src="itinerari/consigliati-moda.js"></script>
     <script src="recensioni/recensioni-data.js"></script>
+    <script src="cookie/cookie-banner.js?v=200"></script>
     <script src="main.js"></script>
 
 </body>
