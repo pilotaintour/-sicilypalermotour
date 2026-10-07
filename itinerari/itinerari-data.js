@@ -259,33 +259,52 @@ function apriDettagliModal(id) {
         // Renderizza Box Punti di Raccolta & Ritrovo Mappa con Selettore
         const modalPickupBox = document.getElementById('modal-pickup-box');
         if (modalPickupBox) {
-            const mainMeeting = tour.meetingPoint || 'Palermo Centro';
-            const pickupList = (tour.pickupPoints && Array.isArray(tour.pickupPoints) && tour.pickupPoints.length > 0)
-                ? tour.pickupPoints
-                : (typeof tour.pickupPoints === 'string' && tour.pickupPoints ? tour.pickupPoints.split('•') : []);
+            // Estrai tutti i punti di raccolta singoli e puliti
+            const tuttiPunti = [];
+
+            if (tour.meetingPoint) {
+                tour.meetingPoint.split('•').forEach(s => {
+                    const clean = s.trim();
+                    if (clean && !tuttiPunti.includes(clean)) tuttiPunti.push(clean);
+                });
+            }
+
+            if (tour.pickupPoints) {
+                const arr = Array.isArray(tour.pickupPoints) ? tour.pickupPoints : (typeof tour.pickupPoints === 'string' ? tour.pickupPoints.split('•') : []);
+                arr.forEach(s => {
+                    if (typeof s === 'string') {
+                        s.split('•').forEach(sub => {
+                            const clean = sub.trim();
+                            if (clean && !tuttiPunti.includes(clean)) tuttiPunti.push(clean);
+                        });
+                    }
+                });
+            }
+
+            if (tuttiPunti.length === 0) tuttiPunti.push('Palermo Centro');
 
             const instructions = tour.meetingInstructions || '';
 
-            // Unisci tutti i punti senza duplicati
-            const tuttiPunti = [mainMeeting];
-            pickupList.forEach(p => {
-                const clean = p.trim();
-                if (clean && !tuttiPunti.includes(clean)) {
-                    tuttiPunti.push(clean);
-                }
-            });
-
             let selectOptionsHtml = tuttiPunti.map((p, idx) => `
                 <option value="${escapeHtml(p)}" ${idx === 0 ? 'selected' : ''}>
-                    📍 ${idx === 0 ? 'Ritrovo Principale: ' : 'Punto di Raccolta ' + idx + ': '}${escapeHtml(p)}
+                    📍 ${escapeHtml(p)}
                 </option>
             `).join('');
 
             let pickupHtml = `
                 <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.06);">
                     <h4 style="margin: 0 0 10px 0; color: #0369a1; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                        🗺️ Mappa &amp; Punti di Raccolta
+                        🗺️ Punti di Raccolta &amp; Ritrovo
                     </h4>
+
+                    <!-- Lista Bottoni dei Punti di Raccolta per Selezione Veloce -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+                        ${tuttiPunti.map(p => `
+                            <button type="button" onclick="selezionaPuntoMappa('${escapeHtml(p)}')" style="background: #ffffff; border: 1.5px solid #0284c7; color: #0369a1; padding: 7px 14px; border-radius: 20px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(2,132,199,0.1); transition: all 0.2s ease;">
+                                🚌 ${escapeHtml(p)}
+                            </button>
+                        `).join('')}
+                    </div>
 
                     <!-- Domanda / Selettore del punto da vedere sulla mappa -->
                     <div style="background: #ffffff; border: 1.5px solid #0284c7; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
@@ -304,8 +323,8 @@ function apriDettagliModal(id) {
 
                     <!-- Link Navigatore GPS -->
                     <div style="text-align: center;">
-                        <a id="tour-gps-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mainMeeting + ', Palermo')}" target="_blank" style="background: #0284c7; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
-                            🧭 Avvia Navigatore GPS per ${escapeHtml(mainMeeting)}
+                        <a id="tour-gps-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tuttiPunti[0] + ', Palermo')}" target="_blank" style="background: #0284c7; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                            🧭 Avvia Navigatore GPS per ${escapeHtml(tuttiPunti[0])}
                         </a>
                     </div>
 
@@ -318,6 +337,12 @@ function apriDettagliModal(id) {
             `;
 
             modalPickupBox.innerHTML = pickupHtml;
+
+            // Inizializza la mappa con il primo punto singolo
+            setTimeout(() => {
+                aggiornaMappaTourSelezionato(tuttiPunti[0]);
+            }, 100);
+        }
 
             // Inizializza la mappa con il primo punto
             setTimeout(() => {
@@ -517,6 +542,14 @@ function escapeHtml(str) {
 }
 
 // Aggiorna la mappa visiva e il pulsante GPS in base al punto di raccolta selezionato dal turista nella modale
+function selezionaPuntoMappa(puntoNome) {
+    const select = document.getElementById('select-tour-map-point');
+    if (select) {
+        select.value = puntoNome;
+    }
+    aggiornaMappaTourSelezionato(puntoNome);
+}
+
 function aggiornaMappaTourSelezionato(puntoNome) {
     const mapContainer = document.getElementById('tour-live-map-container');
     const gpsLink = document.getElementById('tour-gps-link');
@@ -535,6 +568,6 @@ function aggiornaMappaTourSelezionato(puntoNome) {
     if (gpsLink) {
         const query = encodeURIComponent(puntoNome + ', Palermo, Italia');
         gpsLink.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
-        gpsLink.innerHTML = `🧭 Avvia Navigatore GPS per ${escapeHtml(puntoNome)}`;
+        gpsLink.innerHTML = `🧭 Avvia Navigatore GPS per <strong>${escapeHtml(puntoNome)}</strong>`;
     }
 }
