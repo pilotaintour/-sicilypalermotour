@@ -116,12 +116,20 @@ function inizializzaAnimazioneContattaciScroll() {
 
 // Scroll Fluido al modulo di contatto
 function scorriAlFormContatti() {
-    const formSec = document.getElementById('contatti');
-    if (formSec) {
-        formSec.scrollIntoView({ behavior: 'smooth' });
-    }
-    const nomeInput = document.getElementById('nome');
-    if (nomeInput) {
-        setTimeout(() => nomeInput.focus(), 500);
+    apriFormMessaggioScuro();
+}
+
+// Apre o chiude il form scuro per l'invio del messaggio
+function apriFormMessaggioScuro() {
+    const box = document.getElementById('contact-dark-form-box');
+    if (box) {
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const nomeInput = document.getElementById('nome');
+            if (nomeInput) {
+                setTimeout(() => nomeInput.focus(), 300);
+            }
+        }
     }
 }

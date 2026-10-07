@@ -376,10 +376,132 @@ nav ul li a.nav-admin {
     box-shadow: 0 12px 35px rgba(0, 153, 216, 0.6);
 }
 
+.contact-hero-actions-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.contact-pill-link {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(45px);
+    transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
+}
+
+.contact-pill-link:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #00cbf8;
+    color: #ffffff;
+    transform: translateY(-3px) scale(1.03) !important;
+}
+
+.contact-pill-link.wa-pill {
+    background: rgba(37, 211, 102, 0.15);
+    border-color: rgba(37, 211, 102, 0.4);
+    color: #4ade80;
+}
+
+.contact-pill-link.wa-pill:hover {
+    background: rgba(37, 211, 102, 0.3);
+    border-color: #25d366;
+    color: #ffffff;
+}
+
+/* Modulo di Contatto Scuro Integrato */
+.contact-dark-form-box {
+    background: rgba(8, 24, 50, 0.92);
+    border: 1.5px solid rgba(0, 203, 248, 0.4);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 650px;
+    margin: 30px auto 0 auto;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    text-align: left;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.form-group-dark {
+    margin-bottom: 18px;
+}
+
+.form-group-dark label {
+    display: block;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    font-size: 0.92rem;
+}
+
+.form-group-dark input,
+.form-group-dark textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    font-size: 0.98rem;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.form-group-dark input:focus,
+.form-group-dark textarea:focus {
+    outline: none;
+    border-color: #00cbf8;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(0, 203, 248, 0.2);
+}
+
+.form-group-dark textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.btn-tour-dark {
+    background: linear-gradient(135deg, #0099d8, #0284c7);
+    color: #ffffff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.02rem;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 6px 20px rgba(0, 153, 216, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-tour-dark:hover {
+    background: linear-gradient(135deg, #0082b8, #0369a1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 153, 216, 0.5);
+}
+
 /* Quando la sezione entra nello schermo allo scroll */
 .contact-hero-section-full.animate-in .contact-hero-subtitle,
 .contact-hero-section-full.animate-in .contact-hero-title,
-.contact-hero-section-full.animate-in .contact-hero-btn {
+.contact-hero-section-full.animate-in .contact-hero-btn,
+.contact-hero-section-full.animate-in .contact-pill-link {
     opacity: 1;
     transform: translateY(0);
 }

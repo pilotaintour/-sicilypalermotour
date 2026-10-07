@@ -79,52 +79,62 @@
         <!-- Sezione 2: Più alla Moda / Trending -->
         <section id="sezione-moda-container" class="consigliati-moda-section"></section>
 
-        <!-- Banner Hero Full-Width d'Impatto "Contattaci" - Stile Identico -->
-        <section class="contact-hero-section-full" id="contact-scroll-banner">
+        <!-- Sezione Contatti Full-Width Dark Hero con Animazione Scroll -->
+        <section id="contatti" class="contact-hero-section-full animate-in">
             <div class="contact-hero-line-accent"></div>
+
             <div class="contact-hero-content-box">
                 <div class="contact-hero-subtitle">
                     HAI BISOGNO DI INFORMAZIONI O VUOI ORGANIZZARE IL TUO PROSSIMO VIAGGIO?
                 </div>
+
                 <h2 class="contact-hero-title">
                     Il nostro team è a tua disposizione per aiutarti a scegliere l'itinerario ideale, personalizzare un tour o richiedere un preventivo.
                 </h2>
-                <button type="button" class="contact-hero-btn" onclick="scorriAlFormContatti()">
-                    CONTATTACI
-                </button>
-            </div>
-        </section>
 
-        <!-- Sezione Contatti -->
-        <section id="contatti" class="contact-section">
-            <div class="intro">
-                <h2>Contattaci</h2>
-                <p>Hai domande sui nostri tour o desideri un itinerario personalizzato? Scrivici!</p>
-            </div>
+                <!-- Pulsanti Contatti Cliccabili Eleganti -->
+                <div class="contact-hero-actions-row">
+                    <a href="mailto:pilotaintour13@gmail.com" class="contact-pill-link">
+                        ✉️ pilotaintour13@gmail.com
+                    </a>
+                    <button type="button" onclick="apriChatWhatsApp('Ciao! Vorrei informazioni o un preventivo per un tour.')" class="contact-pill-link wa-pill">
+                        💬 Chatta su WhatsApp
+                    </button>
+                    <button type="button" onclick="apriFormMessaggioScuro()" class="contact-hero-btn">
+                        CONTATTACI
+                    </button>
+                </div>
 
-            <form id="contactForm" onsubmit="inviaMessaggio(event)">
-                <div class="form-group">
-                    <label for="nome">Nome:</label>
-                    <input type="text" id="nome" required placeholder="Inserisci il tuo nome">
+                <!-- Modulo di Contatto Scuro Integrato -->
+                <div id="contact-dark-form-box" class="contact-dark-form-box hidden">
+                    <form id="contactForm" onsubmit="inviaMessaggio(event)">
+                        <div class="form-group-dark">
+                            <label for="nome">Nome e Cognome *</label>
+                            <input type="text" id="nome" required placeholder="Inserisci il tuo nome">
+                        </div>
+                        <div class="form-group-dark">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" required placeholder="mario.rossi@example.com">
+                        </div>
+                        <div class="form-group-dark">
+                            <label for="messaggio">Messaggio o Richiesta *</label>
+                            <textarea id="messaggio" required placeholder="Come possiamo aiutarti? Scrivi qui la tua richiesta..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-tour-dark">📨 Invia Messaggio All'Admin</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" required placeholder="Inserisci la tua email">
-                </div>
-                <div class="form-group">
-                    <label for="messaggio">Messaggio:</label>
-                    <textarea id="messaggio" required placeholder="Come possiamo aiutarti?"></textarea>
-                </div>
-                <button type="submit" class="btn-tour">Invia Messaggio</button>
-            </form>
+            </div>
         </section>
 
     </div>
 
-    <!-- Pulsante Fluttuante WhatsApp -->
-    <button class="whatsapp-float" onclick="apriChatWhatsApp('Ciao! Desidero maggiori informazioni sui tour di Palermo.')" title="Chatta su WhatsApp">
-        <span class="whatsapp-icon">💬</span> Chatta su WhatsApp
-    </button>
+    <!-- Widget Fluttuante in Basso a Destra: Badge "Siamo Online" + WhatsApp -->
+    <div class="floating-online-wa-widget">
+        <span class="badge-siamo-online">🟢 Siamo Online</span>
+        <button class="whatsapp-float" onclick="apriChatWhatsApp('Ciao! Desidero maggiori informazioni sui tour di Palermo.')" title="Chatta su WhatsApp">
+            <span class="whatsapp-icon">💬</span>
+        </button>
+    </div>
 
     <!-- Modal Dettaglio Itinerario Ridisegnato -->
     <div id="modal-dettaglio" class="modal-overlay hidden" onclick="chiudiModal(event)">
