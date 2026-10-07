@@ -256,54 +256,73 @@ function apriDettagliModal(id) {
         if (priceEl) priceEl.textContent = tour.price || 'Su richiesta';
         if (meetingEl) meetingEl.textContent = tour.meetingPoint || 'Palermo Centro';
 
-        // Renderizza Box Punti di Raccolta & Ritrovo Mappa
+        // Renderizza Box Punti di Raccolta & Ritrovo Mappa con Selettore
         const modalPickupBox = document.getElementById('modal-pickup-box');
         if (modalPickupBox) {
             const mainMeeting = tour.meetingPoint || 'Palermo Centro';
             const pickupList = (tour.pickupPoints && Array.isArray(tour.pickupPoints) && tour.pickupPoints.length > 0)
                 ? tour.pickupPoints
-                : (typeof tour.pickupPoints === 'string' && tour.pickupPoints ? tour.pickupPoints.split(',') : []);
+                : (typeof tour.pickupPoints === 'string' && tour.pickupPoints ? tour.pickupPoints.split('•') : []);
 
-            const instructions = tour.meetingInstructions || 'Presentarsi 10 minuti prima dell\'orario di partenza stabilito.';
-            const mapsQuery = encodeURIComponent(mainMeeting + ', Palermo');
+            const instructions = tour.meetingInstructions || '';
+
+            // Unisci tutti i punti senza duplicati
+            const tuttiPunti = [mainMeeting];
+            pickupList.forEach(p => {
+                const clean = p.trim();
+                if (clean && !tuttiPunti.includes(clean)) {
+                    tuttiPunti.push(clean);
+                }
+            });
+
+            let selectOptionsHtml = tuttiPunti.map((p, idx) => `
+                <option value="${escapeHtml(p)}" ${idx === 0 ? 'selected' : ''}>
+                    📍 ${idx === 0 ? 'Ritrovo Principale: ' : 'Punto di Raccolta ' + idx + ': '}${escapeHtml(p)}
+                </option>
+            `).join('');
 
             let pickupHtml = `
-                <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px;">
-                        <h4 style="margin: 0; color: #0369a1; font-size: 1.02rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                            📍 Punto d'Incontro &amp; Punti di Raccolta
-                        </h4>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" style="background: #0284c7; color: white; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-                            🗺️ Apri su Mappa Google
+                <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.06);">
+                    <h4 style="margin: 0 0 10px 0; color: #0369a1; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                        🗺️ Mappa &amp; Punti di Raccolta
+                    </h4>
+
+                    <!-- Domanda / Selettore del punto da vedere sulla mappa -->
+                    <div style="background: #ffffff; border: 1.5px solid #0284c7; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                        <label for="select-tour-map-point" style="display: block; font-weight: 800; color: #0b2545; font-size: 0.92rem; margin-bottom: 6px;">
+                            📍 Quale punto di raccolta desideri vedere sulla mappa?
+                        </label>
+                        <select id="select-tour-map-point" onchange="aggiornaMappaTourSelezionato(this.value)" style="width: 100%; padding: 10px; border: 1.5px solid #0284c7; border-radius: 8px; font-size: 0.95rem; font-weight: 700; color: #0b2545; background: #ffffff; cursor: pointer;">
+                            ${selectOptionsHtml}
+                        </select>
+                    </div>
+
+                    <!-- Contenitore della Mappa Visiva -->
+                    <div id="tour-live-map-container" style="width: 100%; height: 260px; border-radius: 10px; overflow: hidden; border: 1px solid #cbd5e1; margin-bottom: 12px; background: #f1f5f9;">
+                        <!-- Caricato via JS -->
+                    </div>
+
+                    <!-- Link Navigatore GPS -->
+                    <div style="text-align: center;">
+                        <a id="tour-gps-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mainMeeting + ', Palermo')}" target="_blank" style="background: #0284c7; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                            🧭 Avvia Navigatore GPS per ${escapeHtml(mainMeeting)}
                         </a>
                     </div>
 
-                    <div style="font-size: 0.93rem; color: #0b2545; margin-bottom: 8px; line-height: 1.5;">
-                        <strong>📍 Ritrovo Principale:</strong> <span style="color: #1b4f72; font-weight: 700;">${escapeHtml(mainMeeting)}</span>
-                    </div>
+                    ${instructions ? `
+                        <div style="font-size: 0.88rem; color: #475569; background: #ffffff; padding: 10px 12px; border-radius: 8px; border-left: 3px solid #0284c7; margin-top: 12px;">
+                            🎒 <strong>Indicazioni per il Ritrovo:</strong> ${escapeHtml(instructions)}
+                        </div>
+                    ` : ''}
+                </div>
             `;
 
-            if (pickupList.length > 0) {
-                pickupHtml += `
-                    <div style="font-size: 0.9rem; color: #0f172a; margin-bottom: 8px;">
-                        <strong>🚌 Punti di Raccolta Disponibili:</strong>
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
-                            ${pickupList.map(p => `<span style="background: #ffffff; border: 1px solid #bae6fd; color: #0369a1; padding: 4px 10px; border-radius: 8px; font-size: 0.83rem; font-weight: 600;">🚌 ${escapeHtml(p.trim())}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (instructions) {
-                pickupHtml += `
-                    <div style="font-size: 0.88rem; color: #475569; background: #ffffff; padding: 10px 12px; border-radius: 8px; border-left: 3px solid #0284c7; margin-top: 8px;">
-                        🎒 <strong>Indicazioni per il Ritrovo:</strong> ${escapeHtml(instructions)}
-                    </div>
-                `;
-            }
-
-            pickupHtml += `</div>`;
             modalPickupBox.innerHTML = pickupHtml;
+
+            // Inizializza la mappa con il primo punto
+            setTimeout(() => {
+                aggiornaMappaTourSelezionato(mainMeeting);
+            }, 100);
         }
 
         // Binda il pulsante di prenotazione con calendario
@@ -495,4 +514,27 @@ function escapeHtml(str) {
                       .replace(/>/g, "&gt;")
                       .replace(/"/g, "&quot;")
                       .replace(/'/g, "&#032;");
+}
+
+// Aggiorna la mappa visiva e il pulsante GPS in base al punto di raccolta selezionato dal turista nella modale
+function aggiornaMappaTourSelezionato(puntoNome) {
+    const mapContainer = document.getElementById('tour-live-map-container');
+    const gpsLink = document.getElementById('tour-gps-link');
+
+    if (!puntoNome) puntoNome = 'Palermo Centro';
+
+    if (mapContainer) {
+        if (window.mapsService) {
+            mapContainer.innerHTML = window.mapsService.getGoogleEmbedIframeHtml(puntoNome, { height: '260px' });
+        } else {
+            const query = encodeURIComponent(puntoNome + ', Palermo, Italia');
+            mapContainer.innerHTML = `<iframe width="100%" height="260" style="border:0; border-radius:10px;" loading="lazy" src="https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>`;
+        }
+    }
+
+    if (gpsLink) {
+        const query = encodeURIComponent(puntoNome + ', Palermo, Italia');
+        gpsLink.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+        gpsLink.innerHTML = `🧭 Avvia Navigatore GPS per ${escapeHtml(puntoNome)}`;
+    }
 }
