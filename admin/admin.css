@@ -529,3 +529,37 @@ body {
     margin-bottom: 15px;
     border: 1px solid #fca5a5;
 }
+
+/* Autocomplete Dropdown per Punti di Raccolta */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1.5px solid #0284c7;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(11, 37, 69, 0.18);
+    z-index: 1000;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+
+.autocomplete-item {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.15s ease;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f9ff;
+}
