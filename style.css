@@ -543,3 +543,100 @@ nav ul li a.nav-admin {
         padding: 22px;
     }
 }
+
+/* ==========================================================================
+   STILI FOOTER MULTICOLONNA ELEGANTE - STILE IDENTICO ALL'IMMAGINE
+   ========================================================================== */
+.footer-modern-section {
+    background: #ffffff;
+    padding: 65px 20px 30px 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.footer-logo-img {
+    max-width: 260px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 18px;
+    display: block;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.footer-brand-desc {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 0.92rem;
+    max-width: 380px;
+}
+
+.footer-col-title {
+    color: #0077b6;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -0.3px;
+}
+
+.footer-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-links-list a {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.93rem;
+    transition: color 0.2s ease;
+    display: inline-block;
+}
+
+.footer-links-list a:hover {
+    color: #0077b6;
+}
+
+.footer-bottom-bar {
+    max-width: 1200px;
+    margin: 45px auto 0 auto;
+    padding-top: 22px;
+    border-top: 1.5px solid #0099d8;
+    text-align: center;
+    font-size: 0.92rem;
+    color: #475569;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        text-align: center;
+    }
+    .footer-logo-img {
+        margin: 0 auto 15px auto;
+    }
+    .footer-brand-desc {
+        margin: 0 auto;
+    }
+}
