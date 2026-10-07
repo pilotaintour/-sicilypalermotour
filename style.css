@@ -564,13 +564,17 @@ nav ul li a.nav-admin {
     align-items: start;
 }
 
+.hero-content img {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35)) drop-shadow(0 6px 20px rgba(0,0,0,0.8)) !important;
+}
+
 .footer-logo-img {
     max-width: 450px;
     width: 100%;
     height: auto;
     margin-bottom: 22px;
     display: block;
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+    filter: none !important;
 }
 
 .footer-brand-desc {
