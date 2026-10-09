@@ -16,6 +16,144 @@ body {
     display: none !important;
 }
 
+/* ==========================================================================
+   TOP BAR BLU CONTATTI & BARRA NAVIGAZIONE BIANCA STICKY CON LOGO
+   ========================================================================== */
+.top-header-bar {
+    background: linear-gradient(135deg, #0b2545 0%, #005f9e 100%);
+    color: #ffffff;
+    padding: 11px 35px;
+    font-size: 0.94rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    z-index: 1001;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.top-bar-contacts {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+}
+
+.top-bar-contacts a {
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+.top-bar-contacts a:hover {
+    color: #fef08a;
+    transform: translateY(-1px);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.top-bar-socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.social-circle-link {
+    width: 34px;
+    height: 34px;
+    background: #ffffff;
+    color: #005f9e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+}
+
+.social-circle-link:hover {
+    transform: scale(1.12);
+    background: #fef08a;
+    color: #0b2545;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+}
+
+.social-circle-link svg {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+}
+    justify-content: center;
+    text-decoration: none;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.social-circle-link:hover {
+    transform: scale(1.1);
+    background: #e0f2fe;
+}
+
+.social-circle-link svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* BARRA NAVIGAZIONE PRINCIPALE BIANCA STICKY */
+.main-navbar-sticky {
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.main-navbar-brand img {
+    max-width: 240px;
+    height: auto;
+    display: block;
+}
+
+.main-nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.main-nav-links a {
+    color: #0077b6;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+    padding: 6px 0;
+}
+
+.main-nav-links a:hover,
+.main-nav-links a.active {
+    color: #0284c7;
+    border-bottom: 2.5px solid #0284c7;
+}
+
 /* HEADER HERO PANORAMICA LIMPIDA SENZA SCATOLE CHE COPRONO L'IMMAGINE */
 header#home {
     position: relative;
